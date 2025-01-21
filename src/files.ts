@@ -1,14 +1,14 @@
 import fs from 'node:fs/promises'
-import path from 'node:path'
+import path, { format } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import type {
   AbsolutePath,
   RelativePath,
-  TConvertToOutput,
   TExtensionsRemoveDuplicatesStrategies,
   TExtractorsUsefulInfo,
   TGetUniqueNames,
+  TRemoveFiles,
   TUpdateContentInTxtFiles,
 } from './types'
 
@@ -16,18 +16,30 @@ export const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const getAbsPathFolder = (...folders: RelativePath[]): AbsolutePath => path.resolve(__dirname, ...folders)
 export const getAbsPathFolders = (folders: RelativePath[]): AbsolutePath[] =>
-  folders.map(folder => getAbsPathFolder(folder))
+  folders.map((folder) => getAbsPathFolder(folder))
 
 export const createFolder = (relativeFolder: string) => fs.mkdir(getAbsPathFolder(relativeFolder), { recursive: true })
 
-export const isIndirectDuplicateFilename = (allFilenames: string[], filename: string): boolean =>
-  filename.includes('(')
-    ? Boolean(allFilenames.find(filename => filename === extractOriginalFilename(filename)))
-    : false
+export const isIndirectDuplicateFilename = (allFilenames: string[], filename: string): boolean => {
+  const isMaybeDuplicate = filename.includes('(')
+
+  if (isMaybeDuplicate) {
+    const originalFilename = extractOriginalFilename(filename)
+
+    const originalFile = allFilenames.find((filename) => filename === originalFilename)
+
+    return Boolean(originalFile)
+  }
+
+  return false
+}
 
 export const extractOriginalFilename = (filename: string) => {
   const [leftIdx, rightIdx] = [filename.indexOf('('), filename.indexOf(')')]
-  return filename.slice(0, leftIdx).concat(filename.slice(rightIdx))
+
+  const original = `${filename.slice(0, leftIdx)}${filename.slice(rightIdx + 1)}`.replace(/\s/g, '').replace(/-/g, '')
+
+  return original
 }
 
 export const moveFiles = async ({
@@ -43,7 +55,7 @@ export const moveFiles = async ({
   }
 
   await Promise.all(
-    filenamePaths.map(filename => fs.rename(filename, getAbsPathFolder(destRelativeFolder, path.basename(filename))))
+    filenamePaths.map((filename) => fs.rename(filename, getAbsPathFolder(destRelativeFolder, path.basename(filename)))),
   )
 }
 
@@ -53,15 +65,14 @@ export const filenameIsInAllFolders = ({
 }: {
   filename: string
   fileMap: Record<string, string[]>
-}) => Object.values(fileMap).every(filenames => filenames.includes(filename))
+}) => Object.values(fileMap).every((filenames) => filenames.includes(filename))
 
 export const checkIsFolderExists = async (pathToFolder: string) => {
   const fullPath = getAbsPathFolder(pathToFolder)
   try {
     await fs.access(fullPath)
     return true
-  }
-  catch (err) {
+  } catch (err) {
     console.error(`Folder ${fullPath} not exists`)
     return false
   }
@@ -69,9 +80,8 @@ export const checkIsFolderExists = async (pathToFolder: string) => {
 
 export const getFileNamesForFolder = async (relativePath: string): Promise<string[]> => {
   try {
-    return fs.readdir(getAbsPathFolder(relativePath))
-  }
-  catch (err) {
+    return await fs.readdir(getAbsPathFolder(relativePath))
+  } catch (err) {
     console.error(`Folder ${relativePath} not exists`)
     throw err
   }
@@ -79,10 +89,10 @@ export const getFileNamesForFolder = async (relativePath: string): Promise<strin
 
 export const getAllFilesInFolder = (folders: string[]) =>
   Promise.all(
-    folders.map(async folder => ({
+    folders.map(async (folder) => ({
       parentFolder: folder,
       filenames: await getFileNamesForFolder(folder),
-    }))
+    })),
   )
 
 export const scanFiles = (parentFolder: string, filenames: string[]) => {
@@ -100,26 +110,26 @@ export const scanFiles = (parentFolder: string, filenames: string[]) => {
 export const getUniqueNames: TGetUniqueNames = (sourceArr: string[]) => [...new Set(sourceArr)]
 
 export const extractors: TExtractorsUsefulInfo = {
-  txt: file => file.content?.split('\n').filter(v => Boolean(v)) || [''],
-  torrent: file => file.filename,
+  txt: (file) => file.content?.split('\n').filter((v) => Boolean(v)) || [''],
+  torrent: (file) => file.filename,
 }
 
 export const txtDuplicateStrategy: TExtensionsRemoveDuplicatesStrategies['txt'] = {
   extractor: extractors.txt,
-  getUniqueNames: lines => getUniqueNames(lines),
-  getDuplicates: lines =>
+  getUniqueNames: (lines) => getUniqueNames(lines),
+  getDuplicates: (lines) =>
     lines.reduce<string[]>(
       (acc, cur, idx) => (lines.indexOf(cur, idx) !== lines.lastIndexOf(cur) ? [...acc, cur] : [...acc]),
-      []
+      [],
     ),
 }
 
 export const torrentDuplicateStrategy: TExtensionsRemoveDuplicatesStrategies['torrent'] = {
   extractor: extractors.torrent,
-  isConsideredDuplicate: filenames => curFile => isIndirectDuplicateFilename(filenames, curFile.filename),
+  isConsideredDuplicate: (filenames) => (curFile) => isIndirectDuplicateFilename(filenames, curFile.filename),
 }
 
-export const updateContentInTxtFiles: TUpdateContentInTxtFiles = options => async (fileMap) => {
+export const updateContentInTxtFiles: TUpdateContentInTxtFiles = (options) => async (fileMap) => {
   if (options.readonly) return
 
   const writeToFilesTasks = Object.entries(fileMap).reduce<Promise<void>[]>((acc, [absolutePath, contentMap]) => {
@@ -135,13 +145,10 @@ export const updateContentInTxtFiles: TUpdateContentInTxtFiles = options => asyn
   await Promise.all(writeToFilesTasks)
 }
 
-export const convertToOutput: TConvertToOutput = options => raw =>
-  raw.flatMap(val =>
-    Object.entries(val).map(([absolutePath, ctx]) => ({
-      filename: path.basename(absolutePath),
-      amount_all_names: ctx.duplicatesLength + ctx.uniqueLength,
-      amount_unique_names: ctx.uniqueLength,
-      amount_duplicates_names: ctx.duplicatesLength,
-      readonlyMode: options.readonly,
-    }))
-  )
+export const removeFiles: TRemoveFiles = (options) => async (filenamePaths) => {
+  if (options.readonly) return
+
+  const removeFilesTasks = filenamePaths.map((filenamePath) => fs.unlink(filenamePath))
+
+  await Promise.all(removeFilesTasks)
+}

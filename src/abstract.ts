@@ -3,13 +3,20 @@ import path from 'node:path'
 
 import { pipe } from 'fp-ts/lib/function'
 
-import { convertToOutput, getAbsPathFolders, torrentDuplicateStrategy, txtDuplicateStrategy } from './files'
+import {
+  getAbsPathFolders,
+  removeFiles,
+  torrentDuplicateStrategy,
+  txtDuplicateStrategy,
+  updateContentInTxtFiles,
+} from './files'
 import type {
   ExtractorFileExtensions,
   TExtractInfoFromFile,
   TGetDuplicatesFromTxtFilesInFolder,
-  TGetDuplicateTorrentsFilesInFolder,
+  TGetDuplicatesInFolderTorrent,
 } from './types'
+import { convertToOutputUniversal } from './formatters'
 
 const extractInfoFromFile: TExtractInfoFromFile = async (filePath) => {
   const ext = path.extname(filePath).slice(1) as ExtractorFileExtensions
@@ -24,30 +31,52 @@ const extractInfoFromFile: TExtractInfoFromFile = async (filePath) => {
   }
 }
 
-const getDuplicateTorrentsFilesInFolder: TGetDuplicateTorrentsFilesInFolder = strategy => async (folder) => {
+const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = (strategy) => async (folder) => {
   const filenames = await fs.readdir(folder)
-  const torrentFilenames = filenames.filter(filename => path.extname(filename) === '.torrent')
+
+  const torrentFilenames = filenames.filter((filename) => path.extname(filename) === '.torrent')
 
   const fileInfoArr = await Promise.all(
-    torrentFilenames.map(filename => extractInfoFromFile(path.join(folder, filename)))
+    torrentFilenames.map((filename) => extractInfoFromFile(path.join(folder, filename))),
   )
 
-  const isConsideredDuplicate = strategy.isConsideredDuplicate(fileInfoArr.map(v => v.filename))
+  const isConsideredDuplicate = strategy.isConsideredDuplicate(fileInfoArr.map((v) => v.filename))
 
-  const duplicateAbsolutePaths = fileInfoArr.reduce<string[]>(
-    (acc, cur) => (isConsideredDuplicate(cur) ? [...acc, cur.absolutePath] : acc),
-    []
+  const duplicateAbsolutePaths = fileInfoArr.reduce<Awaited<ReturnType<ReturnType<TGetDuplicatesInFolderTorrent>>>>(
+    (acc, cur) => {
+      acc.fileOrFolder = folder
+
+      const isDuplicate = isConsideredDuplicate(cur)
+
+      if (isDuplicate) {
+        return {
+          ...acc,
+          paths: [...acc.paths, cur.absolutePath],
+          duplicateLength: acc.duplicateLength + 1,
+        }
+      }
+      return {
+        ...acc,
+        uniqueLength: acc.uniqueLength + 1,
+      }
+    },
+    {
+      paths: [],
+      fileOrFolder: '',
+      uniqueLength: 0,
+      duplicateLength: 0,
+    },
   )
 
   return duplicateAbsolutePaths
 }
 
-const getDuplicatesFromTxtFiles: TGetDuplicatesFromTxtFilesInFolder = strategy => async (folder) => {
+const getDuplicatesFromTxtFiles: TGetDuplicatesFromTxtFilesInFolder = (strategy) => async (folder) => {
   const filenames = await fs.readdir(folder)
-  const txtFilenames = filenames.filter(filename => path.extname(filename) === '.txt')
+  const txtFilenames = filenames.filter((filename) => path.extname(filename) === '.txt')
 
   const fileInfoArr = await Promise.all(
-    txtFilenames.map(filename => extractInfoFromFile(path.join(folder, filename)))
+    txtFilenames.map((filename) => extractInfoFromFile(path.join(folder, filename))),
   )
 
   const updateMapFiles = fileInfoArr.reduce<Awaited<ReturnType<ReturnType<TGetDuplicatesFromTxtFilesInFolder>>>>(
@@ -68,30 +97,42 @@ const getDuplicatesFromTxtFiles: TGetDuplicatesFromTxtFilesInFolder = strategy =
         },
       }
     },
-    {}
+    {},
   )
-
   return updateMapFiles
 }
 
 async function main() {
-  // const folderList = ['0.extra-gold', 'folder1', 'folder2'].map(n => `../../tt/${n}`)
-  const folderList = ['../../tt']
+  const folderList = [
+    ...['2.gold', '1.now', '3.popular', '4.bds', '5.rest', 'anime', 'games'].map((n) => `../../tt/fresh/${n}`),
+    '../../tt/fresh',
+  ]
 
-  const readonly = false
+  const readonly = true
 
-  const getDuplicatesInFoldersTxt = async (folderList: string[]) =>
-    await pipe(folderList, getAbsPathFolders, folders =>
-      Promise.all(folders.map(getDuplicatesFromTxtFiles(txtDuplicateStrategy))))
+  const getDuplicatesInFoldersTxt = async (folderList: string[]) => {
+    const folders = pipe(folderList, getAbsPathFolders)
+    
+    return Promise.all(folders.map(getDuplicatesFromTxtFiles(txtDuplicateStrategy)))
+  }
 
-  const getDuplicatesInFoldersTorrent = async (folderList: string[]) =>
-    await pipe(folderList, getAbsPathFolders, folders =>
-      Promise.all(folders.map(getDuplicateTorrentsFilesInFolder(torrentDuplicateStrategy))))
+
+  const getDuplicatesInFoldersTorrent = async (folderList: string[]) => {
+    const folders = pipe(folderList, getAbsPathFolders)
+    const duplicates = await Promise.all(folders.map(getDuplicateTorrentsFilesInFolder(torrentDuplicateStrategy)))
+
+    return duplicates.filter((v) => v.fileOrFolder !== '')
+  }
 
   const txtFileMapArr = await getDuplicatesInFoldersTxt(folderList)
-  // await Promise.all(txtFileMapArr.map(updateContentInTxtFiles({ readonly })))
+  const torrentFileDuplicates = await getDuplicatesInFoldersTorrent(folderList)
 
-  const formatted = convertToOutput({ readonly })(txtFileMapArr)
+  // Remove duplicates from .txt-specific
+  await Promise.all(txtFileMapArr.map(updateContentInTxtFiles({ readonly })))
+  // Remove duplicates from .torrent-specific
+  await removeFiles({ readonly })(torrentFileDuplicates.flatMap((v) => v.paths))
+
+  const formatted = convertToOutputUniversal({ readonly })({ txt: txtFileMapArr, torrent: torrentFileDuplicates })
 
   console.table(formatted)
 
@@ -99,4 +140,4 @@ async function main() {
   // await extractDuplicateFiles(folderList, { readonly })
 }
 
-main()
+void main()

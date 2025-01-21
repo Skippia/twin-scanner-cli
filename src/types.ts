@@ -52,14 +52,6 @@ export type TExtensionsRemoveDuplicatesStrategies = {
   }
 }
 
-export type TOutputFormat = {
-  filename: string
-  amount_all_names: number
-  amount_unique_names: number
-  amount_duplicates_names: number
-  readonlyMode: boolean
-}[]
-
 /*
   ┌─────────────────────────────────────────────────────────────────────────┐
   │ Signature types                                                         │
@@ -67,9 +59,14 @@ export type TOutputFormat = {
  */
 export type TGetUniqueNames = (sourceArr: string[]) => string[]
 export type TExtractInfoFromFile = (filePath: AbsolutePath) => Promise<TFileInfo>
-export type TGetDuplicateTorrentsFilesInFolder = (
-  strategy: TExtensionsRemoveDuplicatesStrategies['torrent'],
-) => (folder: AbsolutePath) => Promise<AbsolutePath[]>
+export type TGetDuplicatesInFolderTorrent = (strategy: TExtensionsRemoveDuplicatesStrategies['torrent']) => (
+  folder: AbsolutePath,
+) => Promise<{
+  paths: AbsolutePath[]
+  uniqueLength: number
+  duplicateLength: number
+  fileOrFolder: string
+}>
 
 export type TGetDuplicatesFromTxtFilesInFolder = (strategy: TExtensionsRemoveDuplicatesStrategies['txt']) => (
   folder: AbsolutePath,
@@ -118,7 +115,3 @@ export type TGetDuplicatesInFoldersTxt = (folderList: RelativePath[]) => Promise
     }
   >[]
 >
-
-export type TConvertToOutput = (options: {
-  readonly: boolean
-}) => (raw: Awaited<ReturnType<TGetDuplicatesInFoldersTxt>>) => TOutputFormat
