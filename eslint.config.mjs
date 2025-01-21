@@ -27,7 +27,7 @@ export default antfu(
     },
     rules: {
       ...functional.configs.externalTypeScriptRecommended.rules,
-      'noClosure/no-tagged-closures': 'error',
+      'noClosure/no-tagged-closures': 'error'
       // ...functional.configs.recommended.rules,
       // ...functional.configs.lite.rules,
       // ...functional.configs.stylistic.rules,
@@ -258,8 +258,8 @@ export default antfu(
       'style/max-len': [
         'error',
         {
-          code: 100,
-          comments: 160,
+          code: 120,
+          comments: 120,
           ignoreStrings: true,
           ignoreTemplateLiterals: true,
           ignoreRegExpLiterals: true,
@@ -557,7 +557,12 @@ export default antfu(
       'lines-around-comment': 'off',
       'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
       'max-statements-per-line': 'off',
-      'padding-line-between-statements': 'off',
+      // 'style/padding-line-between-statements': ["error",
+      // { blankLine: "always", prev: "*", next: "return" },
+      // { blankLine: "always", prev: ["const", "let", "var"], next: "*" },
+      // { blankLine: "any", prev: ["const", "let", "var"], next: ["const", "let", "var"] }
+
+      // ],
       'quotes': ['error', 'single', { avoidEscape: true }]
     }
   },

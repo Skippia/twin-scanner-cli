@@ -1,5 +1,6 @@
-import fsSync from 'node:fs';
-import { getAbsPathFolder } from './files';
+import fsSync from 'node:fs'
+
+import { getAbsPathFolder } from './files'
 
 export function validateUserArgs() {
   const userArgs = process.argv.slice(2)
@@ -13,18 +14,20 @@ export function validateUserArgs() {
 
     if (readonlyVal === 'true') {
       readonly = true
-    } else if (readonlyVal === 'false') {
+    }
+    else if (readonlyVal === 'false') {
       readonly = false
-    } else {
+    }
+    else {
       console.error('Invalid value for --readonly. It should either be true or false')
       process.exit(1)
     }
 
     readonlyIdx === 0 ? (folders = userArgs.slice(2)) : (folders = userArgs.slice(0, -2))
-  } else {
+  }
+  else {
     folders = userArgs
   }
-
 
   if (folders.length < 2) {
     console.error('Please provide at least 2 paths')
@@ -32,7 +35,9 @@ export function validateUserArgs() {
   }
 
   if (folders.some(folder => !fsSync.existsSync(getAbsPathFolder(folder)))) {
-    console.error(`Invalid paths: ${folders.filter(folder => !fsSync.existsSync(getAbsPathFolder(folder))).join(', ')}`)
+    console.error(
+      `Invalid paths: ${folders.filter(folder => !fsSync.existsSync(getAbsPathFolder(folder))).join(', ')}`
+    )
     process.exit(1)
   }
 
