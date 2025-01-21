@@ -1,0 +1,38 @@
+{
+  "name": "duplicates-extractor",
+  "version": "1.0.0",
+  "main": "./src/index.mts",
+  "type": "module",
+  "scripts": {
+    "start": "tsx ./src/index.mts",
+    "dev": "tsx --watch ./src/index.mts",
+    "ts:check": "tsc --noEmit",
+    "format": "prettier --config .prettierrc.cjs --write .",
+    "eslint:fix": "npx eslint . --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@antfu/eslint-config": "^3.14.0",
+    "@types/commander": "^2.12.5",
+    "@types/figlet": "^1.7.0",
+    "@types/node": "^22.10.7",
+    "eslint": "^9.18.0",
+    "eslint-plugin-functional": "^8.0.0",
+    "eslint-plugin-no-closure": "^1.0.1",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "clear": "^0.1.0",
+    "commander": "^13.0.0",
+    "figlet": "^1.8.0",
+    "fp-ts": "^2.16.9",
+    "remeda": "^2.19.2"
+  }
+}
