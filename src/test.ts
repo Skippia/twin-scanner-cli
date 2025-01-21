@@ -5,7 +5,7 @@ import process from 'node:process'
 import { Command } from 'commander'
 import figlet from 'figlet'
 
-import { __dirname } from './files'
+import { __dirname } from './helpers'
 
 const program = new Command()
 
@@ -27,11 +27,12 @@ async function listDirContents(filepath: string) {
     const detailedFilesPromises = files.map(async (file: string) => {
       const fileDetails = await fs.promises.lstat(path.resolve(filepath, file))
       const { size, birthtime } = fileDetails
-      return { filename: file, 'size(KB)': size, created_at: birthtime }
+      return { 'filename': file, 'size(KB)': size, 'created_at': birthtime }
     })
     const detailedFiles = await Promise.all(detailedFilesPromises)
     console.table(detailedFiles)
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error occurred while reading the directory!', error)
   }
 }

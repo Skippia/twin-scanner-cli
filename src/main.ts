@@ -1,19 +1,13 @@
 import path from 'node:path'
 
-import {
-  checkIsFolderExists,
-  filenameIsInAllFolders,
-  getAbsPathFolder,
-  getAllFilesInFolder,
-  moveFiles,
-  scanFiles,
-} from './files'
-import { validateUserArgs } from './helpers'
+import { checkIsFolderExists, filenameIsInAllFolders, getAllFilesInFolder, moveFiles } from './files'
+import { getAbsPathFolder, validateUserArgs } from './helpers'
+import { scanFiles } from './logic'
 
 async function main(targetFolders: string[], options: { readonly?: boolean } = {}) {
   options.readonly ??= true
 
-  const isSomeFolderNotExist = (await Promise.all(targetFolders.map(checkIsFolderExists))).some((isExists) => !isExists)
+  const isSomeFolderNotExist = (await Promise.all(targetFolders.map(checkIsFolderExists))).some(isExists => !isExists)
 
   if (isSomeFolderNotExist) return
 
@@ -35,9 +29,9 @@ async function main(targetFolders: string[], options: { readonly?: boolean } = {
   const filesData2 = await getAllFilesInFolder(targetFolders)
   const fileMap = filesData2.reduce<Record<string, string[]>>(
     (acc, { parentFolder, filenames }) => ({ ...acc, [parentFolder]: filenames }),
-    {},
+    {}
   )
-  const mergedFiles = [...new Set(Object.values(fileMap).flatMap((filenames) => filenames))]
+  const mergedFiles = [...new Set(Object.values(fileMap).flatMap(filenames => filenames))]
   const crossDuplicateFilenamePaths: string[] = []
 
   mergedFiles.forEach((filename) => {
@@ -45,7 +39,7 @@ async function main(targetFolders: string[], options: { readonly?: boolean } = {
 
     if (isCrossFolderFilenameDuplicate) {
       console.log('Cross file duplicate:', filename)
-      crossDuplicateFilenamePaths.push(...targetFolders.map((folder) => getAbsPathFolder(folder, filename)))
+      crossDuplicateFilenamePaths.push(...targetFolders.map(folder => getAbsPathFolder(folder, filename)))
     }
   })
 
@@ -60,11 +54,11 @@ async function main(targetFolders: string[], options: { readonly?: boolean } = {
   console.dir(
     {
       uniqueDuplicates: uniqueFilenamePaths,
-      crossDuplicateFilenamePaths: [...new Set(crossDuplicateFilenamePaths.map((filename) => path.basename(filename)))],
+      crossDuplicateFilenamePaths: [...new Set(crossDuplicateFilenamePaths.map(filename => path.basename(filename)))],
     },
     {
       depth: null,
-    },
+    }
   )
 }
 
