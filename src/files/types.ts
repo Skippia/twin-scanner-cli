@@ -1,3 +1,12 @@
-import type { AbsolutePath } from '../types'
+import type { ExtractorFileExtensions } from '../logic/types'
 
-export type TRemoveFiles = (options: { readonly: boolean }) => (files: AbsolutePath[]) => Promise<void>
+export type TRemoveFilesEffect = (options: { readonly: boolean }) => (files: AbsolutePath[]) => Promise<void>
+
+export type TGetRecursiveFilesAndFolders = (
+  folder: AbsolutePath,
+  options: {
+    permittedExtensions: ExtractorFileExtensions[]
+    flat: boolean
+    banFolders: string[]
+  },
+) => Promise<AbsolutePath[] | { folders: AbsolutePath[], files: AbsolutePath[] }>

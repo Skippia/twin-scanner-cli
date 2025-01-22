@@ -1,74 +1,31 @@
-import path from 'node:path'
+import type { TUserChoices } from './cli'
+import { getRecursiveFilesAndFolders } from './files'
+import { getCommonFilesInFileMap, getUniversalFileMapFromFolders } from './logic'
+import { applyFilesExtractionEffect, getRidOfDuplicatesInFoldersEffect } from './logic/effect'
+import { banFolders } from './shared/constants'
+import { asyncFlow } from './shared/helpers'
+import { strategies } from './strategies'
 
-import { checkIsFolderExists, filenameIsInAllFolders, getAllFilesInFolder, moveFiles } from './files'
-import { getAbsPathFolder, validateUserArgs } from './helpers'
-import { scanFiles } from './logic'
+export async function main(options: TUserChoices) {
+  let folderList = (options.folderPaths || [options.folderPath]) as string[]
 
-async function main(targetFolders: string[], options: { readonly?: boolean } = {}) {
-  options.readonly ??= true
-
-  const isSomeFolderNotExist = (await Promise.all(targetFolders.map(checkIsFolderExists))).some(isExists => !isExists)
-
-  if (isSomeFolderNotExist) return
-
-  // 1. Scan filenames for duplicates specific for each folder
-  const filesData1 = await getAllFilesInFolder(targetFolders)
-  const uniqueFilenamePaths = filesData1.flatMap(({ parentFolder, filenames }) => [
-    ...scanFiles(parentFolder, filenames),
-  ])
-
-  if (!options.readonly) {
-    // 2. Move duplicates to separate folder
-    await moveFiles({
-      filenamePaths: uniqueFilenamePaths,
-      destRelativeFolder: duplicateFromBothFoldersFolder,
-    })
+  if (options.recursive) {
+    folderList = (await getRecursiveFilesAndFolders(options.folderPath as AbsolutePath, {
+      permittedExtensions: [],
+      banFolders,
+      flat: true,
+    })) as string[]
   }
 
-  // 3. Scan filename for cross-folder duplicates
-  const filesData2 = await getAllFilesInFolder(targetFolders)
-  const fileMap = filesData2.reduce<Record<string, string[]>>(
-    (acc, { parentFolder, filenames }) => ({ ...acc, [parentFolder]: filenames }),
-    {}
+  console.log('Options:', { ...options, folderList })
+
+  await getRidOfDuplicatesInFoldersEffect(folderList, strategies, options)
+
+  const extractCommonFilesInFolders = asyncFlow(
+    getUniversalFileMapFromFolders(strategies, options),
+    getCommonFilesInFileMap,
+    applyFilesExtractionEffect(strategies, options)
   )
-  const mergedFiles = [...new Set(Object.values(fileMap).flatMap(filenames => filenames))]
-  const crossDuplicateFilenamePaths: string[] = []
 
-  mergedFiles.forEach((filename) => {
-    const isCrossFolderFilenameDuplicate = filenameIsInAllFolders({ filename, fileMap })
-
-    if (isCrossFolderFilenameDuplicate) {
-      console.log('Cross file duplicate:', filename)
-      crossDuplicateFilenamePaths.push(...targetFolders.map(folder => getAbsPathFolder(folder, filename)))
-    }
-  })
-
-  if (!options.readonly) {
-    // 2. Move cross duplicates to separate folder
-    await moveFiles({
-      filenamePaths: crossDuplicateFilenamePaths,
-      destRelativeFolder: commonFilesFolder,
-    })
-  }
-
-  console.dir(
-    {
-      uniqueDuplicates: uniqueFilenamePaths,
-      crossDuplicateFilenamePaths: [...new Set(crossDuplicateFilenamePaths.map(filename => path.basename(filename)))],
-    },
-    {
-      depth: null,
-    }
-  )
+  await extractCommonFilesInFolders(folderList)
 }
-
-// const duplicateFromBothFoldersFolder = './duplicate-files'
-// const commonFilesFolder = './common-files'
-const duplicateFromBothFoldersFolder = '/mnt/x/torrents/duplicate-files'
-const commonFilesFolder = '/mnt/x/torrents/common-files'
-
-const { folders, readonly } = validateUserArgs()
-
-void main(folders, {
-  readonly,
-})

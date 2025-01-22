@@ -1,72 +1,57 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-import { getAbsPathFolder } from '../helpers'
+import type { TGetRecursiveFilesAndFolders } from './types'
 
-import type { TRemoveFiles } from './types'
-
-export const createFolder = (relativeFolder: string) => fs.mkdir(getAbsPathFolder(relativeFolder), { recursive: true })
 export const readDir = (folder: string) => fs.readdir(folder)
 export const getFileContentFromTxt = (filePath: string): Promise<string> => fs.readFile(filePath, { encoding: 'utf-8' })
 
-export const writeIntoFile = (filePath: string, content: string) =>
-  fs.writeFile(filePath, content, { encoding: 'utf-8' })
+export const isNameInArrNames = ({ name, arrNames }: { name: string, arrNames: string[] }) =>
+  arrNames.every(names => names.includes(name))
 
-export const moveFiles = async ({
-  filenamePaths,
-  destRelativeFolder,
-}: {
-  filenamePaths: string[]
-  destRelativeFolder: string
-}) => {
-  if (!(await checkIsFolderExists(destRelativeFolder))) {
-    console.log('Create folder:', getAbsPathFolder(destRelativeFolder))
-    await createFolder(destRelativeFolder)
-  }
-
-  await Promise.all(
-    filenamePaths.map(filename => fs.rename(filename, getAbsPathFolder(destRelativeFolder, path.basename(filename))))
-  )
-}
-
-export const filenameIsInAllFolders = ({
-  filename,
-  fileMap,
-}: {
-  filename: string
-  fileMap: Record<string, string[]>
-}) => Object.values(fileMap).every(filenames => filenames.includes(filename))
-
-export const checkIsFolderExists = async (pathToFolder: string) => {
-  const fullPath = getAbsPathFolder(pathToFolder)
+export const checkIsFolderExists = async (pathToFolder: AbsolutePath) => {
   try {
-    await fs.access(fullPath)
+    await fs.access(pathToFolder)
     return true
   }
   catch (err) {
-    console.error(`Folder ${fullPath} not exists`)
+    console.error(`Folder ${pathToFolder} not exists`)
     return false
   }
 }
 
-/**
- * @deprecated
- */
-export const getFileNamesForFolder = async (relativePath: string): Promise<string[]> =>
-  await readDir(getAbsPathFolder(relativePath))
+export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = async (folder, options) => {
+  const folders: string[] = []
+  const files: string[] = []
+  const topLevelFiles = [...(await fs.readdir(folder))]
 
-export const getAllFilesInFolder = (folders: string[]) =>
-  Promise.all(
-    folders.map(async folder => ({
-      parentFolder: folder,
-      filenames: await getFileNamesForFolder(folder),
-    }))
-  )
+  while (topLevelFiles.length > 0) {
+    const el = topLevelFiles.shift()!
 
-export const removeFiles: TRemoveFiles = options => async (filenamePaths) => {
-  if (options.readonly) return
+    if (options.banFolders.includes(el)) continue
 
-  const removeFilesTasks = filenamePaths.map(filenamePath => fs.unlink(filenamePath))
+    const isFolder = (await fs.stat(path.join(folder, el))).isDirectory()
 
-  await Promise.all(removeFilesTasks)
+    if (isFolder) {
+      folders.push(path.join(folder, el))
+      const deeperFilesRelative = await fs.readdir(path.join(folder, el))
+      const deeperFilesAbsolute = deeperFilesRelative.map(name => path.join(el, name))
+
+      topLevelFiles.push(...deeperFilesAbsolute)
+      continue
+    }
+
+    const isPermittedFile = options.permittedExtensions.some(ext => el.endsWith(`.${ext}`))
+
+    if (isPermittedFile) {
+      files.push(path.join(folder, el))
+    }
+  }
+
+  return options.flat
+    ? [...folders, ...files]
+    : {
+        folders,
+        files,
+      }
 }

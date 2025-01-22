@@ -1,12 +1,8 @@
-# Ignore artifacts:
-build
-dist
+.history
+.husky
+.vscode
 coverage
-
-# Ignore all YAML files:
-*.yml
-
-# Ignore all HTML files:
-*.html
-
+dist
+build
 node_modules
+.github

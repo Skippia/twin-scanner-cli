@@ -255,6 +255,12 @@ export default antfu(
       'unused-imports/no-unused-vars': 'off',
       'antfu/if-newline': 'off',
       'antfu/top-level-function': 'off',
+      'style/array-bracket-spacing': [
+        'error',
+        'always', {
+          singleValue: false
+        }
+      ],
       'style/max-len': [
         'error',
         {
@@ -567,7 +573,7 @@ export default antfu(
     }
   },
   {
-    ignores: ['node_modules/*', 'tsconfig.json', 'benchmarks-data/*']
+    ignores: ['node_modules/*', 'tsconfig.json', 'dts-bundle-generator.config.ts']
   }
 )
 

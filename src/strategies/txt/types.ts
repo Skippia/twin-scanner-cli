@@ -1,6 +1,7 @@
-import type { TExtensionsRemoveDuplicatesStrategies, TExtractorsUsefulInfo } from '../../logic/types'
+import type { TExtensionsRemoveDuplicatesStrategies } from '..'
+import type { TExtractorsUsefulInfo } from '../../logic/types'
 
-import type { AbsolutePath } from '@/types'
+import type { TUserChoices } from '@/cli'
 
 export type TGetDuplicatesFromTxtFilesInFolder = (strategy: TExtensionsRemoveDuplicatesStrategies['txt']) => (
   folder: AbsolutePath,
@@ -17,3 +18,8 @@ export type TGetDuplicatesFromTxtFilesInFolder = (strategy: TExtensionsRemoveDup
 >
 
 export type TTxtFileInfoExtractor = TExtractorsUsefulInfo['txt']
+
+export type TApplyFileExtractionEffect = (
+  strategies: TExtensionsRemoveDuplicatesStrategies,
+  options: TUserChoices,
+) => (fileMapExtraction: Record<Filename, AbsolutePath[]>[]) => Promise<void>

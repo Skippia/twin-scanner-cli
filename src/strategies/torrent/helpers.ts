@@ -1,26 +1,18 @@
 import path from 'node:path'
 
-import { pipe } from 'fp-ts/lib/function'
+import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 
-import type { TGetDuplicatesInFolderTorrent } from './types'
+import type { TDuplicateFormatTorrent, TGetDuplicatesInFolderTorrent } from './types'
 
 import { readDir } from '@/files'
-import { getAbsPathFolders } from '@/helpers'
-import { getFilesInfo, isIndirectDuplicateFilename } from '@/logic'
-import type { TExtensionsRemoveDuplicatesStrategies } from '@/logic/types'
+import { getFilesInfo, isIndirectDuplicateFilename } from '@/logic/helpers'
+import type { TFileInfo } from '@/logic/types'
 
-/**
- * @description
- * Describe how to extract name from .torrent file
- */
-export const torrentDuplicateStrategy: TExtensionsRemoveDuplicatesStrategies['torrent'] = {
-  extractor: file => file.filename,
-  isConsideredDuplicate: filenames => curFile => isIndirectDuplicateFilename(filenames, curFile.filename),
-}
+export const isDuplicateTorrent = (filenames: string[]) => (curFile: TFileInfo) =>
+  isIndirectDuplicateFilename(filenames, curFile.filename)
 
 const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strategy => async (folder) => {
   const filenames = await readDir(folder)
-
   const torrentFilenames = filenames.filter(filename => path.extname(filename) === '.torrent')
 
   const filesInfo = await getFilesInfo({
@@ -28,7 +20,7 @@ const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strateg
     filenames: torrentFilenames,
   })
 
-  const isConsideredDuplicate = strategy.isConsideredDuplicate(filesInfo.map(v => v.filename))
+  const isConsideredDuplicate = strategy.isDuplicate(filesInfo.map(v => v.filename))
 
   const duplicateAbsolutePaths = filesInfo.reduce<Awaited<ReturnType<ReturnType<TGetDuplicatesInFolderTorrent>>>>(
     (acc, cur) => {
@@ -63,9 +55,8 @@ const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strateg
 export const getDuplicateTorrentsFilesInFolders = async (
   folderList: string[],
   options: { strategy: TExtensionsRemoveDuplicatesStrategies['torrent'] }
-) => {
-  const folders = pipe(folderList, getAbsPathFolders)
-  const duplicates = await Promise.all(folders.map(getDuplicateTorrentsFilesInFolder(options.strategy)))
+): Promise<TDuplicateFormatTorrent> => {
+  const duplicates = await Promise.all(folderList.map(getDuplicateTorrentsFilesInFolder(options.strategy)))
 
   return duplicates.filter(v => v.uniqueLength > 0)
 }

@@ -7,33 +7,73 @@
   "license": "ISC",
   "keywords": [],
   "main": "./src/index.mts",
+  "types": "./dist/dts/",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/dts/"
+      ]
+    }
+  },
+  "typings": "./dist/dts",
+  "files": [
+    "package.json",
+    "src"
+  ],
   "scripts": {
-    "start": "tsx ./src/index.mts",
-    "dev": "tsx --watch ./src/index.mts",
-    "ts:check": "tsc --noEmit",
+    "dev": "npx tsx --env-file=.env --watch ./src/cli.ts",
+    "start": "npx tsx --env-file=.env ./src/cli.ts",
+    "start:prod": "node --env-file=.env ./dist/cli.js",
+    "prebuild": "rm -rf dist/*",
+    "build": "npm run typecheck && npx vite build",
+    "typecheck": "tsc --noEmit",
     "format": "npx prettier --write src/",
-    "eslint:fix": "npx eslint . --fix"
+    "eslint:fix": "npx eslint . --fix",
+    "analyze": "analyze -c ./vite.config.ts",
+    "upgrade": "upgradeps",
+    "release": "npm run build && np",
+    "release2": "semantic-release"
   },
   "dependencies": {
-    "chalk": "^5.4.1",
-    "clear": "^0.1.0",
-    "commander": "^13.0.0",
-    "figlet": "^1.8.0",
-    "fp-ts": "^2.16.9",
-    "remeda": "^2.19.2"
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^12.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.0.0",
+    "@semantic-release/npm": "^12.0.0",
+    "@semantic-release/release-notes-generator": "^13.0.0",
+    "inquirer": "^12.3.2",
+    "inquirer-autocomplete-standalone": "^0.8.1",
+    "inquirer-fuzzy-path": "^2.3.0",
+    "remeda": "^2.19.2",
+    "semantic-release": "^23.0.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.14.0",
-    "@types/commander": "^2.12.5",
-    "@types/figlet": "^1.7.0",
-    "@types/node": "^22.10.7",
+    "@types/inquirer-fuzzy-path": "^2.3.9",
+    "@types/node": "^22.10.10",
     "eslint": "^9.18.0",
     "eslint-plugin-functional": "^8.0.0",
     "eslint-plugin-no-closure": "^1.0.1",
     "globals": "^15.14.0",
+    "nexe": "4.0.0-rc.6",
+    "np": "^10.1.0",
+    "pkg": "^5.8.1",
     "prettier": "^3.4.2",
+    "terser": "^5.37.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.21.0"
+    "typescript-eslint": "^8.21.0",
+    "upgradeps": "^2.0.7",
+    "vite": "^6.0.11",
+    "vite-bundle-analyzer": "^0.16.0",
+    "vite-plugin-dts": "^4.5.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "pkg": {
+    "targets": [
+      "node18-linux-arm64"
+    ],
+    "outputPath": "dist/binary"
   }
 }

@@ -2,26 +2,27 @@
 logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Dependencies
-node_modules/
-
-# Coverage
+node_modules
+build
+dist
+dist-ssr
+*.local
 coverage
 
-# Transpiled files
-build/
-dist/
-
-# JetBrains IDEs
-.idea/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Misc
+# Editor directories and files
+.vscode/*
+.history/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-temp/text.txt
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
