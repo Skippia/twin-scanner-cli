@@ -1,11 +1,14 @@
+import path from 'node:path'
 import process from 'node:process'
+import { fileURLToPath } from 'node:url'
 
 import inquirer from 'inquirer'
 import inquirerFuzzyPath from 'inquirer-fuzzy-path'
 
 import { validateFolderPath } from './files/effect'
 import { main } from './main'
-import { rootFolder } from './shared/constants'
+
+const __filename = fileURLToPath(import.meta.url)
 
 // @ts-expect-error ...
 inquirer.registerPrompt('fuzzypath', inquirerFuzzyPath)
@@ -23,8 +26,27 @@ export type TUserChoices = {
 async function startCLI() {
   const options = {
     recursive: false,
-    rootFolder,
+    // get current directory as default folder
   } as TUserChoices
+
+  const rootPathFolder = path.join(__filename, '../../../')
+
+  // @ts-expect-error ...
+  const rootFolderAnswer = await inquirer.prompt([
+    {
+      type: 'fuzzypath',
+      name: 'rootFolder',
+      excludePath: (nodePath: string) => nodePath.startsWith('node_modules'),
+      message: `Select a root folder, current: ${rootPathFolder}' \n`,
+      itemType: 'directory',
+      rootPath: rootPathFolder,
+      suggestOnly: false,
+      depthLimit: 1,
+      validate: ({ short }: { short: string }) => validateFolderPath(short),
+    },
+  ])
+
+  options.rootFolder = rootFolderAnswer.rootFolder
 
   const folderModeAnswer = (await inquirer.prompt([
     {
@@ -52,12 +74,12 @@ async function startCLI() {
       {
         type: 'fuzzypath',
         name: 'folderPath',
-        excludeFilter: (nodePath: string) => nodePath.startsWith('node_modules'),
+        excludePath: (nodePath: string) => nodePath.startsWith('node_modules'),
         message: 'Select a folder:',
         itemType: 'directory',
-        rootPath: rootFolder,
+        rootPath: options.rootFolder,
         suggestOnly: false,
-        depthLimit: 0,
+        depthLimit: 1,
         validate: ({ short }: { short: string }) => validateFolderPath(short),
       },
     ])
@@ -149,6 +171,6 @@ async function startCLI() {
 
 // Run the CLI
 startCLI().catch((err) => {
-  console.error(err.message)
+  console.error(JSON.stringify(err, null, 2))
   process.exit(1)
 })

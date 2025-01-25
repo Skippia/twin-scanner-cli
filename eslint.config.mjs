@@ -2,7 +2,6 @@
 import antfu from '@antfu/eslint-config'
 import functional from 'eslint-plugin-functional'
 import noClosure from 'eslint-plugin-no-closure'
-import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default antfu(
@@ -58,9 +57,6 @@ export default antfu(
         projectService: true,
         tsconfigRootDir: import.meta.name
       },
-      globals: {
-        ...globals.browser
-      }
     },
     rules: {
       // !-------------------Supported Rules-------------------
@@ -176,7 +172,7 @@ export default antfu(
       //   }
       // ],
       'ts/no-shadow': 'off', // !!!
-      'ts/no-unused-expressions': 'error',
+      'ts/no-unused-expressions': 'warn',
       // 'ts/no-useless-constructor': 'error',
       'ts/require-await': 'error',
       'ts/return-await': ['error', 'always'],
@@ -211,12 +207,6 @@ export default antfu(
   // ?----------------------------------------------------
   {
     files: ['**/*.js', '**/*.mjs', '**/*.ts'],
-    languageOptions: {
-      globals: {
-        ...globals.browser
-      }
-    },
-
     rules: {
       // Disable conflicting ESLint rules and enable TS-compatible ones
 
@@ -235,6 +225,7 @@ export default antfu(
       'no-throw-literal': 'off',
       'no-shadow': 'off',
       'no-unused-vars': 'off',
+
       'no-useless-constructor': 'off',
 
       'style/comma-dangle': [
@@ -252,14 +243,13 @@ export default antfu(
       'no-console': 'off',
 
       'unicorn/no-new-array': 'off',
-      'unused-imports/no-unused-vars': 'off',
+      'unused-imports/no-unused-vars': 'warn',
+      'unused-imports/no-unused-imports': 'off',
       'antfu/if-newline': 'off',
       'antfu/top-level-function': 'off',
       'style/array-bracket-spacing': [
         'error',
-        'always', {
-          singleValue: false
-        }
+        'never',
       ],
       'style/max-len': [
         'error',
@@ -294,7 +284,7 @@ export default antfu(
       'import/no-named-as-default-member': 'error',
       'import/no-deprecated': 'error',
       'import/no-mutable-exports': 'error',
-      'import/no-unused-modules': 'error',
+      'import/no-unused-modules': 'warn',
       'import/no-empty-named-blocks': 'error',
 
       // !-------------------Module systems-------------------
@@ -515,8 +505,8 @@ export default antfu(
       'no-undefined': 'off',
       'no-underscore-dangle': 'off',
       'no-unneeded-ternary': 'error',
-      'no-unused-expressions': 'error',
-      'no-unused-labels': 'error',
+      'no-unused-expressions': 'warn',
+      'no-unused-labels': 'warn',
       'no-useless-call': 'error',
       'no-useless-catch': 'error',
       'no-useless-computed-key': 'error',

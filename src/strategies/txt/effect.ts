@@ -21,12 +21,12 @@ export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect
     await Promise.all(writeToFilesTasks)
   }
 
-export const removeContentFromTxtFileEffect = async (src: AbsolutePath, stringToDelete: string) => {
-  const rawContent = await getFileContentFromTxt(src)
+export const removeContentFromTxtFileEffect = async (pathToTxtFile: AbsolutePath, stringToDelete: string) => {
+  const rawContent = await getFileContentFromTxt(pathToTxtFile)
   const parsedContent = rawContent.split('\n')
   const updatedContent = parsedContent.filter(v => v !== stringToDelete).join('\n')
 
-  await writeIntoFileEffect(src, updatedContent)
+  await writeIntoFileEffect(pathToTxtFile, updatedContent)
 }
 
 export const removeDuplicatesFromTxtFileEffect = async (

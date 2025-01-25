@@ -3,7 +3,7 @@ import path from 'node:path'
 import { generateCombinationFolderName } from './helpers'
 
 import type { TUserChoices } from '@/cli'
-import { appendIntoTxtFileEffect, createFolderEffect } from '@/files/effect'
+import { appendIntoTxtFileEffect, createFolderEffect, removeEmptyFoldersInFolderEffect } from '@/files/effect'
 import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
 import { convertToApplyExtractorStatistics, convertToOutputUniversal } from '@/strategies/formatter'
 import { torrentDuplicateStrategy } from '@/strategies/torrent'
@@ -19,12 +19,17 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
     if (options.readonly) return
 
     const prefixPathFolder = 'duplicates-extracted'
+    const rootPathToStorageFolder = (options.folderPath || options.folderPaths?.[0]) as string
+
+    const absolutePathToStorageFolder = path.join(rootPathToStorageFolder, prefixPathFolder)
 
     for (const fileMapExtraction of fileMapsExtraction) {
       for (const [duplicateFilename, duplicateAbsolutePaths] of Object.entries(fileMapExtraction)) {
         const storageFolderName = generateCombinationFolderName(duplicateAbsolutePaths[0]!, duplicateAbsolutePaths[1]!)
 
-        await createFolderEffect(path.join(options.rootFolder, prefixPathFolder, storageFolderName))
+        const absolutePathToCommonStorageCur = path.join(absolutePathToStorageFolder, storageFolderName)
+
+        await createFolderEffect(absolutePathToCommonStorageCur)
 
         const bothTorrents = duplicateAbsolutePaths.every(el => el.endsWith('.torrent'))
         const bothTxts = duplicateAbsolutePaths.every(el => el.endsWith('.txt'))
@@ -37,7 +42,7 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
             duplicateAbsolutePaths.map(duplicateAbsolutePath =>
               strategies.torrent.moveFileEffect(
                 duplicateAbsolutePath,
-                path.join(options.rootFolder, prefixPathFolder, storageFolderName, duplicateFilename)
+                path.join(absolutePathToCommonStorageCur, duplicateFilename)
               )
             )
           )
@@ -49,7 +54,7 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
          */
         if (bothTxts) {
           await appendIntoTxtFileEffect(
-            path.join(options.rootFolder, prefixPathFolder, storageFolderName, 'common.txt'),
+            path.join(absolutePathToCommonStorageCur, 'common.txt'),
             convertTorrentFilenameToURL(duplicateFilename).concat('\n')
           )
 
@@ -73,13 +78,17 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
           await Promise.all([
             strategies.torrent.moveFileEffect(
               torrentPath,
-              path.join(options.rootFolder, prefixPathFolder, storageFolderName, duplicateFilename)
+              path.join(absolutePathToCommonStorageCur, duplicateFilename)
             ),
-            strategies.txt.removeContentFromFileEffect(txtPath, duplicateFilename),
+            strategies.txt.removeContentFromFileEffect(txtPath, convertTorrentFilenameToURL(duplicateFilename)),
           ])
         }
       }
     }
+
+    await removeEmptyFoldersInFolderEffect(absolutePathToStorageFolder)
+
+    console.log('Duplicates were extracted to', absolutePathToStorageFolder)
   }
 
 export const getRidOfDuplicatesInFoldersEffect = async (

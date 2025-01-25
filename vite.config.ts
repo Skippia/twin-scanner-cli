@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 // eslint-disable-next-line import/order
 import { defineConfig } from 'vite'
 
-import analyser from 'vite-bundle-analyzer'
+// import analyser from 'vite-bundle-analyzer'
 import dts from 'vite-plugin-dts'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
