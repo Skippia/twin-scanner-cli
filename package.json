@@ -31,8 +31,9 @@
     "eslint:fix": "npx eslint . --fix",
     "analyze": "analyze -c ./vite.config.ts",
     "upgrade": "upgradeps",
+    "upgrade-major-all": "npx npm-check-updates -u",
     "release": "npm run build && np",
-    "release2": "semantic-release"
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "@semantic-release/changelog": "^6.0.3",
@@ -44,7 +45,7 @@
     "inquirer": "^12.3.2",
     "inquirer-autocomplete-standalone": "^0.8.1",
     "inquirer-fuzzy-path": "^2.3.0",
-    "remeda": "^2.19.2",
+    "remeda": "^2.20.0",
     "semantic-release": "^23.0.0",
     "zod": "^3.24.1"
   },
@@ -56,9 +57,7 @@
     "eslint-plugin-functional": "^8.0.0",
     "eslint-plugin-no-closure": "^1.0.1",
     "globals": "^15.14.0",
-    "nexe": "4.0.0-rc.6",
     "np": "^10.1.0",
-    "pkg": "^5.8.1",
     "prettier": "^3.4.2",
     "terser": "^5.37.0",
     "tsx": "^4.19.2",
