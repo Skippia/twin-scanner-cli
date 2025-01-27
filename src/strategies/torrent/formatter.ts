@@ -6,8 +6,8 @@ export type TConvertToOutputTorrent = (options: {
   readonly: boolean
 }) => (raw: Awaited<ReturnType<ReturnType<TGetDuplicatesInFolderTorrent>>>[]) => TOutputFormatTorrent
 
-export const convertToOutputTorrent: TConvertToOutputTorrent = options => raws =>
-  raws.map(raw => ({
+export const convertToOutputTorrent: TConvertToOutputTorrent = (options) => (raws) =>
+  raws.map((raw) => ({
     folder: raw.folder,
     amount_all_names: raw.duplicateLength + raw.uniqueLength,
     amount_unique_names: raw.uniqueLength,

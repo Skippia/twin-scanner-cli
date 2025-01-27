@@ -6,15 +6,14 @@ import type { TGetRecursiveFilesAndFolders } from './types'
 export const readDir = (folder: string) => fs.readdir(folder)
 export const getFileContentFromTxt = (filePath: string): Promise<string> => fs.readFile(filePath, { encoding: 'utf-8' })
 
-export const isNameInArrNames = ({ name, arrNames }: { name: string, arrNames: string[] }) =>
-  arrNames.every(names => names.includes(name))
+export const isNameInArrNames = ({ name, arrNames }: { name: string; arrNames: string[] }) =>
+  arrNames.every((names) => names.includes(name))
 
 export const checkIsFolderExists = async (pathToFolder: AbsolutePath) => {
   try {
     await fs.access(pathToFolder)
     return true
-  }
-  catch (err) {
+  } catch (err) {
     console.error(`Folder ${pathToFolder} not exists`)
     return false
   }
@@ -35,13 +34,13 @@ export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = async (
     if (isFolder) {
       folders.push(path.join(folder, el))
       const deeperFilesRelative = await fs.readdir(path.join(folder, el))
-      const deeperFilesAbsolute = deeperFilesRelative.map(name => path.join(el, name))
+      const deeperFilesAbsolute = deeperFilesRelative.map((name) => path.join(el, name))
 
       topLevelFiles.push(...deeperFilesAbsolute)
       continue
     }
 
-    const isPermittedFile = options.permittedExtensions.some(ext => el.endsWith(`.${ext}`))
+    const isPermittedFile = options.permittedExtensions.some((ext) => el.endsWith(`.${ext}`))
 
     if (isPermittedFile) {
       files.push(path.join(folder, el))

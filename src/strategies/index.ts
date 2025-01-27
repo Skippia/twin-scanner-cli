@@ -25,5 +25,5 @@ export type TExtensionsRemoveDuplicatesStrategies = Readonly<{
 
 export const strategies: TExtensionsRemoveDuplicatesStrategies = {
   txt: txtDuplicateStrategy,
-  torrent: torrentDuplicateStrategy
+  torrent: torrentDuplicateStrategy,
 }

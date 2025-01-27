@@ -17,7 +17,7 @@ export const isIndirectDuplicateFilename = (allFilenames: string[], filename: st
   if (!isMaybeDuplicate) return false
 
   const originalFilename = extractOriginalFilename(filename)
-  const originalFile = allFilenames.find(filename => filename === originalFilename)
+  const originalFile = allFilenames.find((filename) => filename === originalFilename)
 
   return Boolean(originalFile)
 }
@@ -43,5 +43,5 @@ export const extractInfoFromFile: TExtractInfoFromFile = async (filePath) => {
   }
 }
 
-export const getFilesInfo = (pathOptions: { folder: string, filenames: string[] }) =>
-  Promise.all(pathOptions.filenames.map(filename => extractInfoFromFile(path.join(pathOptions.folder, filename))))
+export const getFilesInfo = (pathOptions: { folder: string; filenames: string[] }) =>
+  Promise.all(pathOptions.filenames.map((filename) => extractInfoFromFile(path.join(pathOptions.folder, filename))))

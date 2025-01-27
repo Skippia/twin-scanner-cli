@@ -71,9 +71,9 @@ export type THeterogenousUniversalMapEl = {
   content:
     | string[]
     | {
-      filename: string
-      content: string[]
-    }[]
+        filename: string
+        content: string[]
+      }[]
 }
 
 export type TMonogenousUniversalMapEl = {

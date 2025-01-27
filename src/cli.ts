@@ -84,15 +84,14 @@ async function startCLI() {
       },
     ])
     options.folderPath = singleFolderAnswer.folderPath
-  }
-  else {
+  } else {
     const multipleFoldersAnswer = await inquirer.prompt([
       {
         type: 'input',
         name: 'folderPaths',
         message: 'Input absolute paths to folders (separated by comma):',
         validate: (input) => {
-          const paths = input.split(',').map(p => p.trim())
+          const paths = input.split(',').map((p) => p.trim())
           for (const folderPath of paths) {
             const validationResult = validateFolderPath(folderPath)
 
@@ -100,7 +99,7 @@ async function startCLI() {
           }
           return true
         },
-        filter: (input: string) => input.split(',').map(p => p.trim()),
+        filter: (input: string) => input.split(',').map((p) => p.trim()),
       },
     ])
     options.folderPaths = multipleFoldersAnswer.folderPaths

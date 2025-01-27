@@ -38,7 +38,7 @@ export function asyncFlow<A, B, C, D, E>(
 
 // eslint-disable-next-line ts/no-explicit-any
 export function asyncFlow(...fns: AnyFunction<any, any>[]): AsyncFunction<any, any> {
-  return async input => await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
+  return async (input) => await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
 }
 
 export const getCombinations = (arr: string[], size: number = 2): string[][] => {

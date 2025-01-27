@@ -6,10 +6,10 @@ import type { TRemoveFilesEffect } from './types'
 
 import { readDir } from '.'
 
-export const removeFilesEffect: TRemoveFilesEffect = options => async (filenamePaths) => {
+export const removeFilesEffect: TRemoveFilesEffect = (options) => async (filenamePaths) => {
   if (options.readonly) return
 
-  const removeFilesTasks = filenamePaths.map(filenamePath => fs.unlink(filenamePath))
+  const removeFilesTasks = filenamePaths.map((filenamePath) => fs.unlink(filenamePath))
 
   await Promise.all(removeFilesTasks)
 }
@@ -22,8 +22,7 @@ export const writeIntoFileEffect = (filePath: string, content: string) =>
 export const moveFileEffect = async (src: AbsolutePath, dest: AbsolutePath) => {
   try {
     await fs.rename(src, dest)
-  }
-  catch (err) {
+  } catch (err) {
     // console.warn('Error during moving file from', src, 'to', dest)
   }
 }
@@ -37,8 +36,7 @@ export const validateFolderPath = (folderPath: string): boolean | string => {
     return fsSync.existsSync(folderPath) && fsSync.lstatSync(folderPath).isDirectory()
       ? true
       : 'Please provide a valid folder path'
-  }
-  catch (error) {
+  } catch (error) {
     return 'Please provide a valid folder path'
   }
 }
@@ -46,14 +44,15 @@ export const validateFolderPath = (folderPath: string): boolean | string => {
 export const removeEmptyFoldersInFolderEffect = async (folderPath: AbsolutePath) => {
   try {
     const filesAndFolders = await readDir(folderPath)
-    const onlyFolders = await (
-      filesAndFolders.reduce(async (acc, fileOrFolder) => {
+    const onlyFolders = await filesAndFolders.reduce(
+      async (acc, fileOrFolder) => {
         const stat = await fs.stat(path.join(folderPath, fileOrFolder))
 
         if (stat.isDirectory()) return [...(await acc), path.join(folderPath, fileOrFolder)]
 
         return [...(await acc)]
-      }, Promise.resolve([]) as Promise<AbsolutePath[]>)
+      },
+      Promise.resolve([]) as Promise<AbsolutePath[]>,
     )
 
     for (const folder of onlyFolders) {
@@ -63,8 +62,7 @@ export const removeEmptyFoldersInFolderEffect = async (folderPath: AbsolutePath)
         await fs.rmdir(folder)
       }
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.warn('Error during removing empty folder', folderPath)
   }
 }

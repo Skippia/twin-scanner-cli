@@ -24,7 +24,7 @@ export async function main(options: TUserChoices) {
   const extractCommonFilesInFolders = asyncFlow(
     getUniversalFileMapFromFolders(strategies, options),
     getCommonFilesInFileMap,
-    applyFilesExtractionEffect(strategies, options)
+    applyFilesExtractionEffect(strategies, options),
   )
 
   await extractCommonFilesInFolders(folderList)

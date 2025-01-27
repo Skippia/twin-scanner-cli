@@ -19,8 +19,7 @@ export const extractTorrentFileNameFromURL = (url: string): string => {
     const topicId = params.get('t')?.replace(/^t/, '') || ''
 
     return `[${domain}].t${topicId}.torrent`
-  }
-  catch (error) {
+  } catch (error) {
     console.error('[url]: ', url)
     throw new Error('invalid_url.torrent')
   }
@@ -40,18 +39,18 @@ export const convertTorrentFilenameToURL = (fileName: string): string => {
 export const extractContentFromTxtFile = (file: TFileInfo) =>
   file.content
     ?.split('\n')
-    .filter(v => Boolean(v))
+    .filter((v) => Boolean(v))
     .map(extractTorrentFileNameFromURL) || ['']
 
 export const getDuplicatesFromTxtFile = (lines: string[]) =>
   lines.reduce<string[]>(
     (acc, cur, idx) => (lines.indexOf(cur, idx) !== lines.lastIndexOf(cur) ? [...acc, cur] : [...acc]),
-    []
+    [],
   )
 
-const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = strategy => async (folder) => {
+const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = (strategy) => async (folder) => {
   const filenames = await readDir(folder)
-  const txtFilenames = filenames.filter(filename => path.extname(filename) === '.txt')
+  const txtFilenames = filenames.filter((filename) => path.extname(filename) === '.txt')
 
   const filesInfo = await getFilesInfo({
     folder,
@@ -74,7 +73,7 @@ const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = 
         },
       }
     },
-    {}
+    {},
   )
 
   return updateTxtMapFiles
@@ -86,6 +85,6 @@ const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = 
  */
 export const getDuplicateMapFromTxtFilesInFolders = async (
   folderList: string[],
-  options: { strategy: TExtensionsRemoveDuplicatesStrategies['txt'] }
+  options: { strategy: TExtensionsRemoveDuplicatesStrategies['txt'] },
 ): Promise<TDuplicateFormatTxt> =>
   await Promise.all(folderList.map(getDuplicateMapFromTxtFilesInFolder(options.strategy)))

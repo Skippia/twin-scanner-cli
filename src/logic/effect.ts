@@ -12,8 +12,8 @@ import { txtDuplicateStrategy } from '@/strategies/txt'
 import { convertTorrentFilenameToURL } from '@/strategies/txt/helpers'
 import type { TApplyFileExtractionEffect } from '@/strategies/txt/types'
 
-export const applyFilesExtractionEffect: TApplyFileExtractionEffect
-  = (strategies, options) => async (fileMapsExtraction) => {
+export const applyFilesExtractionEffect: TApplyFileExtractionEffect =
+  (strategies, options) => async (fileMapsExtraction) => {
     console.table(convertToApplyExtractorStatistics(fileMapsExtraction, { readonly: options.readonly }))
 
     if (options.readonly) return
@@ -31,20 +31,20 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
 
         await createFolderEffect(absolutePathToCommonStorageCur)
 
-        const bothTorrents = duplicateAbsolutePaths.every(el => el.endsWith('.torrent'))
-        const bothTxts = duplicateAbsolutePaths.every(el => el.endsWith('.txt'))
-        const isSomeTorrent = duplicateAbsolutePaths.some(el => el.endsWith('.torrent'))
-        const isSomeTxt = duplicateAbsolutePaths.some(el => el.endsWith('.txt'))
+        const bothTorrents = duplicateAbsolutePaths.every((el) => el.endsWith('.torrent'))
+        const bothTxts = duplicateAbsolutePaths.every((el) => el.endsWith('.txt'))
+        const isSomeTorrent = duplicateAbsolutePaths.some((el) => el.endsWith('.torrent'))
+        const isSomeTxt = duplicateAbsolutePaths.some((el) => el.endsWith('.txt'))
 
         // 1. If both torrents => move to storageFolder folder
         if (bothTorrents) {
           await Promise.all(
-            duplicateAbsolutePaths.map(duplicateAbsolutePath =>
+            duplicateAbsolutePaths.map((duplicateAbsolutePath) =>
               strategies.torrent.moveFileEffect(
                 duplicateAbsolutePath,
-                path.join(absolutePathToCommonStorageCur, duplicateFilename)
-              )
-            )
+                path.join(absolutePathToCommonStorageCur, duplicateFilename),
+              ),
+            ),
           )
         }
 
@@ -55,16 +55,16 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
         if (bothTxts) {
           await appendIntoTxtFileEffect(
             path.join(absolutePathToCommonStorageCur, 'common.txt'),
-            convertTorrentFilenameToURL(duplicateFilename).concat('\n')
+            convertTorrentFilenameToURL(duplicateFilename).concat('\n'),
           )
 
           await Promise.all(
-            duplicateAbsolutePaths.map(duplicateAbsolutePath =>
+            duplicateAbsolutePaths.map((duplicateAbsolutePath) =>
               strategies.txt.removeContentFromFileEffect(
                 duplicateAbsolutePath,
-                convertTorrentFilenameToURL(duplicateFilename)
-              )
-            )
+                convertTorrentFilenameToURL(duplicateFilename),
+              ),
+            ),
           )
         }
 
@@ -72,13 +72,13 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
          * 3. If one torrent, one txt => move to storageFolder and remove duplicate from txt
          */
         if (isSomeTorrent && isSomeTxt) {
-          const torrentPath = duplicateAbsolutePaths.find(el => el.endsWith('.torrent'))!
-          const txtPath = duplicateAbsolutePaths.find(el => el.endsWith('.txt'))!
+          const torrentPath = duplicateAbsolutePaths.find((el) => el.endsWith('.torrent'))!
+          const txtPath = duplicateAbsolutePaths.find((el) => el.endsWith('.txt'))!
 
           await Promise.all([
             strategies.torrent.moveFileEffect(
               torrentPath,
-              path.join(absolutePathToCommonStorageCur, duplicateFilename)
+              path.join(absolutePathToCommonStorageCur, duplicateFilename),
             ),
             strategies.txt.removeContentFromFileEffect(txtPath, convertTorrentFilenameToURL(duplicateFilename)),
           ])
@@ -94,14 +94,14 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
 export const getRidOfDuplicatesInFoldersEffect = async (
   folderList: string[],
   strategies: TExtensionsRemoveDuplicatesStrategies,
-  options: TUserChoices
+  options: TUserChoices,
 ): Promise<void> => {
   const duplicateMaps = await Promise.all(
-    options.fileExtensions.map(ext => strategies[ext as 'txt' | 'torrent'].getDuplicateMap(folderList))
+    options.fileExtensions.map((ext) => strategies[ext as 'txt' | 'torrent'].getDuplicateMap(folderList)),
   )
 
-  const torrentIdx = options.fileExtensions.findIndex(ext => ext === 'torrent')
-  const txtIdx = options.fileExtensions.findIndex(ext => ext === 'txt')
+  const torrentIdx = options.fileExtensions.findIndex((ext) => ext === 'torrent')
+  const txtIdx = options.fileExtensions.findIndex((ext) => ext === 'txt')
 
   const txtFilesMapDuplicates = duplicateMaps[txtIdx]
   const torrentFileDuplicates = duplicateMaps[torrentIdx]
@@ -114,7 +114,7 @@ export const getRidOfDuplicatesInFoldersEffect = async (
   if (torrentFileDuplicates) {
     await torrentDuplicateStrategy.removeDuplicatesEffect(
       torrentFileDuplicates as TDuplicateFormatTorrent,
-      options.readonly
+      options.readonly,
     )
   }
 
@@ -124,8 +124,8 @@ export const getRidOfDuplicatesInFoldersEffect = async (
         ...acc,
         [ext]: duplicateMaps[options.fileExtensions.indexOf(ext)],
       }),
-      {} as { txt: TDuplicateFormatTxt, torrent: TDuplicateFormatTorrent }
-    )
+      {} as { txt: TDuplicateFormatTxt; torrent: TDuplicateFormatTorrent },
+    ),
   )
 
   console.table(formatted)

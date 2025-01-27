@@ -6,7 +6,7 @@ import { getDuplicateTorrentsFilesInFolders, isDuplicateTorrent } from './helper
 import { moveFileEffect } from '@/files/effect'
 
 export const torrentDuplicateStrategy: TExtensionsRemoveDuplicatesStrategies['torrent'] = {
-  extractor: file => file.filename,
+  extractor: (file) => file.filename,
   isDuplicate: isDuplicateTorrent,
   moveFileEffect,
   removeDuplicatesEffect: removeDuplicatesTorrentEffect,

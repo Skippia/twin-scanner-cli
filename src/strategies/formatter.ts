@@ -26,7 +26,7 @@ export type TConvertToOutputUniversal = (options: {
 }) => (formats: {
   txt?: Parameters<ReturnType<TConvertToOutputTxt>>[0]
   torrent?: Parameters<ReturnType<TConvertToOutputTorrent>>[0]
-}) => [...TOutputFormatTorrentUniversal, { amount_all_names: number, amount_duplicates_names: number }]
+}) => [...TOutputFormatTorrentUniversal, { amount_all_names: number; amount_duplicates_names: number }]
 
 export type TConvertToApplyExtractorStatistics = (
   input: Record<
@@ -41,15 +41,15 @@ export type TConvertToApplyExtractorStatistics = (
      */
   >[],
   options: { readonly: boolean },
-) => { foldersName: string, amountDuplicates: number, readonlyMode: boolean }[]
+) => { foldersName: string; amountDuplicates: number; readonlyMode: boolean }[]
 
-export const convertToOutputUniversal: TConvertToOutputUniversal = options => (formats) => {
+export const convertToOutputUniversal: TConvertToOutputUniversal = (options) => (formats) => {
   const formattedTxts = formats.txt ? convertToOutputTxt({ readonly: options.readonly })(formats.txt) : []
   const formattedTorrents = formats.torrent
     ? convertToOutputTorrent({ readonly: options.readonly })(formats.torrent)
     : []
 
-  const formattedMap = [...formattedTxts, ...formattedTorrents].map(v => ({
+  const formattedMap = [...formattedTxts, ...formattedTorrents].map((v) => ({
     // eslint-disable-next-line ts/no-explicit-any
     folder_or_filename: ((v as any).folder || (v as any).filename) as string,
     amount_all_names: v.amount_all_names,

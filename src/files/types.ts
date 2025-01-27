@@ -9,4 +9,4 @@ export type TGetRecursiveFilesAndFolders = (
     flat: boolean
     banFolders: string[]
   },
-) => Promise<AbsolutePath[] | { folders: AbsolutePath[], files: AbsolutePath[] }>
+) => Promise<AbsolutePath[] | { folders: AbsolutePath[]; files: AbsolutePath[] }>

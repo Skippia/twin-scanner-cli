@@ -24,6 +24,7 @@
     "dev": "npx tsx --env-file=.env --watch ./src/cli.ts",
     "start": "npx tsx --env-file=.env ./src/cli.ts",
     "start:prod": "node --env-file=.env ./dist/cli.js",
+    "debug": "npx tsx --inspect --env-file=.env ./src/cli.ts",
     "prebuild": "npx rimraf --glob ./dist",
     "build": "npx vite build",
     "typecheck": "tsc --noEmit",
@@ -31,27 +32,27 @@
     "eslint": "npx eslint .",
     "eslint:fix": "npx eslint . --fix",
     "analyze": "analyze -c ./vite.config.ts",
-    "upgrade": "upgradeps",
-    "upgrade-major-all": "npx npm-check-updates -u",
+    "upgrade:check": "npx npm-check-updates --format group",
+    "upgrade": "npx npm-check-updates --interactive",
+    "upgrade:all": "npx npm-check-updates --format group -u",
     "semantic-release": "semantic-release",
-    "release": "npm run build && np"
+    "release": "npm run build && np",
+    "update-git-hooks": "npx simple-git-hooks"
   },
   "dependencies": {
+    "inquirer": "^12.3.2",
+    "inquirer-autocomplete-standalone": "^0.8.1",
+    "inquirer-fuzzy-path": "^2.3.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^3.14.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^12.0.0",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^10.0.0",
     "@semantic-release/npm": "^12.0.0",
     "@semantic-release/release-notes-generator": "^13.0.0",
-    "inquirer": "^12.3.2",
-    "inquirer-autocomplete-standalone": "^0.8.1",
-    "inquirer-fuzzy-path": "^2.3.0",
-    "remeda": "^2.20.0",
-    "semantic-release": "^23.0.0",
-    "zod": "^3.24.1"
-  },
-  "devDependencies": {
-    "@antfu/eslint-config": "^3.14.0",
     "@types/inquirer-fuzzy-path": "^2.3.9",
     "@types/node": "^22.10.10",
     "eslint": "^9.18.0",
@@ -61,8 +62,8 @@
     "np": "^10.1.0",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
+    "semantic-release": "^23.0.0",
     "simple-git-hooks": "^2.11.1",
-    "terser": "^5.37.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.21.0",
@@ -73,9 +74,6 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "simple-git-hooks": {
-    "pre-push": "pnpm lint-staged"
-  },
-  "lint-staged": {
-    "src/**/*.{ts}": "npm run typecheck && npm run format && npm run eslint:fix"
+    "pre-push": "npm run typecheck"
   }
 }

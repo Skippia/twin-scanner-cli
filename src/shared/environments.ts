@@ -7,6 +7,5 @@ const envValitatorSchema = z.object({
 })
 
 export const environments = envValitatorSchema.parse({
-
   TORRENT_URL: process.env.VITE_APP_TORRENT_URL,
 })

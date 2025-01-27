@@ -563,7 +563,7 @@ export default antfu(
     }
   },
   {
-    ignores: ['node_modules/*', 'tsconfig.json', 'dts-bundle-generator.config.ts']
+    ignores: ['node_modules/*', 'dist/*', '.git/*', 'tsconfig.json']
   }
 )
 
