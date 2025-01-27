@@ -33,8 +33,8 @@
     "analyze": "analyze -c ./vite.config.ts",
     "upgrade": "upgradeps",
     "upgrade-major-all": "npx npm-check-updates -u",
-    "release": "npm run build && np",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "release": "npm run build && np"
   },
   "dependencies": {
     "@semantic-release/changelog": "^6.0.3",
@@ -61,6 +61,7 @@
     "np": "^10.1.0",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
+    "simple-git-hooks": "^2.11.1",
     "terser": "^5.37.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
@@ -71,10 +72,10 @@
     "vite-plugin-dts": "^4.5.0",
     "vite-tsconfig-paths": "^5.1.4"
   },
-  "pkg": {
-    "targets": [
-      "node18-linux-arm64"
-    ],
-    "outputPath": "dist/binary"
+  "simple-git-hooks": {
+    "pre-push": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "src/**/*.{ts}": "npm run typecheck && npm run format && npm run eslint:fix"
   }
 }
