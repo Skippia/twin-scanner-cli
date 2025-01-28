@@ -2,7 +2,6 @@ import { builtinModules } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-// eslint-disable-next-line import/order
 import { defineConfig } from 'vite'
 
 import dts from 'vite-plugin-dts'
@@ -14,7 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const getPackageName = () => packageJson.name
 
-const getPackageNameCamelCase = () => {
+function getPackageNameCamelCase() {
   try {
     return getPackageName().replace(/-./g, char => char[1]!.toUpperCase())
   }
@@ -31,7 +30,7 @@ export default defineConfig({
     },
     drop: [
       /* 'console' */
-      'debugger'
+      'debugger',
     ],
     keepNames: true,
     treeShaking: true,
@@ -74,7 +73,7 @@ export default defineConfig({
     tsconfigPaths(),
     dts({
       outDir: './dist/dts',
-    })
-  ]
+    }),
+  ],
 
 })

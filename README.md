@@ -14,7 +14,7 @@ git clone --depth 1 https://github.com/Skippia/twin-scanner-cli.git
 ```sh
 cd ./twin-scanner-cli && pnpm i
 ```
-3. Set env (url) for mapping between torrent and txt files
+3. Set env (url) for mapping between torrent name and torrent URL in txt files
 ```sh
 Rename .env.example -> .env and update variables
 ```
@@ -34,7 +34,7 @@ Let's assume we have such file structure:
     - [rutracker.org].t2.torrent
     - [rutracker.org].t3.torrent
     - [rutracker.org].t4.torrent
-    - list-1.txt
+    - `list-1.txt`
       - https://rutracker.org/forum/viewtopic.php?t=1
       - https://rutracker.org/forum/viewtopic.php?t=2
       - https://rutracker.org/forum/viewtopic.php?t=3
@@ -47,7 +47,7 @@ Let's assume we have such file structure:
     - [rutracker.org].t15.torrent
     - [rutracker.org].t15(2).torrent
     - [rutracker.org].t200.torrent
-    - list-2.txt
+    - `list-2.txt`
       - https://rutracker.org/forum/viewtopic.php?t=1
       - https://rutracker.org/forum/viewtopic.php?t=14
       - https://rutracker.org/forum/viewtopic.php?t=16
@@ -61,7 +61,7 @@ Let's assume we have such file structure:
     - [rutracker.org].t15.torrent
     - [rutracker.org].t300.torrent
     - [rutracker.org].t300(1).torrent
-    - list-3.txt
+    - `list-3.txt`
       - https://rutracker.org/forum/viewtopic.php?t=1
       - https://rutracker.org/forum/viewtopic.php?t=14
       - https://rutracker.org/forum/viewtopic.php?t=16
@@ -71,25 +71,31 @@ Let's assume we have such file structure:
 
 After applying CLI this file structure will be converted into:
 - `duplicates-extrated`
-  -
+  - `folder1_folder1--list-1_folder2_folder2--list-2_folder3_folder3--list-3`
+    - [rutracker.org].t1.torrent
+  - `folder2_folder2--list-2_folder3_folder3--list-3`
+    - [rutracker.org].t14.torrent
+  - `folder1_folder1--list-1_folder2_folder3`
+    - [rutracker.org].t2.torrent
+  - `folder2--list-2_folder3--list-3`
+    - `common.txt`
+      - https://rutracker.org/forum/viewtopic.php?t=16
+  - `folder1_folder1--list-1`
+    - [rutracker.org].t3.torrent
+  - `folder2_folder3`
+    - [rutracker.org].t15.torrent
 - `torrent-storage`
   - `folder1`
-    - [rutracker.org].3.torrent
-    - [rutracker.org].4.torrent
-    - list-1.txt
-      - https://rutracker.org/forum/viewtopic.php?t=2
-      - https://rutracker.org/forum/viewtopic.php?t=3
+    - [rutracker.org].t4.torrent
+    - `list-1.txt`
       - https://rutracker.org/forum/viewtopic.php?t=99
   - `folder2`
-    - list-2.txt
-      - https://rutracker.org/forum/viewtopic.php?t=14
-      - https://rutracker.org/forum/viewtopic.php?t=16
+    - [rutracker.org].t200.torrent
+    - `list-2.txt`
       - https://rutracker.org/forum/viewtopic.php?t=17
-
   - `folder3`
-    - list-3.txt
-      - https://rutracker.org/forum/viewtopic.php?t=14
-      - https://rutracker.org/forum/viewtopic.php?t=16
+    - [rutracker.org].t300.torrent
+    - `list-3.txt`
       - https://rutracker.org/forum/viewtopic.php?t=25
       - https://rutracker.org/forum/viewtopic.php?t=26
 

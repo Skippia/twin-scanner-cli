@@ -3,9 +3,9 @@ import path from 'node:path'
 import type { _ } from 'node_modules/inquirer/dist/esm/ui/prompt'
 
 import { readDir } from '../files'
-import { filterRecordByKeys, getCombinations } from '../shared/helpers'
+import { filterRecordByKeys, getCombinationsGenerator } from '../shared/helpers'
 
-import { getFilesInfo } from './helpers'
+import { buildCommonFilesMap, getFilesInfo } from './helpers'
 import type {
   ExtractorFileExtensions,
   TContent,
@@ -111,57 +111,23 @@ export const getUniversalFileMapFromFolders: TGetUniversalFileMapFromFolders
     )
 
     const heterogeneousUniversalMap = heterogeneousUniversalMapNested.flatMap(v => v)
-
     return convertHeteroUniversalMapToMono(heterogeneousUniversalMap)
   }
 
 export const getCommonFilesInFileMap: TGetCommonFilesInFileMap = (universalFileMap) => {
   const absolutePaths = universalFileMap.map(v => v.folderOrFilename)
-  const allPossibleCombinations = getCombinations(absolutePaths)
+  const nextCombinationGenerator = getCombinationsGenerator(absolutePaths)
 
-  const commonFilesMap = allPossibleCombinations
-    .reduce((acc, folderOrFilenames) => {
-      // const files1 = universalFileMap.find(el => el.folderOrFilename === folderOrFilename1)!
-      // const files2 = universalFileMap.find(el => el.folderOrFilename === folderOrFilename2)!
-      const files = folderOrFilenames
-        .map(
-          folderOrFilename => universalFileMap.find(el => el.folderOrFilename === folderOrFilename)!
-        )
-        .sort((a, b) => a.amount > b.amount ? -1 : 1)
+  const filesMapCache: Record<AbsolutePath, TMonogenousUniversalMapEl> = absolutePaths.reduce(
+    (acc, folderOrFilename) =>
+      ({
+        ...acc,
+        [folderOrFilename]: universalFileMap.find(el => el.folderOrFilename === folderOrFilename),
+      }) satisfies Record<AbsolutePath, TMonogenousUniversalMapEl>,
+    {}
+  )
 
-      const sourceMapEl = files.at(0)!
-      const targetMapEls = files.slice(1)
+  const commonFilesMap = buildCommonFilesMap(filesMapCache, nextCombinationGenerator)
 
-      const fileMap = sourceMapEl.content.reduce(
-        (acc, curFilename) => {
-          // const isDuplicate = targetMapEl.content.includes(curFilename)
-          const isDuplicate = targetMapEls.every(targetMapEl => targetMapEl.content.includes(curFilename))
-
-          if (isDuplicate) {
-            const pathsToDuplicateFiles = targetMapEls.map(targetMapEl => targetMapEl.type === 'torrent'
-              ? path.join(targetMapEl.folderOrFilename, curFilename)
-              : targetMapEl.folderOrFilename)
-
-            return {
-              ...acc,
-              [curFilename]: [
-                sourceMapEl.type === 'torrent'
-                  ? path.join(sourceMapEl.folderOrFilename, curFilename)
-                  : sourceMapEl.folderOrFilename,
-                ...pathsToDuplicateFiles,
-              ],
-            }
-          }
-          return acc
-        },
-        {} as ReturnType<TGetCommonFilesInFileMap>[0]
-      )
-
-      return [...acc, fileMap]
-    }, [] as ReturnType<TGetCommonFilesInFileMap>)
-    .filter(el => Object.keys(el).length > 0)
-
-
-    
   return commonFilesMap
 }

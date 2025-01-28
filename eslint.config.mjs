@@ -10,212 +10,15 @@ export default antfu(
     stylistic: {
       indent: 2,
       quotes: 'single'
-    }
-  },
-  {
-    files: ['**/*.ts'],
-    plugins: {
-      functional,
-      noClosure
-    },
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.name
-      }
     },
     rules: {
-      ...functional.configs.externalTypeScriptRecommended.rules,
-      'noClosure/no-tagged-closures': 'error'
-      // ...functional.configs.recommended.rules,
-      // ...functional.configs.lite.rules,
-      // ...functional.configs.stylistic.rules,
-      // 'functional/no-return-void: ': 'off',
-      // 'functional/prefer-immutable-types': [
-      //   'off',
-      // ],
-      // 'functional/no-expression-statements': [
-      //   'error',
-      //   {
-      //     ignoreVoid: true,
-      //   },
-      // ],
-      // 'functional/no-conditional-statements': [
-      //   'error',
-      //   {
-      //     allowReturningBranches: true,
-      //   },
-      // ],
+      'unused-imports/no-unused-vars': 'warn',
+      'unused-imports/no-unused-imports': 'off',
     }
   },
-  // ?----------------------------------------------------
-  {
-    files: ['**/*.ts'],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.name
-      },
-      globals: {
-        ...globals.node
-      }
-    },
-    rules: {
-      // !-------------------Supported Rules-------------------
-      // https://typescript-eslint.io/rules/#extension-rules
-      'ts/adjacent-overload-signatures': 'error',
-      // 'ts/array-type': ['error', { default: 'generic' }],
-      'ts/await-thenable': 'error', // TODO: fix ANTFU doesn' support it?
-      'ts/ban-ts-comment': ['error', { 'ts-expect-error': false }],
-      'ts/ban-tslint-comment': 'error',
-      'ts/class-literal-property-style': 'error',
-      'ts/consistent-generic-constructors': 'error',
-      'ts/consistent-indexed-object-style': [
-        'error'
-        //   'index-signature',
-      ],
-      'ts/consistent-type-assertions': 'error',
-      'ts/consistent-type-definitions': ['error', 'type'],
-      'ts/consistent-type-exports': 'error',
-      'ts/consistent-type-imports': 'error',
-      'ts/explicit-member-accessibility': 'off',
-      'ts/member-ordering': 'error',
-      'ts/method-signature-style': ['error', 'property'],
-      'ts/naming-convention': 'off', // TODO
-      'ts/no-base-to-string': 'error',
-      'ts/no-confusing-non-null-assertion': 'error',
-      'ts/no-duplicate-enum-values': 'error',
-      'ts/no-duplicate-type-constituents': 'error',
-      'ts/no-dynamic-delete': 'off',
-      'ts/no-empty-interface': 'error',
-      'ts/no-extra-non-null-assertion': 'error',
-      'ts/no-floating-promises': 'error',
-      'ts/no-for-in-array': 'error',
-      'ts/no-import-type-side-effects': 'error',
-      'ts/no-implied-eval': 'error',
-      'ts/no-inferrable-types': ['error', { ignoreParameters: true, ignoreProperties: true }],
-      'ts/no-misused-new': 'error',
-      'ts/no-misused-promises': 'error',
-      'ts/no-mixed-enums': 'error',
-      // 'ts/no-namespace': 'error',
-      'ts/no-non-null-asserted-nullish-coalescing': 'error',
-      'ts/no-non-null-asserted-optional-chain': 'error',
-      'ts/no-redundant-type-constituents': 'error',
-      // 'ts/no-require-imports': 'error',
-      'ts/no-this-alias': 'error',
-      'ts/no-unnecessary-boolean-literal-compare': 'error',
-      'ts/no-unnecessary-condition': [
-        'error',
-        {
-          allowConstantLoopConditions: true
-        }
-      ],
-      'ts/no-unnecessary-qualifier': 'error',
-      'ts/no-unnecessary-type-arguments': 'error',
-      'ts/no-unnecessary-type-assertion': 'error',
-      'ts/no-unnecessary-type-constraint': 'error',
-      'ts/no-unsafe-argument': 'error',
-      'ts/no-unsafe-assignment': 'off', // TODO
-      'ts/no-unsafe-call': 'error',
-      'ts/no-unsafe-declaration-merging': 'error',
-      'ts/no-unsafe-enum-comparison': 'error',
-      'ts/no-unsafe-member-access': 'off', // TODO
-      'ts/no-unsafe-return': 'off',
-      'ts/no-useless-empty-export': 'error',
-      'ts/no-var-requires': 'error',
-      'ts/non-nullable-type-assertion-style': 'off', // TODO
-      // 'ts/parameter-properties': 'error',
-      'ts/prefer-as-const': 'error',
-      'ts/prefer-enum-initializers': 'error',
-      'ts/prefer-for-of': 'error',
-      'ts/prefer-function-type': 'error',
-      'ts/prefer-includes': 'error',
-      'ts/prefer-literal-enum-member': 'error',
-      'ts/prefer-namespace-keyword': 'error',
-      // 'ts/prefer-nullish-coalescing': 'error',
-      'ts/prefer-optional-chain': 'error',
-      'ts/prefer-readonly': 'off',
-      'ts/prefer-readonly-parameter-types': 'off',
-      'ts/prefer-reduce-type-parameter': 'off',
-      'ts/prefer-regexp-exec': 'off',
-      'ts/prefer-return-this-type': 'error',
-      'ts/prefer-string-starts-ends-with': 'error',
-      'ts/prefer-ts-expect-error': 'error',
-      'ts/promise-function-async': 'off',
-      'ts/require-array-sort-compare': 'error',
-      'ts/restrict-plus-operands': 'error',
-      'ts/restrict-template-expressions': 'error',
-      'ts/sort-type-union-intersection-members': 'off',
-      'ts/switch-exhaustiveness-check': 'error',
-      'ts/triple-slash-reference': 'error',
-      'ts/typedef': 'off',
-      'ts/unbound-method': 'off', // ?
-      'ts/unified-signatures': 'error',
-
-      // !-------------------Extension Rules-------------------
-
-      'ts/default-param-last': 'error',
-      'ts/dot-notation': 'error',
-      'ts/lines-around-comment': 'off',
-      'ts/no-array-constructor': 'error',
-      'ts/no-dupe-class-members': 'error',
-      // 'ts/no-empty-function': 'error',
-      'ts/no-invalid-this': 'error',
-      'ts/no-loop-func': 'error',
-      // 'ts/no-loss-of-precision': 'error',
-      'ts/no-redeclare': 'error',
-      // 'ts/no-throw-literal': ['error', { allowThrowingAny: false, allowThrowingUnknown: false }],
-      // 'ts/no-shadow': [
-      //   'error',
-      //   {
-      //     allow: ['E', 'L', 'R', 'A', 'O', 'M', 'S'],
-      //     ignoreTypeValueShadow: true,
-      //     ignoreFunctionTypeParameterNameValueShadow: true
-      //   }
-      // ],
-      'ts/no-shadow': 'off', // !!!
-      'ts/no-unused-expressions': 'warn',
-      // 'ts/no-useless-constructor': 'error',
-      'ts/require-await': 'error',
-      'ts/return-await': ['error', 'always'],
-
-      // Disable for JS and TS
-      'ts/init-declarations': 'off',
-      'ts/no-magic-numbers': 'off',
-      'ts/no-restricted-imports': 'off',
-      'ts/no-use-before-define': 'off',
-      'ts/no-duplicate-imports': 'off', // Superseded by `import/no-duplicates`,
-
-      'ts/no-unsafe-function-type': 'off',
-      'ts/no-empty-object-type': 'off',
-      'ts/interface-name-prefix': 'off',
-      'ts/explicit-function-return-type': 'off', // !!!
-      'ts/explicit-module-boundary-types': 'off',
-      'ts/no-empty-function': [
-        'error',
-        {
-          allow: ['arrowFunctions', 'private-constructors']
-        }
-      ], // !!!
-      'ts/no-explicit-any': [
-        'error',
-        {
-          ignoreRestArgs: true
-        }
-      ],
-      'ts/no-non-null-assertion': 'off' // !!!
-    }
-  },
-  // ?----------------------------------------------------
+  // ?------------COMMON CONFIG------------
   {
     files: ['**/*.js', '**/*.mjs', '**/*.ts'],
-    languageOptions: {
-      globals: {
-        ...globals.node
-      }
-    },
     rules: {
       // Disable conflicting ESLint rules and enable TS-compatible ones
 
@@ -569,7 +372,217 @@ export default antfu(
 
       // ],
       'quotes': ['error', 'single', { avoidEscape: true }]
-    }
+    },
+    ignores: ['vite.config.ts']
+
+  },
+  // ?------------GENERIC TS CONFIG------------
+  {
+    files: ['**/*.ts'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        allowDefaultProject: ['./vite.config.ts'],
+        defaultProject: './tsconfig.json',
+      },
+      globals: {
+        ...globals.node
+      }
+    },
+    rules: {
+      // !-------------------Supported Rules-------------------
+      // https://typescript-eslint.io/rules/#extension-rules
+      'ts/adjacent-overload-signatures': 'error',
+      // 'ts/array-type': ['error', { default: 'generic' }],
+      'ts/await-thenable': 'error', // TODO: fix ANTFU doesn' support it?
+      'ts/ban-ts-comment': ['error', { 'ts-expect-error': false }],
+      'ts/ban-tslint-comment': 'error',
+      'ts/class-literal-property-style': 'error',
+      'ts/consistent-generic-constructors': 'error',
+      'ts/consistent-indexed-object-style': [
+        'error'
+        //   'index-signature',
+      ],
+      'ts/consistent-type-assertions': 'error',
+      'ts/consistent-type-definitions': ['error', 'type'],
+      'ts/consistent-type-exports': 'error',
+      'ts/consistent-type-imports': 'error',
+      'ts/explicit-member-accessibility': 'off',
+      'ts/member-ordering': 'error',
+      'ts/method-signature-style': ['error', 'property'],
+      'ts/naming-convention': 'off', // TODO
+      'ts/no-base-to-string': 'error',
+      'ts/no-confusing-non-null-assertion': 'error',
+      'ts/no-duplicate-enum-values': 'error',
+      'ts/no-duplicate-type-constituents': 'error',
+      'ts/no-dynamic-delete': 'off',
+      'ts/no-empty-interface': 'error',
+      'ts/no-extra-non-null-assertion': 'error',
+      'ts/no-floating-promises': 'error',
+      'ts/no-for-in-array': 'error',
+      'ts/no-import-type-side-effects': 'error',
+      'ts/no-implied-eval': 'error',
+      'ts/no-inferrable-types': ['error', { ignoreParameters: true, ignoreProperties: true }],
+      'ts/no-misused-new': 'error',
+      'ts/no-misused-promises': 'error',
+      'ts/no-mixed-enums': 'error',
+      // 'ts/no-namespace': 'error',
+      'ts/no-non-null-asserted-nullish-coalescing': 'error',
+      'ts/no-non-null-asserted-optional-chain': 'error',
+      'ts/no-redundant-type-constituents': 'error',
+      // 'ts/no-require-imports': 'error',
+      'ts/no-this-alias': 'error',
+      'ts/no-unnecessary-boolean-literal-compare': 'error',
+      'ts/no-unnecessary-condition': [
+        'error',
+        {
+          allowConstantLoopConditions: true
+        }
+      ],
+      'ts/no-unnecessary-qualifier': 'error',
+      'ts/no-unnecessary-type-arguments': 'error',
+      'ts/no-unnecessary-type-assertion': 'error',
+      'ts/no-unnecessary-type-constraint': 'error',
+      'ts/no-unsafe-argument': 'error',
+      'ts/no-unsafe-assignment': 'off', // TODO
+      'ts/no-unsafe-call': 'error',
+      'ts/no-unsafe-declaration-merging': 'error',
+      'ts/no-unsafe-enum-comparison': 'error',
+      'ts/no-unsafe-member-access': 'off', // TODO
+      'ts/no-unsafe-return': 'off',
+      'ts/no-useless-empty-export': 'error',
+      'ts/no-var-requires': 'error',
+      'ts/non-nullable-type-assertion-style': 'off', // TODO
+      // 'ts/parameter-properties': 'error',
+      'ts/prefer-as-const': 'error',
+      'ts/prefer-enum-initializers': 'error',
+      'ts/prefer-for-of': 'error',
+      'ts/prefer-function-type': 'error',
+      'ts/prefer-includes': 'error',
+      'ts/prefer-literal-enum-member': 'error',
+      'ts/prefer-namespace-keyword': 'error',
+      // 'ts/prefer-nullish-coalescing': 'error',
+      'ts/prefer-optional-chain': 'error',
+      'ts/prefer-readonly': 'off',
+      'ts/prefer-readonly-parameter-types': 'off',
+      'ts/prefer-reduce-type-parameter': 'off',
+      'ts/prefer-regexp-exec': 'off',
+      'ts/prefer-return-this-type': 'error',
+      'ts/prefer-string-starts-ends-with': 'error',
+      'ts/prefer-ts-expect-error': 'error',
+      'ts/promise-function-async': 'off',
+      'ts/require-array-sort-compare': 'error',
+      'ts/restrict-plus-operands': 'error',
+      'ts/restrict-template-expressions': 'error',
+      'ts/sort-type-union-intersection-members': 'off',
+      'ts/switch-exhaustiveness-check': 'error',
+      'ts/triple-slash-reference': 'error',
+      'ts/typedef': 'off',
+      'ts/unbound-method': 'off', // ?
+      'ts/unified-signatures': 'error',
+
+      // !-------------------Extension Rules-------------------
+
+      'ts/default-param-last': 'error',
+      'ts/dot-notation': 'error',
+      'ts/lines-around-comment': 'off',
+      'ts/no-array-constructor': 'error',
+      'ts/no-dupe-class-members': 'error',
+      // 'ts/no-empty-function': 'error',
+      'ts/no-invalid-this': 'error',
+      'ts/no-loop-func': 'error',
+      // 'ts/no-loss-of-precision': 'error',
+      'ts/no-redeclare': 'error',
+      // 'ts/no-throw-literal': ['error', { allowThrowingAny: false, allowThrowingUnknown: false }],
+      // 'ts/no-shadow': [
+      //   'error',
+      //   {
+      //     allow: ['E', 'L', 'R', 'A', 'O', 'M', 'S'],
+      //     ignoreTypeValueShadow: true,
+      //     ignoreFunctionTypeParameterNameValueShadow: true
+      //   }
+      // ],
+      'ts/no-shadow': 'off', // !!!
+      'ts/no-unused-expressions': 'warn',
+      // 'ts/no-useless-constructor': 'error',
+      'ts/require-await': 'error',
+      'ts/return-await': ['error', 'always'],
+
+      // Disable for JS and TS
+      'ts/init-declarations': 'off',
+      'ts/no-magic-numbers': 'off',
+      'ts/no-restricted-imports': 'off',
+      'ts/no-use-before-define': 'error',
+      'ts/no-duplicate-imports': 'off', // Superseded by `import/no-duplicates`,
+
+      'ts/no-unsafe-function-type': 'off',
+      'ts/no-empty-object-type': 'off',
+      'ts/interface-name-prefix': 'off',
+      'ts/explicit-function-return-type': 'off', // !!!
+      'ts/explicit-module-boundary-types': 'off',
+      'ts/no-empty-function': [
+        'error',
+        {
+          allow: ['arrowFunctions', 'private-constructors']
+        }
+      ], // !!!
+      'ts/no-explicit-any': [
+        'error',
+        {
+          ignoreRestArgs: true
+        }
+      ],
+      'ts/no-non-null-assertion': 'off' // !!!
+    },
+    ignores: ['vite.config.ts']
+
+  },
+  // ?------------FP TS CONFIG------------
+  {
+    files: ['**/*.ts'],
+    plugins: {
+      functional,
+      noClosure
+    },
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        allowDefaultProject: ['./vite.config.ts'],
+        defaultProject: './tsconfig.json',
+      },
+      globals: {
+        ...globals.node
+      }
+    },
+    rules: {
+      ...functional.configs.externalTypeScriptRecommended.rules,
+      'noClosure/no-tagged-closures': 'error'
+      // ...functional.configs.recommended.rules,
+      // ...functional.configs.lite.rules,
+      // ...functional.configs.stylistic.rules,
+      // 'functional/no-return-void: ': 'off',
+      // 'functional/prefer-immutable-types': [
+      //   'off',
+      // ],
+      // 'functional/no-expression-statements': [
+      //   'error',
+      //   {
+      //     ignoreVoid: true,
+      //   },
+      // ],
+      // 'functional/no-conditional-statements': [
+      //   'error',
+      //   {
+      //     allowReturningBranches: true,
+      //   },
+      // ],
+    },
+    ignores: ['vite.config.ts']
+
   },
   {
     ignores: ['node_modules/*', 'tsconfig.json']

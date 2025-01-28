@@ -6,7 +6,7 @@ import { defaultBanFolders } from './shared/constants'
 import { asyncFlow } from './shared/helpers'
 import { strategies } from './strategies'
 
-export async function main(options: TUserChoices) {
+export const main = async (options: TUserChoices) => {
   let folderList = (options.folderPaths || [options.folderPath]) as string[]
 
   if (options.recursive) {

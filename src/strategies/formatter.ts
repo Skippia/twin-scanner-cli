@@ -32,21 +32,32 @@ export type TConvertToApplyExtractorStatistics = (
   input: Record<
     Filename,
     AbsolutePath[]
-  /**
-   * @example
-   * {
-   *  'cat.torrent': ['folder1/cat.torrent', 'folder2/animals.txt'],.
-   *  'dog.torrent': ['folder1/dog.torrent', 'folder2/dog.torrent'],.
-   * }
-   */
+    /**
+     * @example
+     * {
+     *  'cat.torrent': ['folder1/cat.torrent', 'folder2/animals.txt'],.
+     *  'dog.torrent': ['folder1/dog.torrent', 'folder2/dog.torrent'],.
+     * }
+     */
   >,
   options: { readonly: boolean },
 ) => {
-  duplicate_filename: string,
-  amount_duplicates: number,
-  common_folders_or_files: string,
+  duplicate_filename: string
+  amount_duplicates: number
+  common_folders_or_files: string
   readonly_mode: boolean
 }[]
+
+export const sortByAlphabetical = <T>(arr: T[], _extractor?: (el: T) => string) => {
+  const extractor = (_extractor || (el => el)) as (el: T) => string
+
+  return arr.sort((a, b) => {
+    const str1 = extractor(a)
+    const str2 = extractor(b)
+
+    return str1.localeCompare(str2, 'en', { sensitivity: 'base' })
+  })
+}
 
 export const convertToOutputUniversal: TConvertToOutputUniversal = options => (formats) => {
   const formattedTxts = formats.txt ? convertToOutputTxt({ readonly: options.readonly })(formats.txt) : []
@@ -71,39 +82,27 @@ export const convertToOutputUniversal: TConvertToOutputUniversal = options => (f
 }
 
 export const convertToApplyExtractorStatistics: TConvertToApplyExtractorStatistics = (input, options) => {
-  const formatted = sortByAlphabetical(Object.entries(input), el => el[0])
-    .map(([filename, absolutePaths]) => {
-      const foldersName = generateCombinationFolderName(
-        ...sortByAlphabetical(
-          absolutePaths,
-          p => p.endsWith('.torrent') ? p.split('/').at(-2)! : `${p.split('/').slice(-2).join('.')}`!
-        )
-      )
-        .split('_')
-        .map(folderName => folderName.includes('--') ? `${folderName.replaceAll('--', '/')}.txt` : folderName)
-        .join(', ')
+  const formatted = sortByAlphabetical(Object.entries(input), el => el[0]).map(([filename, absolutePaths]) => {
+    const foldersName = generateCombinationFolderName(
+      ...sortByAlphabetical(absolutePaths, p =>
+        p.endsWith('.torrent') ? p.split('/').at(-2)! : `${p.split('/').slice(-2).join('.')}`)
+    )
+      .split('_')
+      .map(folderName => (folderName.includes('--') ? `${folderName.replaceAll('--', '/')}.txt` : folderName))
+      .join(', ')
 
-      return {
-        duplicate_filename: filename,
-        amount_duplicates: absolutePaths.length,
-        common_folders_or_files: foldersName,
-        readonly_mode: options.readonly,
-      }
-    })
-
-
-  return [...formatted, {
-    amount_duplicates: formatted.reduce((acc, cur) => acc + cur.amount_duplicates, 0),
-  }] as ReturnType<TConvertToApplyExtractorStatistics>
-}
-
-export const sortByAlphabetical = <T>(arr: T[], _extractor?: (el: T) => string) => {
-  const extractor = (_extractor || (el => el)) as (el: T) => string
-
-  return arr.sort((a, b) => {
-    const str1 = extractor(a)
-    const str2 = extractor(b)
-
-    return str1.localeCompare(str2, 'en', { sensitivity: 'base' })
+    return {
+      duplicate_filename: filename,
+      amount_duplicates: absolutePaths.length,
+      common_folders_or_files: foldersName,
+      readonly_mode: options.readonly,
+    }
   })
+
+  return [
+    ...formatted,
+    {
+      amount_duplicates: formatted.reduce((acc, cur) => acc + cur.amount_duplicates, 0),
+    },
+  ] as ReturnType<TConvertToApplyExtractorStatistics>
 }

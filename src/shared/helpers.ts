@@ -41,23 +41,30 @@ export function asyncFlow(...fns: AnyFunction<any, any>[]): AsyncFunction<any, a
   return async input => await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
 }
 
-export function getCombinations(arr: string[]): string[][] {
-  const result: string[][] = []
+export function* getCombinationsGenerator(arr: string[]): Generator<string[]> {
+  const n = arr.length
 
-  const backtrack = (startIndex: number, currentCombination: string[]) => {
-    if (currentCombination.length >= 2) {
-      result.push([...currentCombination])
+  // Generate combinations from longest to shortest
+  for (let k = n; k >= 2; k--) {
+    yield * generateKLengthCombinations(arr, k)
+  }
+}
+
+function* generateKLengthCombinations(arr: string[], k: number): Generator<string[]> {
+  function* backtrack(start: number, current: string[]): Generator<string[]> {
+    if (current.length === k) {
+      yield [...current]
+      return
     }
 
-    for (let i = startIndex; i < arr.length; i++) {
-      currentCombination.push(arr[i]!)
-      backtrack(i + 1, currentCombination)
-      currentCombination.pop()
+    for (let i = start; i < arr.length; i++) {
+      current.push(arr[i]!)
+      yield * backtrack(i + 1, current)
+      current.pop()
     }
   }
 
-  backtrack(0, [])
-  return result.sort((a, b) => a.length > b.length ? -1 : 1)
+  yield * backtrack(0, [])
 }
 
 export const getUniqueNames = (sourceArr: string[]) => [...new Set(sourceArr)]

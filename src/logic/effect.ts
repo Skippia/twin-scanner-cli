@@ -17,25 +17,28 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
     const flattenFileMapsExtraction = fileMapsExtraction.flatMap((el) => {
       const keysOfCurrentRecord = Object.keys(el)
       const flattenRecordArr = keysOfCurrentRecord.map(key => ({
-        [key]: el[key]!
+        [key]: el[key]!,
       }))
       return flattenRecordArr
     })
 
-    const mergedFileMapsExtraction = flattenFileMapsExtraction.reduce((acc, cur) => {
-      const currentFilename = Object.keys(cur)[0]!
-      const currentAbsolutePaths = Object.values(cur)[0]!
+    const mergedFileMapsExtraction = flattenFileMapsExtraction.reduce(
+      (acc, cur) => {
+        const currentFilename = Object.keys(cur)[0]!
+        const currentAbsolutePaths = Object.values(cur)[0]!
 
-      return {
-        ...acc,
-        [currentFilename]: (acc[currentFilename]?.length || 0) > currentAbsolutePaths.length
-          ? acc[currentFilename]!
-          : currentAbsolutePaths
-      }
-    }, {} as Record<string, string[]>)
+        return {
+          ...acc,
+          [currentFilename]:
+            (acc[currentFilename]?.length || 0) > currentAbsolutePaths.length
+              ? acc[currentFilename]!
+              : currentAbsolutePaths,
+        }
+      },
+      {} as Record<string, string[]>
+    )
 
     console.table(convertToApplyExtractorStatistics(mergedFileMapsExtraction, { readonly: options.readonly }))
-
 
     if (options.readonly) return
 
@@ -49,7 +52,6 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
       const absolutePathToCommonStorageCur = path.join(absolutePathToStorageFolder, storageFolderName)
 
       await createFolderEffect(absolutePathToCommonStorageCur)
-
 
       const isOnlyTxts = duplicateAbsolutePaths.every(el => el.endsWith('.txt'))
 
@@ -85,7 +87,7 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
 
           // 2b. Since there is a real file => just remove from source txt file
           if (duplicateAbsolutePath.endsWith('.txt')) {
-            strategies.txt.removeContentFromFileEffect(
+            await strategies.txt.removeContentFromFileEffect(
               duplicateAbsolutePath,
               convertTorrentFilenameToURL(duplicateFilename)
             )
@@ -93,7 +95,6 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
         }
       }
     }
-
 
     await removeEmptyFoldersInFolderEffect(absolutePathToStorageFolder)
 
