@@ -108,7 +108,6 @@
     },
   },
   "include": [
-    "./vite.config.ts",
     "./src/**/*.ts"
   ],
   "exclude": [

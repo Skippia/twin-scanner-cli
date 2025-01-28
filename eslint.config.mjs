@@ -2,6 +2,7 @@
 import antfu from '@antfu/eslint-config'
 import functional from 'eslint-plugin-functional'
 import noClosure from 'eslint-plugin-no-closure'
+import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default antfu(
@@ -57,6 +58,9 @@ export default antfu(
         projectService: true,
         tsconfigRootDir: import.meta.name
       },
+      globals: {
+        ...globals.node
+      }
     },
     rules: {
       // !-------------------Supported Rules-------------------
@@ -207,6 +211,11 @@ export default antfu(
   // ?----------------------------------------------------
   {
     files: ['**/*.js', '**/*.mjs', '**/*.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.node
+      }
+    },
     rules: {
       // Disable conflicting ESLint rules and enable TS-compatible ones
 
@@ -563,7 +572,7 @@ export default antfu(
     }
   },
   {
-    ignores: ['node_modules/*', 'dist/*', '.git/*', 'tsconfig.json']
+    ignores: ['node_modules/*', 'tsconfig.json']
   }
 )
 

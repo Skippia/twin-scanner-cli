@@ -17,14 +17,12 @@ export async function main(options: TUserChoices) {
     })) as string[]
   }
 
-  console.log('Options:', { ...options, folderList })
-
   await getRidOfDuplicatesInFoldersEffect(folderList, strategies, options)
 
   const extractCommonFilesInFolders = asyncFlow(
     getUniversalFileMapFromFolders(strategies, options),
     getCommonFilesInFileMap,
-    applyFilesExtractionEffect(strategies, options),
+    applyFilesExtractionEffect(strategies, options)
   )
 
   await extractCommonFilesInFolders(folderList)

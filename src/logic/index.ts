@@ -1,5 +1,7 @@
 import path from 'node:path'
 
+import type { _ } from 'node_modules/inquirer/dist/esm/ui/prompt'
+
 import { readDir } from '../files'
 import { filterRecordByKeys, getCombinations } from '../shared/helpers'
 
@@ -16,13 +18,13 @@ import type {
 } from './types'
 
 export const convertHeteroUniversalMapToMono = (
-  heterogenousUniversalMap: THeterogenousUniversalMapEl[],
-): TMonogenousUniversalMapEl[] =>
-  heterogenousUniversalMap
-    .filter((v) => Object.keys(v).length > 0)
-    .flatMap((v) => {
+  heterogenousUniversalMap: THeterogenousUniversalMapEl[]
+): TMonogenousUniversalMapEl[] => {
+  const arr: TMonogenousUniversalMapEl[][] = heterogenousUniversalMap
+    .filter(v => Object.keys(v).length > 0)
+    .map((v) => {
       if (v.type === 'txt') {
-        return (v.content as TContent[]).map((txtSubContent) => ({
+        return v.content.map(txtSubContent => ({
           folderOrFilename: txtSubContent.filename,
           type: v.type,
           amount: txtSubContent.content.length,
@@ -35,10 +37,13 @@ export const convertHeteroUniversalMapToMono = (
           folderOrFilename: v.folder,
           type: v.type,
           amount: v.content.length,
-          content: v.content as string[],
+          content: v.content,
         },
       ]
     })
+
+  return arr.flatMap(v => v)
+}
 
 export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = async (folder, strategies) => {
   const extensions = Object.keys(strategies) as ExtractorFileExtensions[]
@@ -46,7 +51,7 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = asy
 
   const filenamesMapByExts = await extensions.reduce(
     async (acc, ext) => {
-      const filenamesByExt = filenames.filter((filename) => path.extname(filename) === `.${ext}`)
+      const filenamesByExt = filenames.filter(filename => path.extname(filename) === `.${ext}`)
       const filesInfo = await getFilesInfo({ folder, filenames: filenamesByExt })
 
       return [
@@ -57,9 +62,9 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = asy
         },
       ]
     },
-    Promise.resolve([] as Array<{ ext: ExtractorFileExtensions; filesInfo: TFileInfo[] }>) as Promise<
-      Array<{ ext: ExtractorFileExtensions; filesInfo: TFileInfo[] }>
-    >,
+    Promise.resolve([] as Array<{ ext: ExtractorFileExtensions, filesInfo: TFileInfo[] }>) as Promise<
+      Array<{ ext: ExtractorFileExtensions, filesInfo: TFileInfo[] }>
+    >
   )
 
   const contentMapByExts = filenamesMapByExts
@@ -67,81 +72,96 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = asy
       ext,
       info:
         ext === 'torrent'
-          ? filesInfo.map((torrentFileInfo) => strategies[ext].extractor(torrentFileInfo))
-          : filesInfo.map((txtFileInfo) => ({
+          ? filesInfo.map(torrentFileInfo => strategies[ext].extractor(torrentFileInfo))
+          : filesInfo.map(txtFileInfo => ({
               filename: txtFileInfo.absolutePath,
               content: strategies[ext].extractor(txtFileInfo),
             })),
     }))
     // Remove empty txt of empty torrent field
-    .filter((v) => v.info.length > 0)
+    .filter(v => v.info.length > 0)
 
   const heterogeneousMapEl = contentMapByExts.reduce((acc, cur) => {
-    const content =
-      cur.ext === 'txt'
-        ? (cur.info as TContent[]).map((content) => ({ filename: content.filename, content: content.content }))
+    const content
+      = cur.ext === 'txt'
+        ? (cur.info as TContent[]).map(content => ({ filename: content.filename, content: content.content }))
         : cur.info
 
-    return {
+    const el = [
       ...acc,
-      type: cur.ext,
-      content,
-      amount: cur.info.length,
-      folder,
-    }
-  }, {} as THeterogenousUniversalMapEl)
+      {
+        folder,
+        type: cur.ext,
+        content,
+      } as THeterogenousUniversalMapEl,
+    ]
+
+    return el
+  }, [] as THeterogenousUniversalMapEl[])
 
   return heterogeneousMapEl
 }
 
-export const getUniversalFileMapFromFolders: TGetUniversalFileMapFromFolders =
-  (strategies, options) => async (folderList) => {
+export const getUniversalFileMapFromFolders: TGetUniversalFileMapFromFolders
+  = (strategies, options) => async (folderList) => {
     const filteredStrategies = filterRecordByKeys(strategies, options.fileExtensions)
 
-    const heterogeneousUniversalMap = await Promise.all(
-      folderList.map((folder) => getUniversalFileMapFromFolder(folder, filteredStrategies)),
+    const heterogeneousUniversalMapNested = await Promise.all(
+      folderList.map(folder => getUniversalFileMapFromFolder(folder, filteredStrategies))
     )
+
+    const heterogeneousUniversalMap = heterogeneousUniversalMapNested.flatMap(v => v)
 
     return convertHeteroUniversalMapToMono(heterogeneousUniversalMap)
   }
 
 export const getCommonFilesInFileMap: TGetCommonFilesInFileMap = (universalFileMap) => {
-  const absolutePaths = universalFileMap.map((v) => v.folderOrFilename)
+  const absolutePaths = universalFileMap.map(v => v.folderOrFilename)
   const allPossibleCombinations = getCombinations(absolutePaths)
 
   const commonFilesMap = allPossibleCombinations
-    .reduce((acc, [folderOrFilename1, folderOrFilename2]) => {
-      const files1 = universalFileMap.find((el) => el.folderOrFilename === folderOrFilename1)!
-      const files2 = universalFileMap.find((el) => el.folderOrFilename === folderOrFilename2)!
+    .reduce((acc, folderOrFilenames) => {
+      // const files1 = universalFileMap.find(el => el.folderOrFilename === folderOrFilename1)!
+      // const files2 = universalFileMap.find(el => el.folderOrFilename === folderOrFilename2)!
+      const files = folderOrFilenames
+        .map(
+          folderOrFilename => universalFileMap.find(el => el.folderOrFilename === folderOrFilename)!
+        )
+        .sort((a, b) => a.amount > b.amount ? -1 : 1)
 
-      const sourceMapEl = files1.amount < files2.amount ? files1 : files2
-      const targetMapEl = files1.amount < files2.amount ? files2 : files1
+      const sourceMapEl = files.at(0)!
+      const targetMapEls = files.slice(1)
 
       const fileMap = sourceMapEl.content.reduce(
         (acc, curFilename) => {
-          const isDuplicate = targetMapEl.content.includes(curFilename)
+          // const isDuplicate = targetMapEl.content.includes(curFilename)
+          const isDuplicate = targetMapEls.every(targetMapEl => targetMapEl.content.includes(curFilename))
 
           if (isDuplicate) {
+            const pathsToDuplicateFiles = targetMapEls.map(targetMapEl => targetMapEl.type === 'torrent'
+              ? path.join(targetMapEl.folderOrFilename, curFilename)
+              : targetMapEl.folderOrFilename)
+
             return {
               ...acc,
               [curFilename]: [
                 sourceMapEl.type === 'torrent'
                   ? path.join(sourceMapEl.folderOrFilename, curFilename)
                   : sourceMapEl.folderOrFilename,
-                targetMapEl.type === 'torrent'
-                  ? path.join(targetMapEl.folderOrFilename, curFilename)
-                  : targetMapEl.folderOrFilename,
+                ...pathsToDuplicateFiles,
               ],
             }
           }
           return acc
         },
-        {} as ReturnType<TGetCommonFilesInFileMap>[0],
+        {} as ReturnType<TGetCommonFilesInFileMap>[0]
       )
 
       return [...acc, fileMap]
     }, [] as ReturnType<TGetCommonFilesInFileMap>)
-    .filter((el) => Object.keys(el).length > 0)
+    .filter(el => Object.keys(el).length > 0)
 
+
+    
   return commonFilesMap
 }

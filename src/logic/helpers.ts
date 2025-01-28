@@ -4,11 +4,19 @@ import type { ExtractorFileExtensions, TExtractInfoFromFile } from './types'
 
 import { getFileContentFromTxt } from '@/files'
 
-export const generateCombinationFolderName = (path1: AbsolutePath, path2: AbsolutePath): string => {
-  const folderName1 = path1.endsWith('.torrent') ? path1.split('/').at(-2) : path1.split('/').at(-1)?.split('.')[0]
-  const folderName2 = path2.endsWith('.torrent') ? path2.split('/').at(-2) : path2.split('/').at(-1)?.split('.')[0]
-  return `${folderName1}_${folderName2}`
-}
+export const generateCombinationFolderName = (...paths: AbsolutePath[]): string => paths.reduce((acc, curPath) => {
+  let folderName = ''
+  const isTorrent = curPath.endsWith('.torrent')
+
+  if (isTorrent) {
+    folderName = curPath.split('/').at(-2)!
+  } else {
+    const last2Paths = curPath.split('/').slice(-2)
+    folderName =  `${last2Paths[0]}--${last2Paths[1]?.split('.')[0]}`
+
+  }
+  return acc === '' ? folderName : `${acc}_${folderName}`
+}, '')
 
 // TODO: copy file
 export const isIndirectDuplicateFilename = (allFilenames: string[], filename: string): boolean => {
@@ -17,7 +25,7 @@ export const isIndirectDuplicateFilename = (allFilenames: string[], filename: st
   if (!isMaybeDuplicate) return false
 
   const originalFilename = extractOriginalFilename(filename)
-  const originalFile = allFilenames.find((filename) => filename === originalFilename)
+  const originalFile = allFilenames.find(filename => filename === originalFilename)
 
   return Boolean(originalFile)
 }
@@ -43,5 +51,5 @@ export const extractInfoFromFile: TExtractInfoFromFile = async (filePath) => {
   }
 }
 
-export const getFilesInfo = (pathOptions: { folder: string; filenames: string[] }) =>
-  Promise.all(pathOptions.filenames.map((filename) => extractInfoFromFile(path.join(pathOptions.folder, filename))))
+export const getFilesInfo = (pathOptions: { folder: string, filenames: string[] }) =>
+  Promise.all(pathOptions.filenames.map(filename => extractInfoFromFile(path.join(pathOptions.folder, filename))))

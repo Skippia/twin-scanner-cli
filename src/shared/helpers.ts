@@ -38,27 +38,26 @@ export function asyncFlow<A, B, C, D, E>(
 
 // eslint-disable-next-line ts/no-explicit-any
 export function asyncFlow(...fns: AnyFunction<any, any>[]): AsyncFunction<any, any> {
-  return async (input) => await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
+  return async input => await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
 }
 
-export const getCombinations = (arr: string[], size: number = 2): string[][] => {
-  const combinations: string[][] = []
+export function getCombinations(arr: string[]): string[][] {
+  const result: string[][] = []
 
-  function combine(start: number, current: string[]) {
-    if (current.length === size) {
-      combinations.push([...current])
-      return
+  const backtrack = (startIndex: number, currentCombination: string[]) => {
+    if (currentCombination.length >= 2) {
+      result.push([...currentCombination])
     }
 
-    for (let i = start; i < arr.length; i++) {
-      current.push(arr[i]!)
-      combine(i + 1, current)
-      current.pop()
+    for (let i = startIndex; i < arr.length; i++) {
+      currentCombination.push(arr[i]!)
+      backtrack(i + 1, currentCombination)
+      currentCombination.pop()
     }
   }
 
-  combine(0, [])
-  return combinations
+  backtrack(0, [])
+  return result.sort((a, b) => a.length > b.length ? -1 : 1)
 }
 
 export const getUniqueNames = (sourceArr: string[]) => [...new Set(sourceArr)]

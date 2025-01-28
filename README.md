@@ -25,6 +25,74 @@ npm run build && npm run start:prod
 
 ### Demo
 
+Let's assume we have such file structure:
+- `torrent-storage`
+  - `folder1`
+    - [rutracker.org].t1(1).torrent
+    - [rutracker.org].t1(2).torrent
+    - [rutracker.org].t1.torrent
+    - [rutracker.org].t2.torrent
+    - [rutracker.org].t3.torrent
+    - [rutracker.org].t4.torrent
+    - list-1.txt
+      - https://rutracker.org/forum/viewtopic.php?t=1
+      - https://rutracker.org/forum/viewtopic.php?t=2
+      - https://rutracker.org/forum/viewtopic.php?t=3
+      - https://rutracker.org/forum/viewtopic.php?t=99
+      - https://rutracker.org/forum/viewtopic.php?t=1
+  - `folder2`
+    - [rutracker.org].t1.torrent
+    - [rutracker.org].t2.torrent
+    - [rutracker.org].t14.torrent
+    - [rutracker.org].t15.torrent
+    - [rutracker.org].t15(2).torrent
+    - [rutracker.org].t200.torrent
+    - list-2.txt
+      - https://rutracker.org/forum/viewtopic.php?t=1
+      - https://rutracker.org/forum/viewtopic.php?t=14
+      - https://rutracker.org/forum/viewtopic.php?t=16
+      - https://rutracker.org/forum/viewtopic.php?t=17
+      - https://rutracker.org/forum/viewtopic.php?t=17
+
+  - `folder3`
+    - [rutracker.org].t1.torrent
+    - [rutracker.org].t2.torrent
+    - [rutracker.org].t14.torrent
+    - [rutracker.org].t15.torrent
+    - [rutracker.org].t300.torrent
+    - [rutracker.org].t300(1).torrent
+    - list-3.txt
+      - https://rutracker.org/forum/viewtopic.php?t=1
+      - https://rutracker.org/forum/viewtopic.php?t=14
+      - https://rutracker.org/forum/viewtopic.php?t=16
+      - https://rutracker.org/forum/viewtopic.php?t=25
+      - https://rutracker.org/forum/viewtopic.php?t=26
+      - https://rutracker.org/forum/viewtopic.php?t=1
+
+After applying CLI this file structure will be converted into:
+- `duplicates-extrated`
+  -
+- `torrent-storage`
+  - `folder1`
+    - [rutracker.org].3.torrent
+    - [rutracker.org].4.torrent
+    - list-1.txt
+      - https://rutracker.org/forum/viewtopic.php?t=2
+      - https://rutracker.org/forum/viewtopic.php?t=3
+      - https://rutracker.org/forum/viewtopic.php?t=99
+  - `folder2`
+    - list-2.txt
+      - https://rutracker.org/forum/viewtopic.php?t=14
+      - https://rutracker.org/forum/viewtopic.php?t=16
+      - https://rutracker.org/forum/viewtopic.php?t=17
+
+  - `folder3`
+    - list-3.txt
+      - https://rutracker.org/forum/viewtopic.php?t=14
+      - https://rutracker.org/forum/viewtopic.php?t=16
+      - https://rutracker.org/forum/viewtopic.php?t=25
+      - https://rutracker.org/forum/viewtopic.php?t=26
+
 ### Example of manual configuration
 
 - Setting VITE_APP_TORRENT_URL=`https://rutracker.org/forum/viewtopic.php` means that:

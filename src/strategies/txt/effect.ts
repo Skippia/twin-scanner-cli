@@ -6,8 +6,8 @@ import { getFileContentFromTxt } from '@/files'
 import { writeIntoFileEffect } from '@/files/effect'
 import type { TUpdateContentInTxtFilesEffect } from '@/logic/types'
 
-export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect =
-  (converter, options) => async (fileMap) => {
+export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect
+  = (converter, options) => async (fileMap) => {
     if (options.readonly) return
 
     const writeToFilesTasks = Object.entries(fileMap).reduce<Promise<void>[]>((acc, [absolutePath, contentMap]) => {
@@ -24,14 +24,14 @@ export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect =
 export const removeContentFromTxtFileEffect = async (pathToTxtFile: AbsolutePath, stringToDelete: string) => {
   const rawContent = await getFileContentFromTxt(pathToTxtFile)
   const parsedContent = rawContent.split('\n')
-  const updatedContent = parsedContent.filter((v) => v !== stringToDelete).join('\n')
+  const updatedContent = parsedContent.filter(v => v !== stringToDelete).join('\n')
 
   await writeIntoFileEffect(pathToTxtFile, updatedContent)
 }
 
 export const removeDuplicatesFromTxtFileEffect = async (
   txtFilesMapDuplicates: TDuplicateFormatTxt,
-  readonly: boolean,
+  readonly: boolean
 ) => {
   await Promise.all(txtFilesMapDuplicates.map(updateContentInTxtFilesEffect(convertTorrentFilenameToURL, { readonly })))
 }

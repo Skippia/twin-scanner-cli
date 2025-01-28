@@ -58,23 +58,27 @@ export type TGetCommonFilesInFileMap = (universalFileMap: TMonogenousUniversalMa
 export type TGetUniversalFileMapFromFolder = (
   folder: string,
   strategies: TExtensionsRemoveDuplicatesStrategies,
-) => Promise<THeterogenousUniversalMapEl>
+) => Promise<THeterogenousUniversalMapEl[]>
 
 export type TContent = {
   filename: string
   content: string[]
 }
 
-export type THeterogenousUniversalMapEl = {
-  folder: string
-  type: ExtractorFileExtensions
-  content:
-    | string[]
-    | {
-        filename: string
-        content: string[]
-      }[]
-}
+export type THeterogenousUniversalMapEl =
+  | {
+    folder: string
+    type: (typeof UFileExtension)['TXT']
+    content: {
+      filename: string
+      content: string[]
+    }[]
+  }
+  | {
+    folder: string
+    type: (typeof UFileExtension)['TORRENT']
+    content: string[]
+  }
 
 export type TMonogenousUniversalMapEl = {
   folderOrFilename: string
