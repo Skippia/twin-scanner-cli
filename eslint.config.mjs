@@ -560,8 +560,8 @@ export default antfu(
     },
     rules: {
       ...functional.configs.externalTypeScriptRecommended.rules,
-      'noClosure/no-tagged-closures': 'error'
-      // ...functional.configs.recommended.rules,
+      ...functional.configs.recommended.rules,
+      'noClosure/no-tagged-closures': 'error',
       // ...functional.configs.lite.rules,
       // ...functional.configs.stylistic.rules,
       // 'functional/no-return-void: ': 'off',
