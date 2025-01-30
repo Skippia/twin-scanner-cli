@@ -28,7 +28,7 @@ export type TUpdateContentInTxtFilesEffect = (
   fileContentMap: Record<
     AbsolutePath,
     {
-      unique: string[]
+      unique: readonly string[]
     }
   >,
 ) => Promise<void>

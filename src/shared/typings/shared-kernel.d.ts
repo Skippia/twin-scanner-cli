@@ -24,6 +24,6 @@ declare type AbsFilenameNoExt = string
    */
 
 declare type TTask<T> = () => Promise<T>
-declare type AsyncFunction<T, R> = (arg: T) => Promise<R>
-declare type SyncFunction<T, R> = (arg: T) => R
-declare type AnyFunction<T, R> = AsyncFunction<T, R> | SyncFunction<T, R>
+declare type AsyncFunction<T = unknown, R = unknown> = (arg: T) => Promise<R>
+declare type SyncFunction<T = unknown, R = unknown> = (arg: T) => R
+declare type AnyFunction<T = unknown, R = unknown> = AsyncFunction<T, R> | SyncFunction<T, R>

@@ -1,24 +1,26 @@
-// eslint-disable-next-line import/no-named-as-default
 import antfu from '@antfu/eslint-config'
 import functional from 'eslint-plugin-functional'
 import noClosure from 'eslint-plugin-no-closure'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
+const allPathPattern = ['**/*.ts']
+const fpPathPattern = ['src/shared/**/*.ts']
+
 export default antfu(
   {
     stylistic: {
       indent: 2,
-      quotes: 'single'
+      quotes: 'single',
     },
     rules: {
       'unused-imports/no-unused-vars': 'warn',
       'unused-imports/no-unused-imports': 'off',
-    }
+    },
   },
   // ?------------COMMON CONFIG------------
   {
-    files: ['**/*.js', '**/*.mjs', '**/*.ts'],
+    files: [...allPathPattern],
     rules: {
       // Disable conflicting ESLint rules and enable TS-compatible ones
 
@@ -47,8 +49,8 @@ export default antfu(
           objects: 'only-multiline',
           imports: 'only-multiline',
           exports: 'only-multiline',
-          functions: 'never'
-        }
+          functions: 'never',
+        },
       ], // !!!
       'prefer-const': 'error',
       'no-undef': 'off',
@@ -71,8 +73,8 @@ export default antfu(
           ignoreStrings: true,
           ignoreTemplateLiterals: true,
           ignoreRegExpLiterals: true,
-          ignoreUrls: true
-        }
+          ignoreUrls: true,
+        },
       ],
       'perfectionist/sort-imports': 'off',
       'import/no-unresolved': 'off', // TODO: blocked by https://github.com/import-js/eslint-plugin-import/issues/2170
@@ -121,15 +123,15 @@ export default antfu(
             ['internal'], // custom path alias (f.e @shared)
             ['parent'],
             ['sibling'],
-            ['index']
+            ['index'],
           ],
           'pathGroups': [
             //
             {
               pattern: '@shared/**',
               group: 'internal',
-              position: 'before'
-            }
+              position: 'before',
+            },
           ],
           'pathGroupsExcludedImportTypes': ['internal'],
           'newlines-between': 'always',
@@ -137,9 +139,9 @@ export default antfu(
           'distinctGroup': true,
           'alphabetize': {
             order: 'asc',
-            caseInsensitive: true
-          }
-        }
+            caseInsensitive: true,
+          },
+        },
       ],
       'import/newline-after-import': 'error',
       'import/prefer-default-export': 'off',
@@ -303,8 +305,8 @@ export default antfu(
         {
           selector: 'TemplateElement[value.raw=/ \\n/]',
           message:
-            'String literals should not contain trailing spaces. If needed for tests please disable locally using eslint comment'
-        }
+            'String literals should not contain trailing spaces. If needed for tests please disable locally using eslint comment',
+        },
       ],
       'no-return-assign': 'error',
       'no-return-await': 'off',
@@ -371,14 +373,12 @@ export default antfu(
       // { blankLine: "any", prev: ["const", "let", "var"], next: ["const", "let", "var"] }
 
       // ],
-      'quotes': ['error', 'single', { avoidEscape: true }]
+      'quotes': ['error', 'single', { avoidEscape: true }],
     },
-    ignores: ['vite.config.ts']
-
   },
   // ?------------GENERIC TS CONFIG------------
   {
-    files: ['**/*.ts'],
+    files: [...allPathPattern],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -388,8 +388,8 @@ export default antfu(
         defaultProject: './tsconfig.json',
       },
       globals: {
-        ...globals.node
-      }
+        ...globals.node,
+      },
     },
     rules: {
       // !-------------------Supported Rules-------------------
@@ -402,7 +402,7 @@ export default antfu(
       'ts/class-literal-property-style': 'error',
       'ts/consistent-generic-constructors': 'error',
       'ts/consistent-indexed-object-style': [
-        'error'
+        'error',
         //   'index-signature',
       ],
       'ts/consistent-type-assertions': 'error',
@@ -438,8 +438,8 @@ export default antfu(
       'ts/no-unnecessary-condition': [
         'error',
         {
-          allowConstantLoopConditions: true
-        }
+          allowConstantLoopConditions: true,
+        },
       ],
       'ts/no-unnecessary-qualifier': 'error',
       'ts/no-unnecessary-type-arguments': 'error',
@@ -525,26 +525,24 @@ export default antfu(
       'ts/no-empty-function': [
         'error',
         {
-          allow: ['arrowFunctions', 'private-constructors']
-        }
+          allow: ['arrowFunctions', 'private-constructors'],
+        },
       ], // !!!
       'ts/no-explicit-any': [
         'error',
         {
-          ignoreRestArgs: true
-        }
+          ignoreRestArgs: true,
+        },
       ],
-      'ts/no-non-null-assertion': 'off' // !!!
+      'ts/no-non-null-assertion': 'off', // !!!
     },
-    ignores: ['vite.config.ts']
-
   },
   // ?------------FP TS CONFIG------------
   {
-    files: ['**/*.ts'],
+    files: [...fpPathPattern],
     plugins: {
       functional,
-      noClosure
+      noClosure,
     },
     languageOptions: {
       parser: tseslint.parser,
@@ -555,8 +553,8 @@ export default antfu(
         defaultProject: './tsconfig.json',
       },
       globals: {
-        ...globals.node
-      }
+        ...globals.node,
+      },
     },
     rules: {
       ...functional.configs.externalTypeScriptRecommended.rules,
@@ -581,12 +579,10 @@ export default antfu(
       //   },
       // ],
     },
-    ignores: ['vite.config.ts']
-
   },
   {
-    ignores: ['node_modules/*', 'tsconfig.json']
-  }
+    ignores: ['node_modules/*', 'tsconfig.json', 'vite.config.ts'],
+  },
 )
 
 // functional.configs.recommended,

@@ -53,7 +53,7 @@ const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strateg
  * Create duplicate maps for all .txt files in folders
  */
 export const getDuplicateTorrentsFilesInFolders = async (
-  folderList: string[],
+  folderList: readonly string[],
   options: { strategy: TExtensionsRemoveDuplicatesStrategies['torrent'] }
 ): Promise<TDuplicateFormatTorrent> => {
   const duplicates = await Promise.all(folderList.map(getDuplicateTorrentsFilesInFolder(options.strategy)))

@@ -7,7 +7,7 @@ export type TTorrentFileInfoExtractor = TExtractorsUsefulInfo['torrent']
 export type TGetDuplicatesInFolderTorrent = (strategy: TExtensionsRemoveDuplicatesStrategies['torrent']) => (
   folder: AbsolutePath,
 ) => Promise<{
-  pathsForDuplicateFiles: AbsolutePath[]
+  pathsForDuplicateFiles: readonly AbsolutePath[]
   uniqueLength: number
   duplicateLength: number
   folder: string
@@ -17,8 +17,8 @@ export type TGetDuplicatesInFoldersTxt = (folderList: RelativePath[]) => Promise
   Record<
     string,
     {
-      unique: string[]
-      duplicates: string[]
+      unique: readonly string[]
+      duplicates: readonly string[]
       duplicatesLength: number
       uniqueLength: number
     }
@@ -26,7 +26,7 @@ export type TGetDuplicatesInFoldersTxt = (folderList: RelativePath[]) => Promise
 >
 
 export type TDuplicateFormatTorrent = {
-  pathsForDuplicateFiles: AbsolutePath[]
+  pathsForDuplicateFiles: readonly AbsolutePath[]
   uniqueLength: number
   duplicateLength: number
   folder: string
@@ -35,8 +35,8 @@ export type TDuplicateFormatTorrent = {
 export type TDuplicateFormatTxt = Record<
   string,
   {
-    unique: string[]
-    duplicates: string[]
+    unique: readonly string[]
+    duplicates: readonly string[]
     duplicatesLength: number
     uniqueLength: number
   }
