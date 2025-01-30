@@ -5,7 +5,11 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 const allPathPattern = ['**/*.ts']
-const fpPathPattern = ['src/shared/**/*.ts']
+const fpPathPattern = [
+  'src/shared/**/*.ts',
+  'src/files/**/*.ts',
+  'src/logic/**/*.ts',
+]
 
 export default antfu(
   {
@@ -559,6 +563,8 @@ export default antfu(
     rules: {
       ...functional.configs.externalTypeScriptRecommended.rules,
       ...functional.configs.recommended.rules,
+      'functional/no-conditional-statements': ['error', { allowReturningBranches: true }],
+      'functional/no-expression-statements': ['error', { ignoreVoid: true, ignoreSelfReturning: true }],
       'noClosure/no-tagged-closures': 'error',
       // ...functional.configs.lite.rules,
       // ...functional.configs.stylistic.rules,

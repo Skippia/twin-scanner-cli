@@ -13,17 +13,17 @@ export type ExtractorFileExtensions = (typeof UFileExtension)[keyof typeof UFile
 export type TExtractInfoFromFile = (filePath: AbsolutePath) => Promise<TFileInfo>
 
 export type TExtractorsUsefulInfo = {
-  [UFileExtension.TORRENT]: (file: TFileInfo) => string
-  [UFileExtension.TXT]: (file: TFileInfo) => string[]
+  [UFileExtension.TORRENT]: (file: Readonly<TFileInfo>) => string
+  [UFileExtension.TXT]: (file: Readonly<TFileInfo>) => string[]
 }
 
-export type TMoveFilesInFolders = (options: {
+export type TMoveFilesInFolders = (options: Readonly<{
   readonly: boolean
-}) => (commonFiles: Record<Filename, AbsolutePath[]>) => Promise<void>
+}>) => (commonFiles: Record<Filename, AbsolutePath[]>) => Promise<void>
 
 export type TUpdateContentInTxtFilesEffect = (
   converter: (filename: string) => string,
-  options: { readonly: boolean },
+  options: Readonly<{ readonly: boolean }>,
 ) => (
   fileContentMap: Record<
     AbsolutePath,
@@ -40,10 +40,10 @@ export type TUpdateContentInTxtFilesEffect = (
 
 export type TGetUniversalFileMapFromFolders = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
-  options: TUserChoices,
-) => (folderList: string[]) => Promise<TMonogenousUniversalMapEl[]>
+  options: Readonly<TUserChoices>,
+) => (folderList: readonly string[]) => Promise<TMonogenousUniversalMapEl[]>
 
-export type TGetCommonFilesInFileMap = (universalFileMap: TMonogenousUniversalMapEl[]) => Record<
+export type TGetCommonFilesInFileMap = (universalFileMap: readonly TMonogenousUniversalMapEl[]) => Record<
   Filename,
   AbsolutePath[]
   /**

@@ -6,52 +6,61 @@ import type { TGetRecursiveFilesAndFolders } from './types'
 export const readDir = (folder: string) => fs.readdir(folder)
 export const getFileContentFromTxt = (filePath: string): Promise<string> => fs.readFile(filePath, { encoding: 'utf-8' })
 
-export const isNameInArrNames = ({ name, arrNames }: { name: string, arrNames: string[] }) =>
+export const isNameInArrNames = ({ name, arrNames }: Readonly<{ name: string, arrNames: string[] }>) =>
   arrNames.every(names => names.includes(name))
 
 export const checkIsFolderExists = async (pathToFolder: AbsolutePath) => {
   try {
+    // eslint-disable-next-line functional/no-expression-statements
     await fs.access(pathToFolder)
     return true
   }
   catch (err) {
-    console.error(`Folder ${pathToFolder} not exists`)
+    console.warn(`Folder ${pathToFolder} not exists`)
     return false
   }
 }
 
+export const checkIfDirectory = async (fullPath: AbsolutePath) => (await fs.stat(fullPath)).isDirectory()
+
 export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = async (folder, options) => {
-  const folders: string[] = []
-  const files: string[] = []
-  const topLevelFiles = [...(await fs.readdir(folder))]
+  const processEntry = async (
+    entries: readonly string[],
+    folders: readonly string[],
+    files: readonly string[]
+  ): Promise<{ folders: string[], files: string[] }> => {
+    if (entries.length === 0) return { folders: [...folders], files: [...files] }
 
-  while (topLevelFiles.length > 0) {
-    const el = topLevelFiles.shift()!
+    const [currentEl, ...remainingEntries] = entries
 
-    if (options.banFolders.includes(el)) continue
-
-    const isFolder = (await fs.stat(path.join(folder, el))).isDirectory()
-
-    if (isFolder) {
-      folders.push(path.join(folder, el))
-      const deeperFilesRelative = await fs.readdir(path.join(folder, el))
-      const deeperFilesAbsolute = deeperFilesRelative.map(name => path.join(el, name))
-
-      topLevelFiles.push(...deeperFilesAbsolute)
-      continue
+    if (options.banFolders.includes(currentEl!)) {
+      return await processEntry(remainingEntries, folders, files)
     }
 
-    const isPermittedFile = options.permittedExtensions.some(ext => el.endsWith(`.${ext}`))
+    const fullPath = path.join(folder, currentEl!)
+    const isDirectory = await checkIfDirectory(fullPath)
 
-    if (isPermittedFile) {
-      files.push(path.join(folder, el))
+    if (isDirectory) {
+      const childEntries = await fs.readdir(fullPath)
+      const childEntriesFullPath = childEntries.map(child => path.join(currentEl!, child))
+
+      return await processEntry(
+        [...remainingEntries, ...childEntriesFullPath],
+        [...folders, fullPath],
+        files
+      )
     }
+
+    const isPermittedFile = options.permittedExtensions.some(ext => currentEl!.endsWith(`.${ext}`))
+    return isPermittedFile
+      ? await processEntry(remainingEntries, folders, [...files, fullPath])
+      : await processEntry(remainingEntries, folders, files)
   }
+
+  const initialEntries = await fs.readdir(folder)
+  const { folders, files } = await processEntry(initialEntries, [], [])
 
   return options.flat
     ? [...folders, ...files]
-    : {
-        folders,
-        files,
-      }
+    : { folders, files }
 }

@@ -67,7 +67,7 @@ const handleError = (error: unknown) => {
 
 const startCLI = async () => {
   const userChoices = await collectUserChoices()
-  return await main(userChoices)
+  await main(userChoices)
 }
 
 // Run the CLI

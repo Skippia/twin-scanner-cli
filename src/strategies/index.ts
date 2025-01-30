@@ -18,7 +18,7 @@ export type TExtensionsRemoveDuplicatesStrategies = Readonly<{
     extractor: TExtractorsUsefulInfo['torrent']
     isDuplicate: (filenames: string[]) => (curFile: TFileInfo) => boolean
     moveFileEffect: (src: AbsolutePath, dest: AbsolutePath) => Promise<void>
-    removeDuplicatesEffect: (duplicateMap: TDuplicateFormatTorrent, readonly: boolean) => Promise<void>
+    removeDuplicatesEffect: (duplicateMap: TDuplicateFormatTorrent, readonly: boolean) => Promise<undefined | void[]>
     getDuplicateMap: (folderList: readonly string[]) => Promise<TDuplicateFormatTorrent>
   }
 }>
