@@ -1,11 +1,8 @@
 import path from 'node:path'
 
-import type { _ } from 'node_modules/inquirer/dist/esm/ui/prompt'
-
 import { readDir } from '../files'
-import { filterRecordByKeys, getCombinationsGenerator } from '../shared/helpers'
 
-import { buildCommonFilesMap, getFilesInfo } from './helpers'
+import { buildCommonFilesMap, filterRecordByKeys, getCombinationsGenerator, getFilesInfo } from './helpers'
 import type {
   ExtractorFileExtensions,
   TContent,

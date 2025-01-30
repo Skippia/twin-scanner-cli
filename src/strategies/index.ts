@@ -8,18 +8,18 @@ import type { UFileExtension } from '@/shared/constants'
 export type TExtensionsRemoveDuplicatesStrategies = Readonly<{
   [UFileExtension.TXT]: {
     extractor: TExtractorsUsefulInfo['txt']
-    getUniqueNames: (lines: string[]) => string[]
-    getDuplicates: (lines: string[], uniqueLines: string[]) => string[]
+    getUniqueNames: (lines: readonly string[]) => readonly string[]
+    getDuplicates: (lines: readonly string[], uniqueLines: readonly string[]) => readonly string[]
     removeContentFromFileEffect: (src: AbsolutePath, contentToDelete: string) => Promise<void>
     removeDuplicatesEffect: (duplicateMap: TDuplicateFormatTxt, readonly: boolean) => Promise<void>
-    getDuplicateMap: (folderList: string[]) => Promise<TDuplicateFormatTxt>
+    getDuplicateMap: (folderList: readonly string[]) => Promise<TDuplicateFormatTxt>
   }
   [UFileExtension.TORRENT]: {
     extractor: TExtractorsUsefulInfo['torrent']
     isDuplicate: (filenames: string[]) => (curFile: TFileInfo) => boolean
     moveFileEffect: (src: AbsolutePath, dest: AbsolutePath) => Promise<void>
     removeDuplicatesEffect: (duplicateMap: TDuplicateFormatTorrent, readonly: boolean) => Promise<void>
-    getDuplicateMap: (folderList: string[]) => Promise<TDuplicateFormatTorrent>
+    getDuplicateMap: (folderList: readonly string[]) => Promise<TDuplicateFormatTorrent>
   }
 }>
 

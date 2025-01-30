@@ -6,10 +6,9 @@ import type { TDuplicateFormatTxt } from '../torrent/types'
 import type { TGetDuplicatesFromTxtFilesInFolder } from './types'
 
 import { readDir } from '@/files'
-import { getFilesInfo } from '@/logic/helpers'
+import { getFilesInfo, isOnlyDigits } from '@/logic/helpers'
 import type { TFileInfo } from '@/logic/types'
 import { environments } from '@/shared/environments'
-import { isOnlyDigits } from '@/shared/helpers'
 
 export const extractTorrentFileNameFromURL = (url: string): string => {
   try {
@@ -43,7 +42,7 @@ export const extractContentFromTxtFile = (file: TFileInfo) =>
     .filter(v => Boolean(v))
     .map(extractTorrentFileNameFromURL) || ['']
 
-export const getDuplicatesFromTxtFile = (lines: string[]) =>
+export const getDuplicatesFromTxtFile = (lines: readonly string[]) =>
   lines.reduce<string[]>(
     (acc, cur, idx) => (lines.indexOf(cur, idx) !== lines.lastIndexOf(cur) ? [...acc, cur] : [...acc]),
     []
@@ -58,7 +57,7 @@ const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = 
     filenames: txtFilenames,
   })
 
-  const updateTxtMapFiles = filesInfo.reduce<Awaited<ReturnType<ReturnType<TGetDuplicatesFromTxtFilesInFolder>>>>(
+  const updateTxtMapFiles = filesInfo.reduce(
     (acc, cur) => {
       const extractedContent = strategy.extractor(cur)
       const uniqueNames = strategy.getUniqueNames(extractedContent)
@@ -74,7 +73,15 @@ const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = 
         },
       }
     },
-    {}
+    {} as Record<
+      AbsolutePath,
+      {
+        unique: readonly string[]
+        duplicates: readonly string[]
+        duplicatesLength: number
+        uniqueLength: number
+      }
+    >
   )
 
   return updateTxtMapFiles
@@ -85,7 +92,7 @@ const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = 
  * Create duplicate maps for all .txt files in folders
  */
 export const getDuplicateMapFromTxtFilesInFolders = async (
-  folderList: string[],
+  folderList: readonly string[],
   options: { strategy: TExtensionsRemoveDuplicatesStrategies['txt'] }
 ): Promise<TDuplicateFormatTxt> =>
   await Promise.all(folderList.map(getDuplicateMapFromTxtFilesInFolder(options.strategy)))

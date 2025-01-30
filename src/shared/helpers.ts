@@ -1,5 +1,5 @@
+/* eslint-disable functional/functional-parameters */
 /* eslint-disable no-redeclare */
-
 export function asyncPipe<A>(a: A): Promise<A>
 export function asyncPipe<A, B>(a: A, ab: AnyFunction<A, B>): Promise<B>
 export function asyncPipe<A, B, C>(a: A, ab: AnyFunction<A, B>, bc: AnyFunction<B, C>): Promise<C>
@@ -17,9 +17,14 @@ export function asyncPipe<A, B, C, D, E>(
   de: AnyFunction<D, E>,
 ): Promise<E>
 
-// eslint-disable-next-line ts/no-explicit-any
-export async function asyncPipe(input: any, ...fns: AnyFunction<any, any>[]): Promise<any> {
-  return await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
+export async function asyncPipe(
+  input: unknown,
+  ...fns: Readonly<AnyFunction[]>
+): Promise<unknown> {
+  return await fns.reduce(
+    async (acc, curFn) => curFn(await acc),
+    Promise.resolve(input)
+  )
 }
 
 export function asyncFlow<A, B>(ab: AnyFunction<A, B>): AsyncFunction<A, B>
@@ -36,41 +41,6 @@ export function asyncFlow<A, B, C, D, E>(
   de: AnyFunction<D, E>,
 ): AsyncFunction<A, E>
 
-// eslint-disable-next-line ts/no-explicit-any
-export function asyncFlow(...fns: AnyFunction<any, any>[]): AsyncFunction<any, any> {
+export function asyncFlow(...fns: Readonly<AnyFunction[]>): AsyncFunction {
   return async input => await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
-}
-
-export function* getCombinationsGenerator(arr: string[]): Generator<string[]> {
-  const n = arr.length
-
-  // Generate combinations from longest to shortest
-  for (let k = n; k >= 2; k--) {
-    yield * generateKLengthCombinations(arr, k)
-  }
-}
-
-function* generateKLengthCombinations(arr: string[], k: number): Generator<string[]> {
-  function* backtrack(start: number, current: string[]): Generator<string[]> {
-    if (current.length === k) {
-      yield [...current]
-      return
-    }
-
-    for (let i = start; i < arr.length; i++) {
-      current.push(arr[i]!)
-      yield * backtrack(i + 1, current)
-      current.pop()
-    }
-  }
-
-  yield * backtrack(0, [])
-}
-
-export const getUniqueNames = (sourceArr: string[]) => [...new Set(sourceArr)]
-export const isOnlyDigits = (str?: string): boolean => (str ? /^\d+$/.test(str) : false)
-
-export const filterRecordByKeys = <T extends Record<string, unknown>>(record: T, keys: string[]): T => {
-  const filteredAsssociativeArray = Object.entries(record).filter(([key]) => keys.includes(key))
-  return Object.fromEntries(filteredAsssociativeArray) as T
 }

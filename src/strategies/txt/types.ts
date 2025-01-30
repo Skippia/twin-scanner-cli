@@ -9,8 +9,8 @@ export type TGetDuplicatesFromTxtFilesInFolder = (strategy: TExtensionsRemoveDup
   Record<
     AbsolutePath,
     {
-      unique: string[]
-      duplicates: string[]
+      unique: readonly string[]
+      duplicates: readonly string[]
       duplicatesLength: number
       uniqueLength: number
     }

@@ -10,7 +10,7 @@ export const torrentDuplicateStrategy: TExtensionsRemoveDuplicatesStrategies['to
   isDuplicate: isDuplicateTorrent,
   moveFileEffect,
   removeDuplicatesEffect: removeDuplicatesTorrentEffect,
-  getDuplicateMap: (folderList: string[]) =>
+  getDuplicateMap: (folderList: readonly string[]) =>
     getDuplicateTorrentsFilesInFolders(folderList, {
       strategy: torrentDuplicateStrategy,
     }),
