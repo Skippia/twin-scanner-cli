@@ -102,7 +102,7 @@ export const buildCommonFilesMap = (
   return result
 }
 
-export function* getCombinationsGenerator(arr: Readonly<string[]>): Generator<Readonly<string[]>> {
+export function* getCombinationsGenerator(arr: readonly string[]): Generator<readonly string[]> {
   const n = arr.length
 
   // eslint-disable-next-line functional/no-loop-statements
@@ -112,10 +112,10 @@ export function* getCombinationsGenerator(arr: Readonly<string[]>): Generator<Re
 }
 
 function* generateKLengthCombinations(
-  arr: Readonly<string[]>,
+  arr: readonly string[],
   k: number
-): Generator<Readonly<string[]>> {
-  function* backtrack(start: number, current: Readonly<string[]>): Generator<Readonly<string[]>> {
+): Generator<readonly string[]> {
+  function* backtrack(start: number, current: readonly string[]): Generator<readonly string[]> {
     if (current.length === k) {
       yield current
       return
@@ -130,7 +130,7 @@ function* generateKLengthCombinations(
   yield * backtrack(0, [])
 }
 
-export const getUniqueNames = (sourceArr: Readonly<string[]>): Readonly<string[]> => [
+export const getUniqueNames = (sourceArr: readonly string[]): readonly string[] => [
   ...new Set(sourceArr),
 ]
 
@@ -138,7 +138,7 @@ export const isOnlyDigits = (str?: string): boolean => (str ? /^\d+$/.test(str) 
 
 export function filterRecordByKeys<T extends Record<string, unknown>>(
   record: Readonly<T>,
-  keys: Readonly<string[]>
+  keys: readonly string[]
 ): Readonly<T> {
   const filteredEntries = Object.entries(record)
     .filter(([key]) => keys.includes(key))

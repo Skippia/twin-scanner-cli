@@ -19,7 +19,7 @@ export function asyncPipe<A, B, C, D, E>(
 
 export async function asyncPipe(
   input: unknown,
-  ...fns: Readonly<AnyFunction[]>
+  ...fns: readonly AnyFunction[]
 ): Promise<unknown> {
   return await fns.reduce(
     async (acc, curFn) => curFn(await acc),
@@ -41,6 +41,6 @@ export function asyncFlow<A, B, C, D, E>(
   de: AnyFunction<D, E>,
 ): AsyncFunction<A, E>
 
-export function asyncFlow(...fns: Readonly<AnyFunction[]>): AsyncFunction {
+export function asyncFlow(...fns: readonly AnyFunction[]): AsyncFunction {
   return async input => await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
 }

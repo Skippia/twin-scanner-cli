@@ -7,15 +7,13 @@ import { asyncFlow } from './shared/helpers'
 import { strategies } from './strategies'
 
 export const main = async (options: TUserChoices) => {
-  let folderList = (options.folderPaths || [options.folderPath]) as string[]
-
-  if (options.recursive) {
-    folderList = (await getRecursiveFilesAndFolders(options.folderPath as AbsolutePath, {
-      permittedExtensions: [],
-      banFolders: defaultBanFolders,
-      flat: true,
-    })) as string[]
-  }
+  const folderList = options.recursive
+    ? (await getRecursiveFilesAndFolders(options.folderPath as AbsolutePath, {
+        permittedExtensions: [],
+        banFolders: defaultBanFolders,
+        flat: true,
+      })) as string[]
+    : (options.folderPaths || [options.folderPath]) as string[]
 
   await getRidOfDuplicatesInFoldersEffect(folderList, strategies, options)
 
