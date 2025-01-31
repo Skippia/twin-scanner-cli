@@ -579,7 +579,7 @@ export default antfu(
       'noClosure/no-tagged-closures': 'error',
       // ...functional.configs.lite.rules,
       ...functional.configs.stylistic.rules,
-      // 'functional/no-return-void: ': 'off',
+      'functional/no-return-void': 'off',
       // 'functional/prefer-immutable-types': [
       //   'off',
       // ],

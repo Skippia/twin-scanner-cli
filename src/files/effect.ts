@@ -82,13 +82,10 @@ export const removeEmptyFoldersInFolderEffect = async (folderPath: AbsolutePath)
     const [current, ...remaining] = folders
     const files = await fs.readdir(current!)
 
-    // eslint-disable-next-line functional/no-conditional-statements
-    if (files.length === 0) {
-      // eslint-disable-next-line functional/no-expression-statements
-      await fs.rmdir(current!)
-    }
-
-    return await processFolders(remaining)
+    return files.length === 0
+      ? await fs.rmdir(current!)
+        .then(() => processFolders(remaining))
+      : await processFolders(remaining)
   }
 
   try {

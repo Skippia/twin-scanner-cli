@@ -1,4 +1,3 @@
-/* eslint-disable functional/no-return-void */
 import path from 'node:path'
 
 import { areAllTextFiles, generateCombinationFolderName, getDuplicateStoragePath, logExtractionStatistics, logUniversalStatistics, mergeFileMapsExtraction } from './helpers'

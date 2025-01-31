@@ -1,4 +1,3 @@
-/* eslint-disable style/max-len */
 import path from 'node:path'
 
 import type { ExtractorFileExtensions, TExtractInfoFromFile, TFileInfo, TGetCommonFilesInFileMap, TMonogenousUniversalMapEl } from './types'
@@ -106,17 +105,18 @@ export const buildCommonFilesMap = (
   filesMapCache: Record<AbsolutePath, TMonogenousUniversalMapEl>,
   combinationsGenerator: Generator<readonly string[]>
 ): ReturnType<TGetCommonFilesInFileMap> => {
-  const resultGenerator = function* (combinationsGenerator: Generator<readonly string[]>): Generator<Record<string, string[]>> {
-    // eslint-disable-next-line functional/no-loop-statements
-    for (const combination of combinationsGenerator) {
-      const fileMap = processCombination(filesMapCache, combination)
+  const resultGenerator
+    = function* (combinationsGenerator: Generator<readonly string[]>): Generator<Record<string, string[]>> {
+      // eslint-disable-next-line functional/no-loop-statements
+      for (const combination of combinationsGenerator) {
+        const fileMap = processCombination(filesMapCache, combination)
 
-      // eslint-disable-next-line functional/no-conditional-statements
-      if (Object.keys(fileMap).length > 0) {
-        yield fileMap
+        // eslint-disable-next-line functional/no-conditional-statements
+        if (Object.keys(fileMap).length > 0) {
+          yield fileMap
+        }
       }
     }
-  }
 
   return [...resultGenerator(combinationsGenerator)]
 }
@@ -165,33 +165,34 @@ export function filterRecordByKeys<T extends Record<string, unknown>>(
   return Object.fromEntries(filteredEntries) as T
 }
 
-export const mergeFileMapsExtraction = (fileMapsExtraction: readonly Record<string, string[]>[]): Record<string, string[]> => {
-  const flattenFileMapsExtraction = fileMapsExtraction.flatMap((el) => {
-    const keysOfCurrentRecord = Object.keys(el)
-    const flattenRecordArr = keysOfCurrentRecord.map(key => ({
-      [key]: el[key]!,
-    }))
-    return flattenRecordArr
-  })
+export const mergeFileMapsExtraction
+  = (fileMapsExtraction: readonly Record<string, string[]>[]): Record<string, string[]> => {
+    const flattenFileMapsExtraction = fileMapsExtraction.flatMap((el) => {
+      const keysOfCurrentRecord = Object.keys(el)
+      const flattenRecordArr = keysOfCurrentRecord.map(key => ({
+        [key]: el[key]!,
+      }))
+      return flattenRecordArr
+    })
 
-  const mergedFileMapsExtraction = flattenFileMapsExtraction.reduce(
-    (acc, cur) => {
-      const currentFilename = Object.keys(cur)[0]!
-      const currentAbsolutePaths = Object.values(cur)[0]!
+    const mergedFileMapsExtraction = flattenFileMapsExtraction.reduce(
+      (acc, cur) => {
+        const currentFilename = Object.keys(cur)[0]!
+        const currentAbsolutePaths = Object.values(cur)[0]!
 
-      return {
-        ...acc,
-        [currentFilename]:
-          (acc[currentFilename]?.length || 0) > currentAbsolutePaths.length
-            ? acc[currentFilename]!
-            : currentAbsolutePaths,
-      }
-    },
-    {} as Record<string, string[]>
-  )
+        return {
+          ...acc,
+          [currentFilename]:
+            (acc[currentFilename]?.length || 0) > currentAbsolutePaths.length
+              ? acc[currentFilename]!
+              : currentAbsolutePaths,
+        }
+      },
+      {} as Record<string, string[]>
+    )
 
-  return mergedFileMapsExtraction
-}
+    return mergedFileMapsExtraction
+  }
 
 export const getDuplicateStoragePath = (options: Readonly<TUserChoices>): AbsolutePath => {
   const rootPathToStorageFolder = (options.folderPath || options.folderPaths?.[0]) as string
@@ -200,13 +201,16 @@ export const getDuplicateStoragePath = (options: Readonly<TUserChoices>): Absolu
   return absolutePathToStorageFolder
 }
 
-// eslint-disable-next-line functional/no-return-void
 export const logExtractionStatistics = (fileMap: Record<string, string[]>, readonly: boolean): void => {
-  console.table(convertToApplyExtractorStatistics(fileMap, { readonly }))
+  const formatted = convertToApplyExtractorStatistics(fileMap, { readonly })
+  console.table(formatted)
 }
-// eslint-disable-next-line functional/no-return-void
-export const logUniversalStatistics = (duplicateMaps: readonly (TDuplicateFormatTorrent | TDuplicateFormatTxt)[], options: Readonly<TUserChoices>): void => {
-  console.table(convertToOutputUniversal({ readonly: options.readonly })(
+
+export const logUniversalStatistics = (
+  duplicateMaps: readonly (TDuplicateFormatTorrent | TDuplicateFormatTxt)[],
+  options: Readonly<TUserChoices>
+): void => {
+  const formatted = convertToOutputUniversal({ readonly: options.readonly })(
     options.fileExtensions.reduce(
       (acc, ext) => ({
         ...acc,
@@ -214,5 +218,6 @@ export const logUniversalStatistics = (duplicateMaps: readonly (TDuplicateFormat
       }),
       {} as { txt: TDuplicateFormatTxt, torrent: TDuplicateFormatTorrent }
     )
-  ))
+  )
+  console.table(formatted)
 }
