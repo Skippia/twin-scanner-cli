@@ -12,20 +12,21 @@ import { PROMPTS_RECORD } from './prompts'
 
 const __filename = fileURLToPath(import.meta.url)
 
+// eslint-disable-next-line functional/prefer-immutable-types
 const registerInquirerPrompt = (inquirerInstance: Readonly<typeof PromptModule>): Readonly<typeof PromptModule> => {
   inquirerInstance.registerPrompt('fuzzypath', inquirerFuzzyPath as unknown as LegacyPromptConstructor)
   return inquirerInstance
 }
 
-export type TUserChoices = Readonly<{
-  folderMode: 'single' | 'multiple'
-  folderPath?: string
-  folderPaths?: readonly string[]
-  fileExtensions: readonly string[]
-  rootFolder: string
-  recursive: boolean
-  readonly: boolean
-}>
+export type TUserChoices = {
+  readonly folderMode: 'single' | 'multiple'
+  readonly folderPath?: string
+  readonly folderPaths?: readonly string[]
+  readonly fileExtensions: readonly string[]
+  readonly rootFolder: string
+  readonly recursive: boolean
+  readonly readonly: boolean
+}
 
 const collectUserChoices = async (): Promise<TUserChoices> => {
   const rootPathFolder = path.join(__filename, '../../../')

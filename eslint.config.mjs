@@ -6,6 +6,7 @@ import tseslint from 'typescript-eslint'
 
 const allPathPattern = ['**/*.ts']
 const fpPathPattern = allPathPattern
+// const fpPathPattern = ['src/cli.ts']
 
 export default antfu(
   {
@@ -556,9 +557,10 @@ export default antfu(
       },
     },
     rules: {
-      'ts/explicit-function-return-type': 'error', // !!!
       ...functional.configs.externalTypeScriptRecommended.rules,
-      ...functional.configs.recommended.rules,
+      ...functional.configs.strict.rules,
+      ...functional.configs.stylistic.rules,
+      // ...functional.configs.recommended.rules,
       'functional/no-conditional-statements': ['error', { allowReturningBranches: true }],
       'functional/no-expression-statements': ['error', { ignoreVoid: true, ignoreSelfReturning: true }],
       'functional/functional-parameters': ['error', {
@@ -576,25 +578,29 @@ export default antfu(
           },
         ],
       }],
-      'noClosure/no-tagged-closures': 'error',
-      // ...functional.configs.lite.rules,
-      ...functional.configs.stylistic.rules,
+      'functional/type-declaration-immutability': 'off',
+      'functional/prefer-immutable-types': ['error', {
+        enforcement: 'ReadonlyDeep',
+        ignoreInferredTypes: true,
+        parameters: {
+          enforcement: 'ReadonlyDeep',
+        },
+        suggestions: {
+          ReadonlyDeep: [
+            [
+              {
+                pattern: '^(?:Readonly<(.+)>|(.+))$',
+                replace: 'ReadonlyDeep<$1$2>',
+              },
+            ],
+          ],
+        },
+      }],
       'functional/no-return-void': 'off',
-      // 'functional/prefer-immutable-types': [
-      //   'off',
-      // ],
-      // 'functional/no-expression-statements': [
-      //   'error',
-      //   {
-      //     ignoreVoid: true,
-      //   },
-      // ],
-      // 'functional/no-conditional-statements': [
-      //   'error',
-      //   {
-      //     allowReturningBranches: true,
-      //   },
-      // ],
+      'functional/readonly-type': ['error', 'keyword'],
+      // ------------------------------------------------
+      'noClosure/no-tagged-closures': 'error',
+      'ts/explicit-function-return-type': 'error', // !!!
     },
   },
   {
