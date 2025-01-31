@@ -1,22 +1,28 @@
+/* eslint-disable style/max-len */
 import path from 'node:path'
 
 import type { ExtractorFileExtensions, TExtractInfoFromFile, TGetCommonFilesInFileMap, TMonogenousUniversalMapEl } from './types'
 
+import type { TUserChoices } from '@/cli'
 import { getFileContentFromTxt } from '@/files'
+import { PREFIX_FILE_FOLDER } from '@/shared/constants'
+import { convertToApplyExtractorStatistics, convertToOutputUniversal } from '@/strategies/formatter'
+import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
 
-export const generateCombinationFolderName = (...paths: AbsolutePath[]): string => paths.reduce((acc, curPath) => {
-  let folderName = ''
-  const isTorrent = curPath.endsWith('.torrent')
+export const generateCombinationFolderName = (paths: readonly AbsolutePath[]): string => {
+  const getFolderNameForPath = (path: AbsolutePath): string => {
+    const isTorrent = path.endsWith('.torrent')
 
-  if (isTorrent) {
-    folderName = curPath.split('/').at(-2)!
+    if (isTorrent) return path.split('/').at(-2)!
+
+    const [parentFolder, fileName] = path.split('/').slice(-2)
+    return `${parentFolder}--${fileName?.split('.')[0]}`
   }
-  else {
-    const last2Paths = curPath.split('/').slice(-2)
-    folderName = `${last2Paths[0]}--${last2Paths[1]?.split('.')[0]}`
-  }
-  return acc === '' ? folderName : `${acc}_${folderName}`
-}, '')
+
+  return paths
+    .map(getFolderNameForPath)
+    .join('_')
+}
 
 export const extractOriginalFilename = (filename: string) => {
   const [leftIdx, rightIdx] = [filename.indexOf('('), filename.indexOf(')')]
@@ -27,7 +33,7 @@ export const extractOriginalFilename = (filename: string) => {
 }
 
 // TODO: copy file
-export const isIndirectDuplicateFilename = (allFilenames: string[], filename: string): boolean => {
+export const isIndirectDuplicateFilename = (allFilenames: readonly string[], filename: string): boolean => {
   const isMaybeDuplicate = filename.includes('(')
 
   if (!isMaybeDuplicate) return false
@@ -51,55 +57,68 @@ export const extractInfoFromFile: TExtractInfoFromFile = async (filePath) => {
   }
 }
 
-export const getFilesInfo = (pathOptions: { folder: string, filenames: string[] }) =>
+export const getFilesInfo = (pathOptions: Readonly<{ folder: string, filenames: string[] }>) =>
   Promise.all(pathOptions.filenames.map(filename => extractInfoFromFile(path.join(pathOptions.folder, filename))))
+
+export const processCombination = (
+  filesMapCache: Record<AbsolutePath, TMonogenousUniversalMapEl>,
+  folderOrFilenames: readonly string[]
+): Record<string, string[]> => {
+  // Get sorted files from the cache
+  const files = folderOrFilenames
+    .map(folderOrFilename => filesMapCache[folderOrFilename]!)
+    .sort((a, b) => a.amount > b.amount ? 1 : -1)
+
+  const [sourceMapEl, ...targetMapEls] = files
+
+  // Process file map for current combination
+  const fileMap = sourceMapEl!.content.reduce((acc, curFilename) => {
+    const isDuplicate = targetMapEls.every(targetMapEl =>
+      targetMapEl.content.includes(curFilename)
+    )
+
+    if (isDuplicate) {
+      const pathsToDuplicateFiles = targetMapEls.map(targetMapEl =>
+        targetMapEl.type === 'torrent'
+          ? path.join(targetMapEl.folderOrFilename, curFilename)
+          : targetMapEl.folderOrFilename
+      )
+
+      return {
+        ...acc,
+        [curFilename]: [
+          sourceMapEl!.type === 'torrent'
+            ? path.join(sourceMapEl!.folderOrFilename, curFilename)
+            : sourceMapEl!.folderOrFilename,
+          ...pathsToDuplicateFiles
+        ]
+      }
+    }
+
+    return acc
+  }, {} as Record<Filename, AbsolutePath[]>)
+
+  return fileMap
+}
+
+export const areAllTextFiles = (paths: readonly string[]) => paths.every(path => path.endsWith('.txt'))
 
 export const buildCommonFilesMap = (
   filesMapCache: Record<AbsolutePath, TMonogenousUniversalMapEl>,
   combinationsGenerator: Generator<readonly string[]>
 ): ReturnType<TGetCommonFilesInFileMap> => {
-  const result: ReturnType<TGetCommonFilesInFileMap> = []
-
-  // Process combinations incrementally using the generator
-  for (const folderOrFilenames of combinationsGenerator) {
-    // Get sorted files from the cache
-    const files = folderOrFilenames
-      .map(folderOrFilename => filesMapCache[folderOrFilename]!)
-      .sort((a, b) => a.amount > b.amount ? 1 : -1)
-
-    const sourceMapEl = files[0]!
-    const targetMapEls = files.slice(1)
-
-    // Process file map for current combination
-    const fileMap = sourceMapEl.content.reduce((acc, curFilename) => {
-      const isDuplicate = targetMapEls.every(targetMapEl =>
-        targetMapEl.content.includes(curFilename)
-      )
-
-      if (isDuplicate) {
-        const pathsToDuplicateFiles = targetMapEls.map(targetMapEl =>
-          targetMapEl.type === 'torrent'
-            ? path.join(targetMapEl.folderOrFilename, curFilename)
-            : targetMapEl.folderOrFilename
-        )
-
-        acc[curFilename] = [
-          sourceMapEl.type === 'torrent'
-            ? path.join(sourceMapEl.folderOrFilename, curFilename)
-            : sourceMapEl.folderOrFilename,
-          ...pathsToDuplicateFiles
-        ]
+  const resultGenerator = function* (combinationsGenerator: Generator<readonly string[]>) {
+    // eslint-disable-next-line functional/no-loop-statements
+    for (const combination of combinationsGenerator) {
+      const fileMap = processCombination(filesMapCache, combination)
+      // eslint-disable-next-line functional/no-conditional-statements
+      if (Object.keys(fileMap).length > 0) {
+        yield fileMap
       }
-      return acc
-    }, {} as ReturnType<TGetCommonFilesInFileMap>[0])
-
-    // Only add non-empty entries to final result
-    if (Object.keys(fileMap).length > 0) {
-      result.push(fileMap)
     }
   }
 
-  return result
+  return [...resultGenerator(combinationsGenerator)]
 }
 
 export function* getCombinationsGenerator(arr: readonly string[]): Generator<readonly string[]> {
@@ -144,4 +163,56 @@ export function filterRecordByKeys<T extends Record<string, unknown>>(
     .filter(([key]) => keys.includes(key))
 
   return Object.fromEntries(filteredEntries) as T
+}
+
+export const mergeFileMapsExtraction = (fileMapsExtraction: readonly Record<string, string[]>[]) => {
+  const flattenFileMapsExtraction = fileMapsExtraction.flatMap((el) => {
+    const keysOfCurrentRecord = Object.keys(el)
+    const flattenRecordArr = keysOfCurrentRecord.map(key => ({
+      [key]: el[key]!,
+    }))
+    return flattenRecordArr
+  })
+
+  const mergedFileMapsExtraction = flattenFileMapsExtraction.reduce(
+    (acc, cur) => {
+      const currentFilename = Object.keys(cur)[0]!
+      const currentAbsolutePaths = Object.values(cur)[0]!
+
+      return {
+        ...acc,
+        [currentFilename]:
+          (acc[currentFilename]?.length || 0) > currentAbsolutePaths.length
+            ? acc[currentFilename]!
+            : currentAbsolutePaths,
+      }
+    },
+    {} as Record<string, string[]>
+  )
+
+  return mergedFileMapsExtraction
+}
+
+export const getDuplicateStoragePath = (options: Readonly<TUserChoices>) => {
+  const rootPathToStorageFolder = (options.folderPath || options.folderPaths?.[0]) as string
+  const absolutePathToStorageFolder = path.join(rootPathToStorageFolder, PREFIX_FILE_FOLDER)
+
+  return absolutePathToStorageFolder
+}
+
+// eslint-disable-next-line functional/no-return-void
+export const logExtractionStatistics = (fileMap: Record<string, string[]>, readonly: boolean) => {
+  console.table(convertToApplyExtractorStatistics(fileMap, { readonly }))
+}
+// eslint-disable-next-line functional/no-return-void
+export const logUniversalStatistics = (duplicateMaps: readonly (TDuplicateFormatTorrent | TDuplicateFormatTxt)[], options: Readonly<TUserChoices>) => {
+  console.table(convertToOutputUniversal({ readonly: options.readonly })(
+    options.fileExtensions.reduce(
+      (acc, ext) => ({
+        ...acc,
+        [ext]: duplicateMaps[options.fileExtensions.indexOf(ext)],
+      }),
+      {} as { txt: TDuplicateFormatTxt, torrent: TDuplicateFormatTorrent }
+    )
+  ))
 }
