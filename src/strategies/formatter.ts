@@ -48,8 +48,8 @@ export type TConvertToApplyExtractorStatistics = (
   readonly_mode: boolean
 }[]
 
-export const sortByAlphabetical = <T>(arr: readonly T[], _extractor?: (el: T) => string) => {
-  const extractor = (_extractor || (el => el)) as (el: T) => string
+export const sortByAlphabetical = <T>(arr: readonly T[], _extractor?: (el: T) => string): T[] => {
+  const extractor = (_extractor || ((el: T): T => el)) as (el: T) => string
 
   return [...arr].sort((a, b) => {
     const str1 = extractor(a)

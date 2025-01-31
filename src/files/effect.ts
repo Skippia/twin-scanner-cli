@@ -14,11 +14,12 @@ export const removeFilesEffect: TRemoveFilesEffect = options => async (filenameP
   return await Promise.all(removeFilesTasks)
 }
 
-export const createFolderEffect = (folderPath: AbsolutePath) => fs.mkdir(folderPath, { recursive: true })
+export const createFolderEffect = (folderPath: AbsolutePath): Promise<string> =>
+  fs.mkdir(folderPath, { recursive: true }) as Promise<string>
 
-export const writeIntoFileEffect = (filePath: string, content: string) => fs.writeFile(filePath, content, { encoding: 'utf-8' })
+export const writeIntoFileEffect = (filePath: string, content: string): Promise<void> => fs.writeFile(filePath, content, { encoding: 'utf-8' })
 
-export const moveFileEffect = async (src: AbsolutePath, dest: AbsolutePath) => {
+export const moveFileEffect = async (src: AbsolutePath, dest: AbsolutePath): Promise<void> => {
   try {
     return await fs.rename(src, dest)
   }
@@ -27,7 +28,7 @@ export const moveFileEffect = async (src: AbsolutePath, dest: AbsolutePath) => {
   }
 }
 
-export const appendIntoTxtFileEffect = async (filePath: AbsolutePath, content: string) =>
+export const appendIntoTxtFileEffect = async (filePath: AbsolutePath, content: string): Promise<void> =>
   await fs.appendFile(filePath, content, { encoding: 'utf-8' })
 
 // TODO: Refactor
@@ -43,7 +44,7 @@ export const validateFolderPath = (folderPath: string): boolean | string => {
 }
 
 // TODO: Refactor
-export const removeEmptyFoldersInFolderEffect1 = async (folderPath: AbsolutePath) => {
+export const removeEmptyFoldersInFolderEffect1 = async (folderPath: AbsolutePath): Promise<void[] | undefined> => {
   try {
     const filesAndFolders = await readDir(folderPath)
     const onlyFolders = await filesAndFolders.reduce(
@@ -58,23 +59,23 @@ export const removeEmptyFoldersInFolderEffect1 = async (folderPath: AbsolutePath
       Promise.resolve([]) as Promise<AbsolutePath[]>
     )
 
-    // eslint-disable-next-line functional/no-loop-statements
-    for (const folder of onlyFolders) {
-      const files = await fs.readdir(folder)
+    const candiatesToRemove = await Promise.all(
+      onlyFolders.map(async folder => ({
+        folder,
+        files: await readDir(folder)
+      }))
+    )
+      .then(filesAndFolders => filesAndFolders.filter(({ files }) => files.length === 0))
 
-      // eslint-disable-next-line functional/no-conditional-statements
-      if (files.length === 0) {
-        // eslint-disable-next-line functional/no-expression-statements
-        await fs.rmdir(folder)
-      }
-    }
+    return await Promise.all(candiatesToRemove.map(({ folder }) => fs.rmdir(folder)))
   }
+
   catch (error) {
     console.warn('Error during removing empty folder', folderPath)
   }
 }
 
-export const removeEmptyFoldersInFolderEffect = async (folderPath: AbsolutePath) => {
+export const removeEmptyFoldersInFolderEffect = async (folderPath: AbsolutePath): Promise<void> => {
   const processFolders = async (folders: readonly AbsolutePath[]): Promise<void> => {
     if (folders.length === 0) return
 

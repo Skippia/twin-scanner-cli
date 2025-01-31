@@ -1,4 +1,3 @@
-/* eslint-disable functional/functional-parameters */
 import type inquirer from 'inquirer'
 
 import { validateFolderPath } from './files/effect'
@@ -53,7 +52,7 @@ export const PROMPTS_RECORD = {
     type: 'input',
     name: 'folderPaths',
     message: 'Input absolute paths to folders (separated by comma):',
-    validate: (input: string) => {
+    validate: (input: string): boolean | string => {
       const paths = input.split(',').map(p => p.trim())
       const invalidPath = paths.find(folderPath =>
         typeof validateFolderPath(folderPath) === 'string'
