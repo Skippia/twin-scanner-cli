@@ -31,7 +31,7 @@ export type TUpdateContentInTxtFilesEffect = (
       unique: readonly string[]
     }
   >,
-) => Promise<void>
+) => Promise<void[] | undefined>
 
 /**
  * @example

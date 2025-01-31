@@ -19,8 +19,9 @@ export const extractTorrentFileNameFromURL = (url: string): string => {
 
     return `[${domain}].t${topicId}.torrent`
   }
-  catch (error) {
+  catch (_err) {
     console.error('[url]: ', url)
+    // eslint-disable-next-line functional/no-throw-statements
     throw new Error('invalid_url.torrent')
   }
 }
@@ -30,13 +31,14 @@ export const convertTorrentFilenameToURL = (fileName: string): string => {
 
   if (!isOnlyDigits(topicId)) {
     console.error('[filename]: ', fileName)
+    // eslint-disable-next-line functional/no-throw-statements
     throw new Error('invalid_filename.torrent')
   }
 
   return `${environments.TORRENT_URL}?t=${topicId}`
 }
 
-export const extractContentFromTxtFile = (file: TFileInfo) =>
+export const extractContentFromTxtFile = (file: Readonly<TFileInfo>) =>
   file.content
     ?.split('\n')
     .filter(v => Boolean(v))
@@ -93,6 +95,6 @@ const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = 
  */
 export const getDuplicateMapFromTxtFilesInFolders = async (
   folderList: readonly string[],
-  options: { strategy: TExtensionsRemoveDuplicatesStrategies['txt'] }
+  options: Readonly<{ strategy: TExtensionsRemoveDuplicatesStrategies['txt'] }>
 ): Promise<TDuplicateFormatTxt> =>
   await Promise.all(folderList.map(getDuplicateMapFromTxtFilesInFolder(options.strategy)))

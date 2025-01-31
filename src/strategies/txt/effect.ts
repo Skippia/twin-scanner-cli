@@ -12,13 +12,10 @@ export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect
 
     const writeToFilesTasks = Object.entries(fileMap).reduce<Promise<void>[]>((acc, [absolutePath, contentMap]) => {
       const writeToFileTask = writeIntoFileEffect(absolutePath, contentMap.unique.map(converter).join('\n'))
-
-      acc.push(writeToFileTask)
-
-      return acc
+      return [...acc, writeToFileTask]
     }, [])
 
-    await Promise.all(writeToFilesTasks)
+    return await Promise.all(writeToFilesTasks)
   }
 
 export const removeContentFromTxtFileEffect = async (pathToTxtFile: AbsolutePath, stringToDelete: string) => {
@@ -26,12 +23,12 @@ export const removeContentFromTxtFileEffect = async (pathToTxtFile: AbsolutePath
   const parsedContent = rawContent.split('\n')
   const updatedContent = parsedContent.filter(v => v !== stringToDelete).join('\n')
 
-  await writeIntoFileEffect(pathToTxtFile, updatedContent)
+  return await writeIntoFileEffect(pathToTxtFile, updatedContent)
 }
 
 export const removeDuplicatesFromTxtFileEffect = async (
-  txtFilesMapDuplicates: TDuplicateFormatTxt,
+  txtFilesMapDuplicates: Readonly<TDuplicateFormatTxt>,
   readonly: boolean
-) => {
-  await Promise.all(txtFilesMapDuplicates.map(updateContentInTxtFilesEffect(convertTorrentFilenameToURL, { readonly })))
-}
+) => await Promise.all(
+  txtFilesMapDuplicates.map(updateContentInTxtFilesEffect(convertTorrentFilenameToURL, { readonly }))
+)

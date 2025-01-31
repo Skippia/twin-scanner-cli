@@ -7,9 +7,9 @@ export type TOutputFormatTxt = {
   amount_duplicates_names: number
   readonlyMode: boolean
 }[]
-export type TConvertToOutputTxt = (options: {
+export type TConvertToOutputTxt = (options: Readonly<{
   readonly: boolean
-}) => (raw: Awaited<ReturnType<TGetDuplicatesInFoldersTxt>>) => TOutputFormatTxt
+}>) => (raw: Readonly<Awaited<ReturnType<TGetDuplicatesInFoldersTxt>>>) => TOutputFormatTxt
 
 export const convertToOutputTxt: TConvertToOutputTxt = options => raw =>
   raw.flatMap(val =>

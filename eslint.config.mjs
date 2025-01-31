@@ -6,9 +6,10 @@ import tseslint from 'typescript-eslint'
 
 const allPathPattern = ['**/*.ts']
 const fpPathPattern = [
-  'src/shared/**/*.ts',
   'src/files/**/*.ts',
   'src/logic/**/*.ts',
+  'src/shared/**/*.ts',
+  'src/strategies/**/*.ts',
 ]
 
 export default antfu(
