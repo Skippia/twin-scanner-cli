@@ -2,9 +2,9 @@ import type { TOutputFormatTorrent } from '../formatter'
 
 import type { TGetDuplicatesInFolderTorrent } from './types'
 
-export type TConvertToOutputTorrent = (options: {
+export type TConvertToOutputTorrent = (options: Readonly<{
   readonly: boolean
-}) => (raw: Awaited<ReturnType<ReturnType<TGetDuplicatesInFolderTorrent>>>[]) => TOutputFormatTorrent
+}>) => (raw: readonly Awaited<ReturnType<ReturnType<TGetDuplicatesInFolderTorrent>>>[]) => TOutputFormatTorrent
 
 export const convertToOutputTorrent: TConvertToOutputTorrent = options => raws =>
   raws.map(raw => ({

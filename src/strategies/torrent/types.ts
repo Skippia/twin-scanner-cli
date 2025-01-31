@@ -4,7 +4,7 @@ import type { TExtractorsUsefulInfo } from '@/logic/types'
 
 export type TTorrentFileInfoExtractor = TExtractorsUsefulInfo['torrent']
 
-export type TGetDuplicatesInFolderTorrent = (strategy: TExtensionsRemoveDuplicatesStrategies['torrent']) => (
+export type TGetDuplicatesInFolderTorrent = (strategy: Readonly<TExtensionsRemoveDuplicatesStrategies['torrent']>) => (
   folder: AbsolutePath,
 ) => Promise<{
   pathsForDuplicateFiles: readonly AbsolutePath[]
@@ -13,7 +13,7 @@ export type TGetDuplicatesInFolderTorrent = (strategy: TExtensionsRemoveDuplicat
   folder: string
 }>
 
-export type TGetDuplicatesInFoldersTxt = (folderList: RelativePath[]) => Promise<
+export type TGetDuplicatesInFoldersTxt = (folderList: readonly RelativePath[]) => Promise<
   Record<
     string,
     {

@@ -21,26 +21,26 @@ export type TOutputFormatTorrentUniversal = {
   readonlyMode: boolean
 }[]
 
-export type TConvertToOutputUniversal = (options: {
+export type TConvertToOutputUniversal = (options: Readonly<{
   readonly: boolean
-}) => (formats: {
+}>) => (formats: Readonly<{
   txt?: Parameters<ReturnType<TConvertToOutputTxt>>[0]
   torrent?: Parameters<ReturnType<TConvertToOutputTorrent>>[0]
-}) => [...TOutputFormatTorrentUniversal, { amount_all_names: number, amount_duplicates_names: number }]
+}>) => [...TOutputFormatTorrentUniversal, { amount_all_names: number, amount_duplicates_names: number }]
 
 export type TConvertToApplyExtractorStatistics = (
   input: Record<
     Filename,
     AbsolutePath[]
-    /**
-     * @example
-     * {
-     *  'cat.torrent': ['folder1/cat.torrent', 'folder2/animals.txt'],.
-     *  'dog.torrent': ['folder1/dog.torrent', 'folder2/dog.torrent'],.
-     * }
-     */
+  /**
+   * @example
+   * {
+   *  'cat.torrent': ['folder1/cat.torrent', 'folder2/animals.txt'],.
+   *  'dog.torrent': ['folder1/dog.torrent', 'folder2/dog.torrent'],.
+   * }
+   */
   >,
-  options: { readonly: boolean },
+  options: Readonly<{ readonly: boolean }>,
 ) => {
   duplicate_filename: string
   amount_duplicates: number
@@ -48,10 +48,10 @@ export type TConvertToApplyExtractorStatistics = (
   readonly_mode: boolean
 }[]
 
-export const sortByAlphabetical = <T>(arr: T[], _extractor?: (el: T) => string) => {
+export const sortByAlphabetical = <T>(arr: readonly T[], _extractor?: (el: T) => string) => {
   const extractor = (_extractor || (el => el)) as (el: T) => string
 
-  return arr.sort((a, b) => {
+  return [...arr].sort((a, b) => {
     const str1 = extractor(a)
     const str2 = extractor(b)
 
