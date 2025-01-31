@@ -1,4 +1,3 @@
-/* eslint-disable functional/functional-parameters */
 /* eslint-disable no-redeclare */
 export function asyncPipe<A>(a: A): Promise<A>
 export function asyncPipe<A, B>(a: A, ab: AnyFunction<A, B>): Promise<B>
@@ -19,6 +18,7 @@ export function asyncPipe<A, B, C, D, E>(
 
 export async function asyncPipe(
   input: unknown,
+  // eslint-disable-next-line functional/functional-parameters
   ...fns: readonly AnyFunction[]
 ): Promise<unknown> {
   return await fns.reduce(
@@ -41,6 +41,7 @@ export function asyncFlow<A, B, C, D, E>(
   de: AnyFunction<D, E>,
 ): AsyncFunction<A, E>
 
+// eslint-disable-next-line functional/functional-parameters
 export function asyncFlow(...fns: readonly AnyFunction[]): AsyncFunction {
   return async input => await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
 }
