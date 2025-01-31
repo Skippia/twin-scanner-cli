@@ -15,7 +15,7 @@ import type {
 } from './types'
 
 export const convertHeteroUniversalMapToMono = (
-  heterogenousUniversalMap: THeterogenousUniversalMapEl[]
+  heterogenousUniversalMap: readonly THeterogenousUniversalMapEl[]
 ): TMonogenousUniversalMapEl[] => {
   const arr: TMonogenousUniversalMapEl[][] = heterogenousUniversalMap
     .filter(v => Object.keys(v).length > 0)

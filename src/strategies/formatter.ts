@@ -84,7 +84,7 @@ export const convertToOutputUniversal: TConvertToOutputUniversal = options => (f
 export const convertToApplyExtractorStatistics: TConvertToApplyExtractorStatistics = (input, options) => {
   const formatted = sortByAlphabetical(Object.entries(input), el => el[0]).map(([filename, absolutePaths]) => {
     const foldersName = generateCombinationFolderName(
-      ...sortByAlphabetical(absolutePaths, p =>
+      sortByAlphabetical(absolutePaths, p =>
         p.endsWith('.torrent') ? p.split('/').at(-2)! : `${p.split('/').slice(-2).join('.')}`)
     )
       .split('_')

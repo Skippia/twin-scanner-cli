@@ -565,6 +565,26 @@ export default antfu(
       ...functional.configs.recommended.rules,
       'functional/no-conditional-statements': ['error', { allowReturningBranches: true }],
       'functional/no-expression-statements': ['error', { ignoreVoid: true, ignoreSelfReturning: true }],
+      'functional/functional-parameters': ['error', {
+        enforceParameterCount: false,
+        overrides: [
+          {
+            specifiers: [
+              {
+                from: 'file',
+              },
+            ],
+            options: {
+              enforceParameterCount: {
+                count: 'atLeastOne',
+                ignoreLambdaExpression: true,
+                ignoreIIFE: true,
+                ignoreGettersAndSetters: true,
+              },
+            },
+          },
+        ],
+      }],
       'noClosure/no-tagged-closures': 'error',
       // ...functional.configs.lite.rules,
       // ...functional.configs.stylistic.rules,
