@@ -8,7 +8,7 @@ import { readDir } from '@/files'
 import { getFilesInfo, isIndirectDuplicateFilename } from '@/logic/helpers'
 import type { TFileInfo } from '@/logic/types'
 
-export const isDuplicateTorrent = (filenames: readonly string[]) => (curFile: Readonly<TFileInfo>) =>
+export const isDuplicateTorrent = (filenames: readonly string[]) => (curFile: Readonly<TFileInfo>): boolean =>
   isIndirectDuplicateFilename(filenames, curFile.filename)
 
 const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strategy => async (folder) => {

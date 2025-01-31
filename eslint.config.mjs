@@ -5,12 +5,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 const allPathPattern = ['**/*.ts']
-const fpPathPattern = [
-  'src/files/**/*.ts',
-  'src/logic/**/*.ts',
-  'src/shared/**/*.ts',
-  'src/strategies/**/*.ts',
-]
+const fpPathPattern = allPathPattern
 
 export default antfu(
   {
@@ -525,7 +520,6 @@ export default antfu(
       'ts/no-unsafe-function-type': 'off',
       'ts/no-empty-object-type': 'off',
       'ts/interface-name-prefix': 'off',
-      'ts/explicit-function-return-type': 'off', // !!!
       'ts/explicit-module-boundary-types': 'off',
       'ts/no-empty-function': [
         'error',
@@ -562,6 +556,7 @@ export default antfu(
       },
     },
     rules: {
+      'ts/explicit-function-return-type': 'error', // !!!
       ...functional.configs.externalTypeScriptRecommended.rules,
       ...functional.configs.recommended.rules,
       'functional/no-conditional-statements': ['error', { allowReturningBranches: true }],
@@ -576,19 +571,14 @@ export default antfu(
               },
             ],
             options: {
-              enforceParameterCount: {
-                count: 'atLeastOne',
-                ignoreLambdaExpression: true,
-                ignoreIIFE: true,
-                ignoreGettersAndSetters: true,
-              },
+              enforceParameterCount: false,
             },
           },
         ],
       }],
       'noClosure/no-tagged-closures': 'error',
       // ...functional.configs.lite.rules,
-      // ...functional.configs.stylistic.rules,
+      ...functional.configs.stylistic.rules,
       // 'functional/no-return-void: ': 'off',
       // 'functional/prefer-immutable-types': [
       //   'off',

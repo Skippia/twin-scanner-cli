@@ -38,13 +38,13 @@ export const convertTorrentFilenameToURL = (fileName: string): string => {
   return `${environments.TORRENT_URL}?t=${topicId}`
 }
 
-export const extractContentFromTxtFile = (file: Readonly<TFileInfo>) =>
+export const extractContentFromTxtFile = (file: Readonly<TFileInfo>): string[] =>
   file.content
     ?.split('\n')
     .filter(v => Boolean(v))
     .map(extractTorrentFileNameFromURL) || ['']
 
-export const getDuplicatesFromTxtFile = (lines: readonly string[]) =>
+export const getDuplicatesFromTxtFile = (lines: readonly string[]): string[] =>
   lines.reduce<string[]>(
     (acc, cur, idx) => (lines.indexOf(cur, idx) !== lines.lastIndexOf(cur) ? [...acc, cur] : [...acc]),
     []

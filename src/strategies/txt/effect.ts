@@ -18,17 +18,18 @@ export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect
     return await Promise.all(writeToFilesTasks)
   }
 
-export const removeContentFromTxtFileEffect = async (pathToTxtFile: AbsolutePath, stringToDelete: string) => {
-  const rawContent = await getFileContentFromTxt(pathToTxtFile)
-  const parsedContent = rawContent.split('\n')
-  const updatedContent = parsedContent.filter(v => v !== stringToDelete).join('\n')
+export const removeContentFromTxtFileEffect
+  = async (pathToTxtFile: AbsolutePath, stringToDelete: string): Promise<void> => {
+    const rawContent = await getFileContentFromTxt(pathToTxtFile)
+    const parsedContent = rawContent.split('\n')
+    const updatedContent = parsedContent.filter(v => v !== stringToDelete).join('\n')
 
-  return await writeIntoFileEffect(pathToTxtFile, updatedContent)
-}
+    return await writeIntoFileEffect(pathToTxtFile, updatedContent)
+  }
 
 export const removeDuplicatesFromTxtFileEffect = async (
   txtFilesMapDuplicates: Readonly<TDuplicateFormatTxt>,
   readonly: boolean
-) => await Promise.all(
+): Promise<(void[] | undefined)[]> => await Promise.all(
   txtFilesMapDuplicates.map(updateContentInTxtFilesEffect(convertTorrentFilenameToURL, { readonly }))
 )

@@ -3,25 +3,25 @@ import path from 'node:path'
 
 import type { TGetRecursiveFilesAndFolders } from './types'
 
-export const readDir = (folder: string) => fs.readdir(folder)
+export const readDir = (folder: string): Promise<string[]> => fs.readdir(folder)
 export const getFileContentFromTxt = (filePath: string): Promise<string> => fs.readFile(filePath, { encoding: 'utf-8' })
 
-export const isNameInArrNames = ({ name, arrNames }: Readonly<{ name: string, arrNames: string[] }>) =>
+export const isNameInArrNames = ({ name, arrNames }: Readonly<{ name: string, arrNames: string[] }>): boolean =>
   arrNames.every(names => names.includes(name))
 
-export const checkIsFolderExists = async (pathToFolder: AbsolutePath) => {
+export const checkIsFolderExists = async (pathToFolder: AbsolutePath): Promise<boolean> => {
   try {
-    // eslint-disable-next-line functional/no-expression-statements
-    await fs.access(pathToFolder)
-    return true
+    return await fs.access(pathToFolder)
+      .then(() => true)
   }
-  catch (err) {
+  catch (_err) {
     console.warn(`Folder ${pathToFolder} not exists`)
     return false
   }
 }
 
-export const checkIfDirectory = async (fullPath: AbsolutePath) => (await fs.stat(fullPath)).isDirectory()
+export const checkIfDirectory = async (fullPath: AbsolutePath): Promise<boolean> =>
+  (await fs.stat(fullPath)).isDirectory()
 
 export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = async (folder, options) => {
   const processEntry = async (
@@ -59,7 +59,6 @@ export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = async (
 
   const initialEntries = await fs.readdir(folder)
   const { folders, files } = await processEntry(initialEntries, [], [])
-
   return options.flat
     ? [...folders, ...files]
     : { folders, files }
