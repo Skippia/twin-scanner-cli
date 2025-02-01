@@ -1,17 +1,25 @@
 import path from 'node:path'
 
+import * as A from 'fp-ts/Array'
+import { pipe } from 'fp-ts/function'
+import * as O from 'fp-ts/Option'
+import * as R from 'fp-ts/Record'
+import * as S from 'fp-ts/string'
+import * as TE from 'fp-ts/TaskEither'
+
 import type {
   ExtractorFileExtensions,
   TExtractInfoFromFile,
   TFileInfo,
-  TGetCommonFilesInFileMap,
-  TMonogenousUniversalMapEl,
 } from './types'
 
 import type { TUserChoices } from '@/cli'
-import { getFileContentFromTxt } from '@/files/readers'
+import { getFileContentFromTxtTE } from '@/files/system-operations'
 import { PREFIX_FILE_FOLDER } from '@/shared/constants'
-import { convertToApplyExtractorStatistics, convertToOutputUniversal } from '@/strategies/formatter'
+import {
+  convertToApplyExtractorStatistics,
+  convertToOutputUniversal,
+} from '@/strategies/formatter'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
 
 export const generateCombinationFolderName = (paths: ReadonlyArray<AbsolutePath>): string => {
@@ -35,100 +43,46 @@ export const extractOriginalFilename = (filename: string): Filename => {
   return original
 }
 
-export const isIndirectDuplicateFilename = (allFilenames: ReadonlyArray<string>, filename: string): boolean => {
+export const isIndirectDuplicateFilename = (
+  allFilenames: ReadonlyArray<string>,
+  filename: string
+): boolean => {
   const isMaybeDuplicate = filename.includes('(')
 
   if (!isMaybeDuplicate) return false
 
   const originalFilename = extractOriginalFilename(filename)
-  const originalFile = allFilenames.find(filename => filename === originalFilename)
 
-  return Boolean(originalFile)
+  return allFilenames.includes(originalFilename)
 }
 
-export const extractInfoFromFile: TExtractInfoFromFile = async (filePath) => {
+export const extractInfoFromFile: TExtractInfoFromFile = (filePath) => {
   const ext = path.extname(filePath).slice(1) as ExtractorFileExtensions
   const filename = path.basename(filePath)
-  const content = ext === 'txt' ? await getFileContentFromTxt(filePath) : null
 
-  return {
-    absolutePath: filePath,
-    content,
-    ext,
-    filename,
-  }
+  return pipe(
+    ext === 'txt'
+      ? getFileContentFromTxtTE(filePath)
+      : TE.right(''),
+    TE.map(content => ({
+      absolutePath: filePath,
+      content: content || null,
+      ext,
+      filename,
+    }))
+  )
 }
 
 export const getFilesInfo = (pathOptions: {
   readonly folder: string
-  readonly filenames: ReadonlyArray<string>
-}): Promise<ReadonlyArray<TFileInfo>> =>
-  Promise.all(pathOptions.filenames.map(filename => extractInfoFromFile(path.join(pathOptions.folder, filename))))
-
-export const processCombination = (
-  filesMapCache: { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl },
-  folderOrFilenames: ReadonlyArray<string>
-): { [key: string]: ReadonlyArray<string> } => {
-  // Get sorted files from the cache
-  const files = folderOrFilenames
-    .map(folderOrFilename => filesMapCache[folderOrFilename]!)
-    .sort((a, b) => (a.amount > b.amount ? 1 : -1))
-
-  const [sourceMapEl, ...targetMapEls] = files
-
-  // Process file map for current combination
-  const fileMap = sourceMapEl!.content.reduce(
-    (acc, curFilename) => {
-      const isDuplicate = targetMapEls.every(targetMapEl => targetMapEl.content.includes(curFilename))
-
-      if (isDuplicate) {
-        const pathsToDuplicateFiles = targetMapEls.map(targetMapEl =>
-          targetMapEl.type === 'torrent'
-            ? path.join(targetMapEl.folderOrFilename, curFilename)
-            : targetMapEl.folderOrFilename
-        )
-
-        return {
-          ...acc,
-          [curFilename]: [
-            sourceMapEl!.type === 'torrent'
-              ? path.join(sourceMapEl!.folderOrFilename, curFilename)
-              : sourceMapEl!.folderOrFilename,
-            ...pathsToDuplicateFiles,
-          ],
-        }
-      }
-
-      return acc
-    },
-    {} as { readonly [key: Filename]: ReadonlyArray<AbsolutePath> }
-  )
-
-  return fileMap
-}
+  readonly filenames: string[]
+}): TE.TaskEither<Error, TFileInfo[]> => pipe(
+  pathOptions.filenames,
+  A.map(filename => extractInfoFromFile(path.join(pathOptions.folder, filename))),
+  A.sequence(TE.ApplicativePar)
+)
 
 export const areAllTextFiles = (paths: ReadonlyArray<string>): boolean => paths.every(path => path.endsWith('.txt'))
-
-export const buildCommonFilesMap = (
-  filesMapCache: { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl },
-  combinationsGenerator: Generator<ReadonlyArray<string>>
-): ReturnType<TGetCommonFilesInFileMap> => {
-  const resultGenerator = function* (
-    combinationsGenerator: Generator<ReadonlyArray<string>>
-  ): Generator<{ [key: string]: ReadonlyArray<string> }> {
-    // eslint-disable-next-line functional/no-loop-statements
-    for (const combination of combinationsGenerator) {
-      const fileMap = processCombination(filesMapCache, combination)
-
-      // eslint-disable-next-line functional/no-conditional-statements
-      if (Object.keys(fileMap).length > 0) {
-        yield fileMap
-      }
-    }
-  }
-
-  return [...resultGenerator(combinationsGenerator)]
-}
 
 export function* getCombinationsGenerator(arr: ReadonlyArray<string>): Generator<ReadonlyArray<string>> {
   const n = arr.length
@@ -155,48 +109,25 @@ function* generateKLengthCombinations(arr: ReadonlyArray<string>, k: number): Ge
   yield * backtrack(0, [])
 }
 
-export const getUniqueNames = (sourceArr: ReadonlyArray<string>): ReadonlyArray<string> => [...new Set(sourceArr)]
+export const getUniqueNames = (sourceArr: string[]): ReadonlyArray<string> => pipe(
+  sourceArr,
+  A.uniq(S.Eq)
+)
 
-export const isOnlyDigits = (str?: string): boolean => (str ? /^\d+$/.test(str) : false)
+export const isOnlyDigits = (str?: string): boolean => pipe(
+  str,
+  O.fromNullable,
+  O.exists(s => /^\d+$/.test(s))
+)
 
-export function filterRecordByKeys<T extends { readonly [key: string]: unknown }>(
+export const filterRecordByKeys = <T extends { readonly [key: string]: unknown }>(
   record: T,
   keys: ReadonlyArray<string>
-): Readonly<T> {
-  const filteredEntries = Object.entries(record).filter(([key]) => keys.includes(key))
-
-  return Object.fromEntries(filteredEntries) as T
-}
-
-export const mergeFileMapsExtraction = (
-  fileMapsExtraction: ReadonlyArray<{ [key: string]: ReadonlyArray<string> }>
-): { [key: string]: ReadonlyArray<string> } => {
-  const flattenFileMapsExtraction = fileMapsExtraction.flatMap((el) => {
-    const keysOfCurrentRecord = Object.keys(el)
-    const flattenRecordArr = keysOfCurrentRecord.map(key => ({
-      [key]: el[key]!,
-    }))
-    return flattenRecordArr
-  })
-
-  const mergedFileMapsExtraction = flattenFileMapsExtraction.reduce(
-    (acc, cur) => {
-      const currentFilename = Object.keys(cur)[0]!
-      const currentAbsolutePaths = Object.values(cur)[0]!
-
-      return {
-        ...acc,
-        [currentFilename]:
-          (acc[currentFilename]?.length || 0) > currentAbsolutePaths.length
-            ? acc[currentFilename]!
-            : currentAbsolutePaths,
-      }
-    },
-    {} as { [key: string]: ReadonlyArray<string> }
-  )
-
-  return mergedFileMapsExtraction
-}
+): Readonly<T> =>
+  pipe(
+    record,
+    R.filterWithIndex(key => keys.includes(key))
+  ) as T
 
 export const getDuplicateStoragePath = (options: TUserChoices): AbsolutePath => {
   const rootPathToStorageFolder = (options.folderPath || options.folderPaths?.[0]) as string
@@ -208,23 +139,21 @@ export const getDuplicateStoragePath = (options: TUserChoices): AbsolutePath => 
 export const logExtractionStatistics = (
   fileMap: { readonly [key: string]: ReadonlyArray<string> },
   readonly: boolean
-): void => {
-  const formatted = convertToApplyExtractorStatistics(fileMap, { readonly })
-  console.table(formatted)
-}
+): void => pipe(
+  fileMap,
+  convertToApplyExtractorStatistics({ readonly }),
+  console.table
+)
 
 export const logUniversalStatistics = (
   duplicateMaps: ReadonlyArray<TDuplicateFormatTorrent | TDuplicateFormatTxt>,
   options: TUserChoices
-): void => {
-  const formatted = convertToOutputUniversal({ readonly: options.readonly })(
-    options.fileExtensions.reduce(
-      (acc, ext) => ({
-        ...acc,
-        [ext]: duplicateMaps[options.fileExtensions.indexOf(ext)],
-      }),
-      {}
-    )
-  )
-  console.table(formatted)
-}
+): void => pipe(
+  options.fileExtensions,
+  A.reduce({}, (acc, ext) => ({
+    ...acc,
+    [ext]: duplicateMaps[options.fileExtensions.indexOf(ext)],
+  })),
+  convertToOutputUniversal({ readonly: options.readonly }),
+  console.table
+)

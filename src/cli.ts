@@ -22,7 +22,7 @@ export type TUserChoices = {
   readonly folderMode: 'single' | 'multiple'
   readonly folderPath?: string
   readonly folderPaths?: ReadonlyArray<string>
-  readonly fileExtensions: ReadonlyArray<string>
+  readonly fileExtensions: string[]
   readonly rootFolder: string
   readonly recursive: boolean
   readonly readonly: boolean

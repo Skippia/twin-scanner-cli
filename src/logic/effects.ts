@@ -6,7 +6,6 @@ import {
   getDuplicateStoragePath,
   logExtractionStatistics,
   logUniversalStatistics,
-  mergeFileMapsExtraction,
 } from './helpers'
 import type { ExtractorFileExtensions } from './types'
 
