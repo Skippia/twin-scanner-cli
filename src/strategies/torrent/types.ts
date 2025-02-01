@@ -4,40 +4,36 @@ import type { TExtractorsUsefulInfo } from '@/logic/types'
 
 export type TTorrentFileInfoExtractor = TExtractorsUsefulInfo['torrent']
 
-export type TGetDuplicatesInFolderTorrent = (strategy: Readonly<TExtensionsRemoveDuplicatesStrategies['torrent']>) => (
+export type TGetDuplicatesInFolderTorrent = (strategy: TExtensionsRemoveDuplicatesStrategies['torrent']) => (
   folder: AbsolutePath,
 ) => Promise<{
-  pathsForDuplicateFiles: readonly AbsolutePath[]
-  uniqueLength: number
-  duplicateLength: number
-  folder: string
+  readonly pathsForDuplicateFiles: ReadonlyArray<AbsolutePath>
+  readonly uniqueLength: number
+  readonly duplicateLength: number
+  readonly folder: string
 }>
 
-export type TGetDuplicatesInFoldersTxt = (folderList: readonly RelativePath[]) => Promise<
-  Record<
-    string,
-    {
-      unique: readonly string[]
-      duplicates: readonly string[]
-      duplicatesLength: number
-      uniqueLength: number
-    }
-  >[]
->
-
-export type TDuplicateFormatTorrent = {
-  pathsForDuplicateFiles: readonly AbsolutePath[]
-  uniqueLength: number
-  duplicateLength: number
-  folder: string
-}[]
-
-export type TDuplicateFormatTxt = Record<
-  string,
-  {
-    unique: readonly string[]
-    duplicates: readonly string[]
-    duplicatesLength: number
-    uniqueLength: number
+export type TGetDuplicatesInFoldersTxt = (folderList: ReadonlyArray<RelativePath>) => Promise<{
+  readonly [key: string]: {
+    readonly unique: ReadonlyArray<string>
+    readonly duplicates: ReadonlyArray<string>
+    readonly duplicatesLength: number
+    readonly uniqueLength: number
   }
->[]
+}>
+
+export type TDuplicateFormatTorrent = ReadonlyArray<{
+  readonly pathsForDuplicateFiles: ReadonlyArray<AbsolutePath>
+  readonly uniqueLength: number
+  readonly duplicateLength: number
+  readonly folder: string
+}>
+
+export type TDuplicateFormatTxt = ReadonlyArray<{
+  readonly [key: string]: {
+    readonly unique: ReadonlyArray<string>
+    readonly duplicates: ReadonlyArray<string>
+    readonly duplicatesLength: number
+    readonly uniqueLength: number
+  }
+}>

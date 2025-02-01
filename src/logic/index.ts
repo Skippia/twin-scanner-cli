@@ -15,9 +15,9 @@ import type {
 } from './types'
 
 export const convertHeteroUniversalMapToMono = (
-  heterogenousUniversalMap: readonly THeterogenousUniversalMapEl[]
-): TMonogenousUniversalMapEl[] => {
-  const arr: TMonogenousUniversalMapEl[][] = heterogenousUniversalMap
+  heterogenousUniversalMap: ReadonlyArray<THeterogenousUniversalMapEl>
+): ReadonlyArray<TMonogenousUniversalMapEl> => {
+  const arr: ReadonlyArray<ReadonlyArray<TMonogenousUniversalMapEl>> = heterogenousUniversalMap
     .filter(v => Object.keys(v).length > 0)
     .map((v) => {
       if (v.type === 'txt') {
@@ -43,7 +43,7 @@ export const convertHeteroUniversalMapToMono = (
 }
 
 export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = async (folder, strategies) => {
-  const extensions = Object.keys(strategies) as ExtractorFileExtensions[]
+  const extensions = Object.keys(strategies) as ReadonlyArray<ExtractorFileExtensions>
   const filenames = await readDir(folder)
 
   const filenamesMapByExts = await extensions.reduce(
@@ -59,9 +59,7 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = asy
         },
       ]
     },
-    Promise.resolve([] as Array<{ ext: ExtractorFileExtensions, filesInfo: TFileInfo[] }>) as Promise<
-      Array<{ ext: ExtractorFileExtensions, filesInfo: TFileInfo[] }>
-    >
+    Promise.resolve([] as ReadonlyArray<{ ext: ExtractorFileExtensions, filesInfo: ReadonlyArray<TFileInfo> }>)
   )
 
   const contentMapByExts = filenamesMapByExts
@@ -81,7 +79,10 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = asy
   const heterogeneousMapEl = contentMapByExts.reduce((acc, cur) => {
     const content
       = cur.ext === 'txt'
-        ? (cur.info as TContent[]).map(content => ({ filename: content.filename, content: content.content }))
+        ? (cur.info as ReadonlyArray<TContent>).map(content => ({
+            filename: content.filename,
+            content: content.content,
+          }))
         : cur.info
 
     const el = [
@@ -94,7 +95,7 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = asy
     ]
 
     return el
-  }, [] as THeterogenousUniversalMapEl[])
+  }, [] as ReadonlyArray<THeterogenousUniversalMapEl>)
 
   return heterogeneousMapEl
 }
@@ -115,12 +116,12 @@ export const getCommonFilesInFileMap: TGetCommonFilesInFileMap = (universalFileM
   const absolutePaths = universalFileMap.map(v => v.folderOrFilename)
   const nextCombinationGenerator = getCombinationsGenerator(absolutePaths)
 
-  const filesMapCache: Record<AbsolutePath, TMonogenousUniversalMapEl> = absolutePaths.reduce(
+  const filesMapCache: { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl } = absolutePaths.reduce(
     (acc, folderOrFilename) =>
       ({
         ...acc,
         [folderOrFilename]: universalFileMap.find(el => el.folderOrFilename === folderOrFilename),
-      }) satisfies Record<AbsolutePath, TMonogenousUniversalMapEl>,
+      }) satisfies { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl },
     {}
   )
 

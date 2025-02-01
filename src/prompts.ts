@@ -4,7 +4,7 @@ import { validateFolderPath } from './files/effect'
 
 type FunctionReturningTPromptEl = (() => TPromptEl) | ((val: string) => TPromptEl)
 
-export type TPromptEl = Parameters<typeof inquirer['prompt']>[0]
+export type TPromptEl = Readonly<Parameters<(typeof inquirer)['prompt']>[0]>
 
 export const PROMPTS_RECORD = {
   getRootFolderPrompt: (rootPathFolder: string): TPromptEl => ({
@@ -18,7 +18,7 @@ export const PROMPTS_RECORD = {
     suggestOnly: false,
     depthLimit: 1,
     // @ts-expect-error ...
-    validate: ({ short }: Readonly<{ short: string }>) => validateFolderPath(short),
+    validate: ({ short }: { readonly short: string }) => validateFolderPath(short),
   }),
   getFolderModePrompt: (): TPromptEl => ({
     type: 'list',
@@ -46,7 +46,7 @@ export const PROMPTS_RECORD = {
     suggestOnly: false,
     depthLimit: 1,
     // @ts-expect-error ...
-    validate: ({ short }: Readonly<{ short: string }>) => validateFolderPath(short),
+    validate: ({ short }: { readonly short: string }) => validateFolderPath(short),
   }),
   getMultipleFoldersPrompt: (): TPromptEl => ({
     type: 'input',
@@ -54,12 +54,8 @@ export const PROMPTS_RECORD = {
     message: 'Input absolute paths to folders (separated by comma):',
     validate: (input: string): boolean | string => {
       const paths = input.split(',').map(p => p.trim())
-      const invalidPath = paths.find(folderPath =>
-        typeof validateFolderPath(folderPath) === 'string'
-      )
-      return invalidPath
-        ? `Invalid path: ${invalidPath}; ${validateFolderPath(invalidPath)}`
-        : true
+      const invalidPath = paths.find(folderPath => typeof validateFolderPath(folderPath) === 'string')
+      return invalidPath ? `Invalid path: ${invalidPath}; ${validateFolderPath(invalidPath)}` : true
     },
     filter: (input: string) => input.split(',').map(p => p.trim()),
   }),
@@ -89,5 +85,5 @@ export const PROMPTS_RECORD = {
       { name: 'No, just get info about duplicates (readonly mode)', value: true },
       { name: 'Yes', value: false },
     ],
-  })
-} as const satisfies Record<string, FunctionReturningTPromptEl>
+  }),
+} as const satisfies { readonly [key: string]: FunctionReturningTPromptEl }

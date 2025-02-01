@@ -5,26 +5,27 @@ import { txtDuplicateStrategy } from './txt/index'
 import type { TExtractorsUsefulInfo, TFileInfo } from '@/logic/types'
 import type { UFileExtension } from '@/shared/constants'
 
-export type TExtensionsRemoveDuplicatesStrategies = Readonly<{
-  [UFileExtension.TXT]: {
-    extractor: TExtractorsUsefulInfo['txt']
-    getUniqueNames: (lines: readonly string[]) => readonly string[]
-    getDuplicates: (lines: readonly string[], uniqueLines: readonly string[]) => readonly string[]
-    removeContentFromFileEffect: (src: AbsolutePath, contentToDelete: string) => Promise<void>
-    removeDuplicatesEffect: (duplicateMap: Readonly<TDuplicateFormatTxt>, readonly: boolean) => Promise<void>
-    getDuplicateMap: (folderList: readonly string[]) => Promise<TDuplicateFormatTxt>
+export type TExtensionsRemoveDuplicatesStrategies = {
+  readonly [UFileExtension.TXT]: {
+    readonly extractor: TExtractorsUsefulInfo['txt']
+    readonly getUniqueNames: (lines: ReadonlyArray<string>) => ReadonlyArray<string>
+    readonly getDuplicates: (lines: ReadonlyArray<string>, uniqueLines: ReadonlyArray<string>) => ReadonlyArray<string>
+    readonly removeContentFromFileEffect: (src: AbsolutePath, contentToDelete: string) => Promise<void>
+    readonly removeDuplicatesEffect:
+    (duplicateMap: TDuplicateFormatTxt, readonly: boolean) => Promise<(void[] | undefined)[]>
+    readonly getDuplicateMap: (folderList: ReadonlyArray<string>) => Promise<TDuplicateFormatTxt>
   }
-  [UFileExtension.TORRENT]: {
-    extractor: TExtractorsUsefulInfo['torrent']
-    isDuplicate: (filenames: readonly string[]) => (curFile: Readonly<TFileInfo>) => boolean
-    moveFileEffect: (src: AbsolutePath, dest: AbsolutePath) => Promise<void>
-    removeDuplicatesEffect: (
-      duplicateMap: Readonly<TDuplicateFormatTorrent>,
-      readonly: boolean
-    ) => Promise<undefined | void[]>
-    getDuplicateMap: (folderList: readonly string[]) => Promise<TDuplicateFormatTorrent>
+  readonly [UFileExtension.TORRENT]: {
+    readonly extractor: TExtractorsUsefulInfo['torrent']
+    readonly isDuplicate: (filenames: ReadonlyArray<string>) => (curFile: TFileInfo) => boolean
+    readonly moveFileEffect: (src: AbsolutePath, dest: AbsolutePath) => Promise<void>
+    readonly removeDuplicatesEffect: (
+      duplicateMap: TDuplicateFormatTorrent,
+      readonly: boolean,
+    ) => Promise<void[] | undefined>
+    readonly getDuplicateMap: (folderList: ReadonlyArray<string>) => Promise<TDuplicateFormatTorrent>
   }
-}>
+}
 
 export const strategies: TExtensionsRemoveDuplicatesStrategies = {
   txt: txtDuplicateStrategy,

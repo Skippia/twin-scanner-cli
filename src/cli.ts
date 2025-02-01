@@ -21,8 +21,8 @@ const registerInquirerPrompt = (inquirerInstance: Readonly<typeof PromptModule>)
 export type TUserChoices = {
   readonly folderMode: 'single' | 'multiple'
   readonly folderPath?: string
-  readonly folderPaths?: readonly string[]
-  readonly fileExtensions: readonly string[]
+  readonly folderPaths?: ReadonlyArray<string>
+  readonly fileExtensions: ReadonlyArray<string>
   readonly rootFolder: string
   readonly recursive: boolean
   readonly readonly: boolean
@@ -37,13 +37,13 @@ const collectUserChoices = async (): Promise<TUserChoices> => {
   const { rootFolder } = await inquirer.prompt([PROMPTS_RECORD.getRootFolderPrompt(rootPathFolder)])
   const { folderMode } = await inquirer.prompt([PROMPTS_RECORD.getFolderModePrompt()])
 
-  const folderConfig = folderMode === 'single'
-    ? { folderPath: (await inquirer.prompt([PROMPTS_RECORD.getSingleFolderPrompt(rootFolder as string)])).folderPath }
-    : { folderPaths: (await inquirer.prompt([PROMPTS_RECORD.getMultipleFoldersPrompt()])).folderPaths }
+  const folderConfig
+    = folderMode === 'single'
+      ? { folderPath: (await inquirer.prompt([PROMPTS_RECORD.getSingleFolderPrompt(rootFolder as string)])).folderPath }
+      : { folderPaths: (await inquirer.prompt([PROMPTS_RECORD.getMultipleFoldersPrompt()])).folderPaths }
 
-  const recursive = folderMode === 'single'
-    ? (await inquirer.prompt([PROMPTS_RECORD.getRecursivePrompt()])).recursive
-    : false
+  const recursive
+    = folderMode === 'single' ? (await inquirer.prompt([PROMPTS_RECORD.getRecursivePrompt()])).recursive : false
 
   const { fileExtensions } = await inquirer.prompt([PROMPTS_RECORD.getExtensionsPrompt()])
   const { readonly } = await inquirer.prompt([PROMPTS_RECORD.getReadonlyPrompt()])

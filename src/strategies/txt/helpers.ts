@@ -38,14 +38,14 @@ export const convertTorrentFilenameToURL = (fileName: string): string => {
   return `${environments.TORRENT_URL}?t=${topicId}`
 }
 
-export const extractContentFromTxtFile = (file: Readonly<TFileInfo>): string[] =>
+export const extractContentFromTxtFile = (file: TFileInfo): ReadonlyArray<string> =>
   file.content
     ?.split('\n')
-    .filter(v => Boolean(v))
+    .filter(Boolean)
     .map(extractTorrentFileNameFromURL) || ['']
 
-export const getDuplicatesFromTxtFile = (lines: readonly string[]): string[] =>
-  lines.reduce<string[]>(
+export const getDuplicatesFromTxtFile = (lines: ReadonlyArray<string>): ReadonlyArray<string> =>
+  lines.reduce<ReadonlyArray<string>>(
     (acc, cur, idx) => (lines.indexOf(cur, idx) !== lines.lastIndexOf(cur) ? [...acc, cur] : [...acc]),
     []
   )
@@ -75,15 +75,14 @@ const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = 
         },
       }
     },
-    {} as Record<
-      AbsolutePath,
-      {
-        unique: readonly string[]
-        duplicates: readonly string[]
-        duplicatesLength: number
-        uniqueLength: number
+    {} as {
+      readonly [key: AbsolutePath]: {
+        readonly unique: ReadonlyArray<string>
+        readonly duplicates: ReadonlyArray<string>
+        readonly duplicatesLength: number
+        readonly uniqueLength: number
       }
-    >
+    }
   )
 
   return updateTxtMapFiles
@@ -94,7 +93,7 @@ const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = 
  * Create duplicate maps for all .txt files in folders
  */
 export const getDuplicateMapFromTxtFilesInFolders = async (
-  folderList: readonly string[],
-  options: Readonly<{ strategy: TExtensionsRemoveDuplicatesStrategies['txt'] }>
+  folderList: ReadonlyArray<string>,
+  options: { readonly strategy: TExtensionsRemoveDuplicatesStrategies['txt'] }
 ): Promise<TDuplicateFormatTxt> =>
   await Promise.all(folderList.map(getDuplicateMapFromTxtFilesInFolder(options.strategy)))

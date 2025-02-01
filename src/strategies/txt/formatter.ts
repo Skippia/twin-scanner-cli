@@ -1,15 +1,21 @@
-import type { TGetDuplicatesInFoldersTxt } from '../torrent/types'
-
-export type TOutputFormatTxt = {
-  filename: string
-  amount_all_names: number
-  amount_unique_names: number
-  amount_duplicates_names: number
-  readonlyMode: boolean
+export type TOutputFormatTxt = readonly {
+  readonly filename: string
+  readonly amount_all_names: number
+  readonly amount_unique_names: number
+  readonly amount_duplicates_names: number
+  readonly readonlyMode: boolean
 }[]
-export type TConvertToOutputTxt = (options: Readonly<{
-  readonly: boolean
-}>) => (raw: Readonly<Awaited<ReturnType<TGetDuplicatesInFoldersTxt>>>) => TOutputFormatTxt
+
+export type TConvertToOutputTxt = (options: { readonly readonly: boolean }) => (
+  raw: ReadonlyArray<{
+    readonly [key: string]: {
+      readonly unique: ReadonlyArray<string>
+      readonly duplicates: ReadonlyArray<string>
+      readonly duplicatesLength: number
+      readonly uniqueLength: number
+    }
+  }>,
+) => TOutputFormatTxt
 
 export const convertToOutputTxt: TConvertToOutputTxt = options => raw =>
   raw.flatMap(val =>

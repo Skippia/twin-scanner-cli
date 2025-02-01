@@ -17,7 +17,8 @@ export const removeFilesEffect: TRemoveFilesEffect = options => async (filenameP
 export const createFolderEffect = (folderPath: AbsolutePath): Promise<string> =>
   fs.mkdir(folderPath, { recursive: true }) as Promise<string>
 
-export const writeIntoFileEffect = (filePath: string, content: string): Promise<void> => fs.writeFile(filePath, content, { encoding: 'utf-8' })
+export const writeIntoFileEffect = (filePath: string, content: string): Promise<void> =>
+  fs.writeFile(filePath, content, { encoding: 'utf-8' })
 
 export const moveFileEffect = async (src: AbsolutePath, dest: AbsolutePath): Promise<void> => {
   try {
@@ -47,6 +48,7 @@ export const validateFolderPath = (folderPath: string): boolean | string => {
 export const removeEmptyFoldersInFolderEffect1 = async (folderPath: AbsolutePath): Promise<void[] | undefined> => {
   try {
     const filesAndFolders = await readDir(folderPath)
+
     const onlyFolders = await filesAndFolders.reduce(
       async (acc, fileOrFolder) => {
         const fullPath = path.join(folderPath, fileOrFolder)
@@ -62,14 +64,12 @@ export const removeEmptyFoldersInFolderEffect1 = async (folderPath: AbsolutePath
     const candiatesToRemove = await Promise.all(
       onlyFolders.map(async folder => ({
         folder,
-        files: await readDir(folder)
+        files: await readDir(folder),
       }))
-    )
-      .then(filesAndFolders => filesAndFolders.filter(({ files }) => files.length === 0))
+    ).then(filesAndFolders => filesAndFolders.filter(({ files }) => files.length === 0))
 
     return await Promise.all(candiatesToRemove.map(({ folder }) => fs.rmdir(folder)))
   }
-
   catch (error) {
     console.warn('Error during removing empty folder', folderPath)
   }
@@ -83,21 +83,21 @@ export const removeEmptyFoldersInFolderEffect = async (folderPath: AbsolutePath)
     const files = await fs.readdir(current!)
 
     return files.length === 0
-      ? await fs.rmdir(current!)
-        .then(() => processFolders(remaining))
+      ? await fs.rmdir(current!).then(() => processFolders(remaining))
       : await processFolders(remaining)
   }
 
   try {
     const entries = await readDir(folderPath)
 
-    const onlyFolders = await (
-      entries.reduce(async (acc, fileOrFolder) => {
+    const onlyFolders = await entries.reduce(
+      async (acc, fileOrFolder) => {
         const fullPath = path.join(folderPath, fileOrFolder)
         const isFolder = await checkIfDirectory(fullPath)
 
-        return isFolder ? [...(await acc), fullPath] : (await acc)
-      }, Promise.resolve([] as string[]))
+        return isFolder ? [...(await acc), fullPath] : await acc
+      },
+      Promise.resolve([] as string[])
     )
 
     return await processFolders(onlyFolders)
