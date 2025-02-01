@@ -1,3 +1,5 @@
+import type * as TE from 'fp-ts/TaskEither'
+
 import type { TUserChoices } from '@/cli'
 import type { UFileExtension } from '@/shared/constants'
 import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
@@ -10,7 +12,7 @@ export type TFileInfo = {
 }
 
 export type ExtractorFileExtensions = Readonly<(typeof UFileExtension)[keyof typeof UFileExtension]>
-export type TExtractInfoFromFile = (filePath: AbsolutePath) => Promise<TFileInfo>
+export type TExtractInfoFromFile = (filePath: AbsolutePath) => TE.TaskEither<Error, TFileInfo>
 
 export type TExtractorsUsefulInfo = {
   readonly [UFileExtension.TORRENT]: (file: TFileInfo) => string
@@ -34,11 +36,10 @@ export type TUpdateContentInTxtFilesEffect = (
  * @example
  * { 'filename.ext': ['/path/to/file1.ext', '/path/to/file2.ext'] }
  */
-
 export type TGetUniversalFileMapFromFolders = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   options: TUserChoices,
-) => (folderList: ReadonlyArray<string>) => Promise<ReadonlyArray<TMonogenousUniversalMapEl>>
+) => (folderList: string[]) => TE.TaskEither<Error, ReadonlyArray<TMonogenousUniversalMapEl>>
 
 export type TGetCommonFilesInFileMap = (
   universalFileMap: ReadonlyArray<TMonogenousUniversalMapEl>,
@@ -47,7 +48,7 @@ export type TGetCommonFilesInFileMap = (
 export type TGetUniversalFileMapFromFolder = (
   folder: string,
   strategies: TExtensionsRemoveDuplicatesStrategies,
-) => Promise<ReadonlyArray<THeterogenousUniversalMapEl>>
+) => TE.TaskEither<Error, THeterogenousUniversalMapEl[]>
 
 export type TContent = {
   filename: string
@@ -72,6 +73,6 @@ export type THeterogenousUniversalMapEl =
 export type TMonogenousUniversalMapEl = {
   readonly folderOrFilename: string
   readonly type: ExtractorFileExtensions
-  readonly content: ReadonlyArray<string>
+  readonly content: string[]
   readonly amount: number
 }
