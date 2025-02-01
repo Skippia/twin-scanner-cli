@@ -3,16 +3,20 @@ import path from 'node:path'
 
 import type { TGetRecursiveFilesAndFolders } from './types'
 
-export const readDir = (folder: string): Promise<string[]> => fs.readdir(folder)
+export const readDir = (folder: string): Promise<ReadonlyArray<string>> => fs.readdir(folder)
 export const getFileContentFromTxt = (filePath: string): Promise<string> => fs.readFile(filePath, { encoding: 'utf-8' })
 
-export const isNameInArrNames = ({ name, arrNames }: Readonly<{ name: string, arrNames: string[] }>): boolean =>
-  arrNames.every(names => names.includes(name))
+export const isNameInArrNames = ({
+  name,
+  arrNames,
+}: {
+  readonly name: string
+  readonly arrNames: ReadonlyArray<string>
+}): boolean => arrNames.every(names => names.includes(name))
 
 export const checkIsFolderExists = async (pathToFolder: AbsolutePath): Promise<boolean> => {
   try {
-    return await fs.access(pathToFolder)
-      .then(() => true)
+    return await fs.access(pathToFolder).then(() => true)
   }
   catch (_err) {
     console.warn(`Folder ${pathToFolder} not exists`)
@@ -25,10 +29,10 @@ export const checkIfDirectory = async (fullPath: AbsolutePath): Promise<boolean>
 
 export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = async (folder, options) => {
   const processEntry = async (
-    entries: readonly string[],
-    folders: readonly string[],
-    files: readonly string[]
-  ): Promise<{ folders: string[], files: string[] }> => {
+    entries: ReadonlyArray<string>,
+    folders: ReadonlyArray<string>,
+    files: ReadonlyArray<string>
+  ): Promise<{ folders: ReadonlyArray<string>, files: ReadonlyArray<string> }> => {
     if (entries.length === 0) return { folders: [...folders], files: [...files] }
 
     const [currentEl, ...remainingEntries] = entries
@@ -44,11 +48,7 @@ export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = async (
       const childEntries = await fs.readdir(fullPath)
       const childEntriesFullPath = childEntries.map(child => path.join(currentEl!, child))
 
-      return await processEntry(
-        [...remainingEntries, ...childEntriesFullPath],
-        [...folders, fullPath],
-        files
-      )
+      return await processEntry([...remainingEntries, ...childEntriesFullPath], [...folders, fullPath], files)
     }
 
     const isPermittedFile = options.permittedExtensions.some(ext => currentEl!.endsWith(`.${ext}`))
@@ -59,7 +59,5 @@ export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = async (
 
   const initialEntries = await fs.readdir(folder)
   const { folders, files } = await processEntry(initialEntries, [], [])
-  return options.flat
-    ? [...folders, ...files]
-    : { folders, files }
+  return options.flat ? [...folders, ...files] : { folders, files }
 }

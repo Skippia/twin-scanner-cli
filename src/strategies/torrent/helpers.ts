@@ -8,8 +8,10 @@ import { readDir } from '@/files'
 import { getFilesInfo, isIndirectDuplicateFilename } from '@/logic/helpers'
 import type { TFileInfo } from '@/logic/types'
 
-export const isDuplicateTorrent = (filenames: readonly string[]) => (curFile: Readonly<TFileInfo>): boolean =>
-  isIndirectDuplicateFilename(filenames, curFile.filename)
+export const isDuplicateTorrent
+  = (filenames: ReadonlyArray<string>) =>
+    (curFile: TFileInfo): boolean =>
+      isIndirectDuplicateFilename(filenames, curFile.filename)
 
 const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strategy => async (folder) => {
   const filenames = await readDir(folder)
@@ -53,8 +55,8 @@ const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strateg
  * Create duplicate maps for all .txt files in folders
  */
 export const getDuplicateTorrentsFilesInFolders = async (
-  folderList: readonly string[],
-  options: Readonly<{ strategy: TExtensionsRemoveDuplicatesStrategies['torrent'] }>
+  folderList: ReadonlyArray<string>,
+  options: { readonly strategy: TExtensionsRemoveDuplicatesStrategies['torrent'] }
 ): Promise<TDuplicateFormatTorrent> => {
   const duplicates = await Promise.all(folderList.map(getDuplicateTorrentsFilesInFolder(options.strategy)))
 

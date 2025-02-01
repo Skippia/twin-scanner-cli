@@ -1,12 +1,16 @@
 import antfu from '@antfu/eslint-config'
 import functional from 'eslint-plugin-functional'
-import noClosure from 'eslint-plugin-no-closure'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 const allPathPattern = ['**/*.ts']
 const fpPathPattern = allPathPattern
-// const fpPathPattern = ['src/cli.ts']
+// const fpPathPattern = [
+//   'src/shared/**/*.ts',
+//   'src/logic/**/*.ts',
+//   'src/files/**/*.ts',
+//   'src/strategies/**/*.ts',
+// ]
 
 export default antfu(
   {
@@ -404,7 +408,7 @@ export default antfu(
       'ts/consistent-generic-constructors': 'error',
       'ts/consistent-indexed-object-style': [
         'error',
-        //   'index-signature',
+        'index-signature',
       ],
       'ts/consistent-type-assertions': 'error',
       'ts/consistent-type-definitions': ['error', 'type'],
@@ -542,7 +546,6 @@ export default antfu(
     files: [...fpPathPattern],
     plugins: {
       functional,
-      noClosure,
     },
     languageOptions: {
       parser: tseslint.parser,
@@ -557,10 +560,16 @@ export default antfu(
       },
     },
     rules: {
-      ...functional.configs.externalTypeScriptRecommended.rules,
+      //* Core
       ...functional.configs.strict.rules,
+      ...functional.configs.externalTypeScriptRecommended.rules,
+      //* Other configs
+      ...functional.configs.currying.rules,
+      ...functional.configs.noExceptions.rules,
+      ...functional.configs.noMutations.rules,
+      ...functional.configs.noOtherParadigms.rules,
+      ...functional.configs.noStatements.rules,
       ...functional.configs.stylistic.rules,
-      // ...functional.configs.recommended.rules,
       'functional/no-conditional-statements': ['error', { allowReturningBranches: true }],
       'functional/no-expression-statements': ['error', { ignoreVoid: true, ignoreSelfReturning: true }],
       'functional/functional-parameters': ['error', {
@@ -580,26 +589,15 @@ export default antfu(
       }],
       'functional/type-declaration-immutability': 'off',
       'functional/prefer-immutable-types': ['error', {
-        enforcement: 'ReadonlyDeep',
+        enforcement: 'None',
         ignoreInferredTypes: true,
         parameters: {
           enforcement: 'ReadonlyDeep',
-        },
-        suggestions: {
-          ReadonlyDeep: [
-            [
-              {
-                pattern: '^(?:Readonly<(.+)>|(.+))$',
-                replace: 'ReadonlyDeep<$1$2>',
-              },
-            ],
-          ],
         },
       }],
       'functional/no-return-void': 'off',
       'functional/readonly-type': ['error', 'keyword'],
       // ------------------------------------------------
-      'noClosure/no-tagged-closures': 'error',
       'ts/explicit-function-return-type': 'error', // !!!
     },
   },

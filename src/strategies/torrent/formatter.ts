@@ -1,10 +1,13 @@
 import type { TOutputFormatTorrent } from '../formatter'
 
-import type { TGetDuplicatesInFolderTorrent } from './types'
-
-export type TConvertToOutputTorrent = (options: Readonly<{
-  readonly: boolean
-}>) => (raw: readonly Awaited<ReturnType<ReturnType<TGetDuplicatesInFolderTorrent>>>[]) => TOutputFormatTorrent
+export type TConvertToOutputTorrent = (options: { readonly readonly: boolean }) => (
+  raw: ReadonlyArray<{
+    readonly pathsForDuplicateFiles: ReadonlyArray<AbsolutePath>
+    readonly uniqueLength: number
+    readonly duplicateLength: number
+    readonly folder: string
+  }>,
+) => TOutputFormatTorrent
 
 export const convertToOutputTorrent: TConvertToOutputTorrent = options => raws =>
   raws.map(raw => ({

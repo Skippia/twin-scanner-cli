@@ -19,12 +19,9 @@ export function asyncPipe<A, B, C, D, E>(
 export async function asyncPipe(
   input: unknown,
   // eslint-disable-next-line functional/functional-parameters
-  ...fns: readonly AnyFunction[]
+  ...fns: ReadonlyArray<AnyFunction>
 ): Promise<unknown> {
-  return await fns.reduce(
-    async (acc, curFn) => curFn(await acc),
-    Promise.resolve(input)
-  )
+  return await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
 }
 
 export function asyncFlow<A, B>(ab: AnyFunction<A, B>): AsyncFunction<A, B>
@@ -42,6 +39,6 @@ export function asyncFlow<A, B, C, D, E>(
 ): AsyncFunction<A, E>
 
 // eslint-disable-next-line functional/functional-parameters
-export function asyncFlow(...fns: readonly AnyFunction[]): AsyncFunction {
+export function asyncFlow(...fns: ReadonlyArray<AnyFunction>): AsyncFunction {
   return async input => await fns.reduce(async (acc, curFn) => curFn(await acc), Promise.resolve(input))
 }

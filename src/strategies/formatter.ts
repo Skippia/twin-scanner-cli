@@ -1,37 +1,43 @@
 import { convertToOutputTorrent } from './torrent/formatter'
-import type { TConvertToOutputTorrent } from './torrent/formatter'
 import { convertToOutputTxt } from './txt/formatter'
-import type { TConvertToOutputTxt } from './txt/formatter'
 
 import { generateCombinationFolderName } from '@/logic/helpers'
 
-export type TOutputFormatTorrent = {
-  folder: string
-  amount_all_names: number
-  amount_unique_names: number
-  amount_duplicates_names: number
-  readonlyMode: boolean
-}[]
+export type TOutputFormatTorrent = ReadonlyArray<{
+  readonly folder: string
+  readonly amount_all_names: number
+  readonly amount_unique_names: number
+  readonly amount_duplicates_names: number
+  readonly readonlyMode: boolean
+}>
 
-export type TOutputFormatTorrentUniversal = {
-  folder_or_filename: string
-  amount_all_names: number
-  amount_unique_names: number
-  amount_duplicates_names: number
-  readonlyMode: boolean
-}[]
+export type TOutputFormatTorrentUniversal = ReadonlyArray<{
+  readonly folder_or_filename: string
+  readonly amount_all_names: number
+  readonly amount_unique_names: number
+  readonly amount_duplicates_names: number
+  readonly readonlyMode: boolean
+}>
 
-export type TConvertToOutputUniversal = (options: Readonly<{
-  readonly: boolean
-}>) => (formats: Readonly<{
-  txt?: Parameters<ReturnType<TConvertToOutputTxt>>[0]
-  torrent?: Parameters<ReturnType<TConvertToOutputTorrent>>[0]
-}>) => [...TOutputFormatTorrentUniversal, { amount_all_names: number, amount_duplicates_names: number }]
+export type TConvertToOutputUniversal = (options: { readonly readonly: boolean }) => (formats: {
+  readonly txt?: ReadonlyArray<{
+    readonly [key: string]: {
+      readonly unique: ReadonlyArray<string>
+      readonly duplicates: ReadonlyArray<string>
+      readonly duplicatesLength: number
+      readonly uniqueLength: number
+    }
+  }>
+  readonly torrent?: ReadonlyArray<{
+    readonly pathsForDuplicateFiles: ReadonlyArray<AbsolutePath>
+    readonly uniqueLength: number
+    readonly duplicateLength: number
+    readonly folder: string
+  }>
+}) =>
+[...TOutputFormatTorrentUniversal, { readonly amount_all_names: number, readonly amount_duplicates_names: number }]
 
 export type TConvertToApplyExtractorStatistics = (
-  input: Record<
-    Filename,
-    AbsolutePath[]
   /**
    * @example
    * {
@@ -39,16 +45,16 @@ export type TConvertToApplyExtractorStatistics = (
    *  'dog.torrent': ['folder1/dog.torrent', 'folder2/dog.torrent'],.
    * }
    */
-  >,
-  options: Readonly<{ readonly: boolean }>,
-) => {
-  duplicate_filename: string
-  amount_duplicates: number
-  common_folders_or_files: string
-  readonly_mode: boolean
-}[]
+  input: { readonly [key: Filename]: ReadonlyArray<AbsolutePath> },
+  options: { readonly readonly: boolean },
+) => ReadonlyArray<{
+  readonly duplicate_filename: string
+  readonly amount_duplicates: number
+  readonly common_folders_or_files: string
+  readonly readonly_mode: boolean
+}>
 
-export const sortByAlphabetical = <T>(arr: readonly T[], _extractor?: (el: T) => string): T[] => {
+export const sortByAlphabetical = <T>(arr: ReadonlyArray<T>, _extractor?: (el: T) => string): ReadonlyArray<T> => {
   const extractor = (_extractor || ((el: T): T => el)) as (el: T) => string
 
   return [...arr].sort((a, b) => {

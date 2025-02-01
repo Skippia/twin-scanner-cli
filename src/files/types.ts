@@ -1,13 +1,14 @@
 import type { ExtractorFileExtensions } from '../logic/types'
 
-export type TRemoveFilesEffect = (options: Readonly<{ readonly: boolean }>) =>
-(files: readonly AbsolutePath[]) => Promise<void[] | undefined>
+export type TRemoveFilesEffect = (options: {
+  readonly readonly: boolean
+}) => (files: ReadonlyArray<AbsolutePath>) => Promise<void[] | undefined>
 
 export type TGetRecursiveFilesAndFolders = (
   folder: AbsolutePath,
-  options: Readonly<{
-    permittedExtensions: ExtractorFileExtensions[]
-    flat: boolean
-    banFolders: string[]
-  }>,
-) => Promise<AbsolutePath[] | { folders: AbsolutePath[], files: AbsolutePath[] }>
+  options: {
+    readonly permittedExtensions: ReadonlyArray<ExtractorFileExtensions>
+    readonly flat: boolean
+    readonly banFolders: ReadonlyArray<string>
+  },
+) => Promise<ReadonlyArray<AbsolutePath> | { folders: ReadonlyArray<AbsolutePath>, files: ReadonlyArray<AbsolutePath> }>

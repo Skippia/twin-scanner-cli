@@ -3,35 +3,32 @@ import type { UFileExtension } from '@/shared/constants'
 import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
 
 export type TFileInfo = {
-  ext: ExtractorFileExtensions
-  content: string | null
-  absolutePath: string
-  filename: string
+  readonly ext: ExtractorFileExtensions
+  readonly content: string | null
+  readonly absolutePath: string
+  readonly filename: string
 }
 
-export type ExtractorFileExtensions = (typeof UFileExtension)[keyof typeof UFileExtension]
+export type ExtractorFileExtensions = Readonly<(typeof UFileExtension)[keyof typeof UFileExtension]>
 export type TExtractInfoFromFile = (filePath: AbsolutePath) => Promise<TFileInfo>
 
 export type TExtractorsUsefulInfo = {
-  [UFileExtension.TORRENT]: (file: Readonly<TFileInfo>) => string
-  [UFileExtension.TXT]: (file: Readonly<TFileInfo>) => string[]
+  readonly [UFileExtension.TORRENT]: (file: TFileInfo) => string
+  readonly [UFileExtension.TXT]: (file: TFileInfo) => ReadonlyArray<string>
 }
 
-export type TMoveFilesInFolders = (options: Readonly<{
-  readonly: boolean
-}>) => (commonFiles: Record<Filename, AbsolutePath[]>) => Promise<void>
+export type TMoveFilesInFolders = (options: {
+  readonly readonly: boolean
+}) => (commonFiles: { readonly [key: string]: ReadonlyArray<AbsolutePath> }) => Promise<void>
 
 export type TUpdateContentInTxtFilesEffect = (
   converter: (filename: string) => string,
-  options: Readonly<{ readonly: boolean }>,
-) => (
-  fileContentMap: Record<
-    AbsolutePath,
-    {
-      unique: readonly string[]
-    }
-  >,
-) => Promise<void[] | undefined>
+  options: { readonly readonly: boolean },
+) => (fileContentMap: {
+  readonly [key: AbsolutePath]: {
+    readonly unique: ReadonlyArray<string>
+  }
+}) => Promise<void[] | undefined>
 
 /**
  * @example
@@ -40,49 +37,41 @@ export type TUpdateContentInTxtFilesEffect = (
 
 export type TGetUniversalFileMapFromFolders = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
-  options: Readonly<TUserChoices>,
-) => (folderList: readonly string[]) => Promise<TMonogenousUniversalMapEl[]>
+  options: TUserChoices,
+) => (folderList: ReadonlyArray<string>) => Promise<ReadonlyArray<TMonogenousUniversalMapEl>>
 
-export type TGetCommonFilesInFileMap = (universalFileMap: readonly TMonogenousUniversalMapEl[]) => Record<
-  Filename,
-  AbsolutePath[]
-  /**
-   * @example
-   * {
-   *  'cat.torrent': ['folder1/cat.torrent', 'folder2/animals.txt'],.
-   *  'dog.torrent': ['folder1/dog.torrent', 'folder2/dog.torrent'],.
-   * }
-   */
->[]
+export type TGetCommonFilesInFileMap = (
+  universalFileMap: ReadonlyArray<TMonogenousUniversalMapEl>,
+) => ReadonlyArray<{ readonly [key: Filename]: ReadonlyArray<AbsolutePath> }>
 
 export type TGetUniversalFileMapFromFolder = (
   folder: string,
   strategies: TExtensionsRemoveDuplicatesStrategies,
-) => Promise<THeterogenousUniversalMapEl[]>
+) => Promise<ReadonlyArray<THeterogenousUniversalMapEl>>
 
 export type TContent = {
   filename: string
-  content: string[]
+  content: ReadonlyArray<string>
 }
 
 export type THeterogenousUniversalMapEl =
   | {
-    folder: string
-    type: (typeof UFileExtension)['TXT']
-    content: {
-      filename: string
-      content: string[]
-    }[]
+    readonly folder: string
+    readonly type: (typeof UFileExtension)['TXT']
+    readonly content: ReadonlyArray<{
+      readonly filename: string
+      readonly content: ReadonlyArray<string>
+    }>
   }
   | {
-    folder: string
-    type: (typeof UFileExtension)['TORRENT']
-    content: string[]
+    readonly folder: string
+    readonly type: (typeof UFileExtension)['TORRENT']
+    readonly content: ReadonlyArray<string>
   }
 
 export type TMonogenousUniversalMapEl = {
-  folderOrFilename: string
-  type: ExtractorFileExtensions
-  content: string[]
-  amount: number
+  readonly folderOrFilename: string
+  readonly type: ExtractorFileExtensions
+  readonly content: ReadonlyArray<string>
+  readonly amount: number
 }
