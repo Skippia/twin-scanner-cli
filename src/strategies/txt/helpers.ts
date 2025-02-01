@@ -5,7 +5,7 @@ import type { TDuplicateFormatTxt } from '../torrent/types'
 
 import type { TGetDuplicatesFromTxtFilesInFolder } from './types'
 
-import { readDir } from '@/files'
+import { readDir } from '@/files/readers'
 import { getFilesInfo, isOnlyDigits } from '@/logic/helpers'
 import type { TFileInfo } from '@/logic/types'
 import { environments } from '@/shared/environments'

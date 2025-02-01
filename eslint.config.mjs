@@ -588,13 +588,14 @@ export default antfu(
         ],
       }],
       'functional/type-declaration-immutability': 'off',
-      'functional/prefer-immutable-types': ['error', {
-        enforcement: 'None',
-        ignoreInferredTypes: true,
-        parameters: {
-          enforcement: 'ReadonlyDeep',
-        },
-      }],
+      // 'functional/prefer-immutable-types': ['error', {
+      //   enforcement: 'None',
+      //   ignoreInferredTypes: true,
+      //   parameters: {
+      //     enforcement: 'ReadonlyDeep',
+      //   },
+      // }],
+      'functional/prefer-immutable-types': ['off'],
       'functional/no-return-void': 'off',
       'functional/readonly-type': ['error', 'keyword'],
       // ------------------------------------------------

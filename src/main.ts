@@ -1,5 +1,5 @@
 import type { TUserChoices } from './cli'
-import { getRecursiveFilesAndFolders } from './files'
+import { getRecursiveFilesAndFolders } from './files/readers'
 import { getCommonFilesInFileMap, getUniversalFileMapFromFolders } from './logic'
 import { applyFilesExtractionEffect, getRidOfDuplicatesInFoldersEffect } from './logic/effect'
 import { DEFAULT_BAN_FOLDERS } from './shared/constants'

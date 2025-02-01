@@ -1,6 +1,6 @@
 import type { TDuplicateFormatTorrent } from './types'
 
-import { removeFilesEffect } from '@/files/effect'
+import { removeFilesEffect } from '@/files/effects'
 
 export const removeDuplicatesTorrentEffect = async (
   torrentFileDuplicates: TDuplicateFormatTorrent,

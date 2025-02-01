@@ -11,7 +11,7 @@ import {
 import type { ExtractorFileExtensions } from './types'
 
 import type { TUserChoices } from '@/cli'
-import { appendIntoTxtFileEffect, createFolderEffect, removeEmptyFoldersInFolderEffect } from '@/files/effect'
+import { appendIntoTxtFileEffect, createFolderEffect, removeEmptyFoldersInFolderEffect } from '@/files/effects'
 import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
 import { torrentDuplicateStrategy } from '@/strategies/torrent'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'

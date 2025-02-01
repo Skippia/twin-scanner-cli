@@ -40,6 +40,7 @@
     "update-git-hooks": "npx simple-git-hooks"
   },
   "dependencies": {
+    "fp-ts": "^2.16.9",
     "inquirer": "^12.3.2",
     "inquirer-autocomplete-standalone": "^0.8.1",
     "inquirer-fuzzy-path": "^2.3.0",
