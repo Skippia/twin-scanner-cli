@@ -2,8 +2,8 @@ import type { TDuplicateFormatTxt } from '../torrent/types'
 
 import { convertTorrentFilenameToURL } from './helpers'
 
-import { getFileContentFromTxt } from '@/files'
-import { writeIntoFileEffect } from '@/files/effect'
+import { getFileContentFromTxt } from '@/files/readers'
+import { writeIntoFileEffect } from '@/files/effects'
 import type { TUpdateContentInTxtFilesEffect } from '@/logic/types'
 
 export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect

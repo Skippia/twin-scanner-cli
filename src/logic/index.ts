@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import { readDir } from '../files'
+import { readDir } from '../files/readers'
 
 import { buildCommonFilesMap, filterRecordByKeys, getCombinationsGenerator, getFilesInfo } from './helpers'
 import type {

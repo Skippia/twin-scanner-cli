@@ -9,7 +9,7 @@ import type {
 } from './types'
 
 import type { TUserChoices } from '@/cli'
-import { getFileContentFromTxt } from '@/files'
+import { getFileContentFromTxt } from '@/files/readers'
 import { PREFIX_FILE_FOLDER } from '@/shared/constants'
 import { convertToApplyExtractorStatistics, convertToOutputUniversal } from '@/strategies/formatter'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'

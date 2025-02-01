@@ -4,7 +4,7 @@ import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 
 import type { TDuplicateFormatTorrent, TGetDuplicatesInFolderTorrent } from './types'
 
-import { readDir } from '@/files'
+import { readDir } from '@/files/readers'
 import { getFilesInfo, isIndirectDuplicateFilename } from '@/logic/helpers'
 import type { TFileInfo } from '@/logic/types'
 

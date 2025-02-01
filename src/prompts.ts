@@ -1,6 +1,6 @@
 import type inquirer from 'inquirer'
 
-import { validateFolderPath } from './files/effect'
+import { validateFolderPath } from './files/effects'
 
 type FunctionReturningTPromptEl = (() => TPromptEl) | ((val: string) => TPromptEl)
 

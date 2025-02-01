@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      fp-ts:
+        specifier: ^2.16.9
+        version: 2.16.9
       inquirer:
         specifier: ^12.3.2
         version: 12.3.2(@types/node@22.10.10)
@@ -54,9 +57,6 @@ importers:
       eslint-plugin-functional:
         specifier: ^8.0.0
         version: 8.0.0(eslint@9.18.0(jiti@2.4.2))(typescript@5.7.3)
-      eslint-plugin-no-closure:
-        specifier: ^1.0.1
-        version: 1.0.1
       globals:
         specifier: ^15.14.0
         version: 15.14.0
@@ -1932,9 +1932,6 @@ packages:
     peerDependencies:
       eslint: '>=8.23.0'
 
-  eslint-plugin-no-closure@1.0.1:
-    resolution: {integrity: sha512-Q5wbUpIWwpNTgSB4On0oPGh4ZjjALWlRq8o5/s7LTxt25BgCs/xf5jori+HKFPogdbclJkx2yvKQAy+MmmTUzA==}
-
   eslint-plugin-no-only-tests@3.3.0:
     resolution: {integrity: sha512-brcKcxGnISN2CcVhXJ/kEQlNa0MEfGRtwKtWA16SkqXHKitaKIMrfemJKLKX1YqDU5C/5JY3PvZXd5jEW04e0Q==}
     engines: {node: '>=5.0.0'}
@@ -2143,6 +2140,9 @@ packages:
   foreground-child@3.3.0:
     resolution: {integrity: sha512-Ld2g8rrAyMYFXBhEqMz8ZAHBi4J4uS1i/CxGMDnjyFWddMXLVcDp051DZfu+t7+ab7Wv6SMqpWmyFIj5UbfFvg==}
     engines: {node: '>=14'}
+
+  fp-ts@2.16.9:
+    resolution: {integrity: sha512-+I2+FnVB+tVaxcYyQkHUq7ZdKScaBlX53A41mxQtpIccsfyv8PzdzP7fzp2AY832T4aoK6UZ5WRX/ebGd8uZuQ==}
 
   from2@2.3.0:
     resolution: {integrity: sha512-OMcX/4IC/uqEPVgGeyfN22LJk6AZrMkRZHxcHBMBvHScDGgwTm2GT2Wkgtocyd3JfZffjj2kYUDXXII0Fk9W0g==}
@@ -6403,8 +6403,6 @@ snapshots:
       minimatch: 9.0.5
       semver: 7.6.3
 
-  eslint-plugin-no-closure@1.0.1: {}
-
   eslint-plugin-no-only-tests@3.3.0: {}
 
   eslint-plugin-perfectionist@4.7.0(eslint@9.18.0(jiti@2.4.2))(typescript@5.7.3):
@@ -6706,6 +6704,8 @@ snapshots:
     dependencies:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
+
+  fp-ts@2.16.9: {}
 
   from2@2.3.0:
     dependencies:

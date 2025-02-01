@@ -3,7 +3,7 @@ import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 import { removeDuplicatesTorrentEffect } from './effect'
 import { getDuplicateTorrentsFilesInFolders, isDuplicateTorrent } from './helpers'
 
-import { moveFileEffect } from '@/files/effect'
+import { moveFileEffect } from '@/files/effects'
 
 export const torrentDuplicateStrategy: TExtensionsRemoveDuplicatesStrategies['torrent'] = {
   extractor: file => file.filename,
