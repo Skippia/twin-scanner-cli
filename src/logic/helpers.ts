@@ -11,7 +11,7 @@ import { PREFIX_FILE_FOLDER } from '@/shared/constants'
 import { convertToApplyExtractorStatistics, convertToOutputUniversal } from '@/strategies/formatters'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
 
-export const generateCombinationFolderName = (paths: ReadonlyArray<AbsolutePath>): string => {
+export const generateCombinationFolderName = (paths: Array<AbsolutePath>): string => {
   const getFolderNameForPath = (path: AbsolutePath): string => {
     const isTorrent = path.endsWith('.torrent')
 
@@ -32,7 +32,7 @@ export const extractOriginalFilename = (filename: string): Filename => {
   return original
 }
 
-export const isIndirectDuplicateFilename = (allFilenames: ReadonlyArray<string>, filename: string): boolean => {
+export const isIndirectDuplicateFilename = (allFilenames: Array<string>, filename: string): boolean => {
   const isMaybeDuplicate = filename.includes('(')
 
   if (!isMaybeDuplicate) return false
@@ -42,9 +42,9 @@ export const isIndirectDuplicateFilename = (allFilenames: ReadonlyArray<string>,
   return allFilenames.includes(originalFilename)
 }
 
-export const areAllTextFiles = (paths: ReadonlyArray<string>): boolean => paths.every(path => path.endsWith('.txt'))
+export const areAllTextFiles = (paths: Array<string>): boolean => paths.every(path => path.endsWith('.txt'))
 
-export function* getCombinationsGenerator(arr: ReadonlyArray<string>): Generator<ReadonlyArray<string>> {
+export function* getCombinationsGenerator(arr: Array<string>): Generator<Array<string>> {
   const n = arr.length
 
   // eslint-disable-next-line functional/no-loop-statements, functional/no-let
@@ -53,8 +53,8 @@ export function* getCombinationsGenerator(arr: ReadonlyArray<string>): Generator
   }
 }
 
-function* generateKLengthCombinations(arr: ReadonlyArray<string>, k: number): Generator<ReadonlyArray<string>> {
-  function* backtrack(start: number, current: ReadonlyArray<string>): Generator<ReadonlyArray<string>> {
+function* generateKLengthCombinations(arr: Array<string>, k: number): Generator<Array<string>> {
+  function* backtrack(start: number, current: Array<string>): Generator<Array<string>> {
     if (current.length === k) {
       yield current
       return
@@ -69,7 +69,7 @@ function* generateKLengthCombinations(arr: ReadonlyArray<string>, k: number): Ge
   yield * backtrack(0, [])
 }
 
-export const getUniqueNames = (sourceArr: string[]): ReadonlyArray<string> => pipe(sourceArr, A.uniq(S.Eq))
+export const getUniqueNames = (sourceArr: string[]): Array<string> => pipe(sourceArr, A.uniq(S.Eq))
 
 export const isOnlyDigits = (str?: string): boolean =>
   pipe(
@@ -80,7 +80,7 @@ export const isOnlyDigits = (str?: string): boolean =>
 
 export const filterRecordByKeys = <T extends { readonly [key: string]: unknown }>(
   record: T,
-  keys: ReadonlyArray<string>
+  keys: Array<string>
 ): Readonly<T> =>
   pipe(
     record,
@@ -94,13 +94,11 @@ export const getDuplicateStoragePath = (options: TUserChoices): AbsolutePath => 
   return absolutePathToStorageFolder
 }
 
-export const logExtractionStatistics = (
-  fileMap: { readonly [key: string]: ReadonlyArray<string> },
-  readonly: boolean
-): void => pipe(fileMap, convertToApplyExtractorStatistics({ readonly }), console.table)
+export const logExtractionStatistics = (fileMap: { readonly [key: string]: Array<string> }, readonly: boolean): void =>
+  pipe(fileMap, convertToApplyExtractorStatistics({ readonly }), console.table)
 
 export const logUniversalStatistics = (
-  duplicateMaps: ReadonlyArray<TDuplicateFormatTorrent | TDuplicateFormatTxt>,
+  duplicateMaps: Array<TDuplicateFormatTorrent | TDuplicateFormatTxt>,
   options: TUserChoices
 ): void =>
   pipe(

@@ -15,7 +15,7 @@ export const isNameInArrNames = ({
   arrNames,
 }: {
   readonly name: string
-  readonly arrNames: ReadonlyArray<string>
+  readonly arrNames: Array<string>
 }): boolean => arrNames.every(names => names.includes(name))
 
 const getFilesAndFoldersFromFolder = ({
@@ -30,8 +30,8 @@ const getFilesAndFoldersFromFolder = ({
   folders: readonly string[]
   files: readonly string[]
   options: {
-    readonly permittedExtensions: ReadonlyArray<ExtractorFileExtensions>
-    readonly banFolders: ReadonlyArray<string>
+    readonly permittedExtensions: Array<ExtractorFileExtensions>
+    readonly banFolders: Array<string>
   }
 }): TE.TaskEither<Error, { folders: readonly string[], files: readonly string[] }> => {
   if (entries.length === 0) {

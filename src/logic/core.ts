@@ -21,7 +21,7 @@ import { readDirTE } from '@/files/system-operations'
 
 export const convertHeteroUniversalMapToMono = (
   heterogenousUniversalMap: THeterogenousUniversalMapEl[]
-): ReadonlyArray<TMonogenousUniversalMapEl> => {
+): Array<TMonogenousUniversalMapEl> => {
   const arr = heterogenousUniversalMap
     .filter(v => Object.keys(v).length > 0)
     .map((v) => {
@@ -50,7 +50,7 @@ export const convertHeteroUniversalMapToMono = (
 export const processCombination = (
   filesMapCache: { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl },
   folderOrFilenames: readonly string[]
-): { readonly [key: string]: ReadonlyArray<string> } => {
+): { readonly [key: string]: Array<string> } => {
   const files = folderOrFilenames
     .map(folderOrFilename => filesMapCache[folderOrFilename]!)
     .sort((a, b) => (a.amount > b.amount ? 1 : -1))
@@ -90,11 +90,11 @@ export const processCombination = (
 
 export const buildCommonFilesMap = (
   filesMapCache: { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl },
-  combinationsGenerator: Generator<ReadonlyArray<string>>
+  combinationsGenerator: Generator<Array<string>>
 ): ReturnType<TGetCommonFilesInFileMap> => {
   const resultGenerator = function* (
-    combinationsGenerator: Generator<ReadonlyArray<string>>
-  ): Generator<{ [key: string]: ReadonlyArray<string> }> {
+    combinationsGenerator: Generator<Array<string>>
+  ): Generator<{ [key: string]: Array<string> }> {
     // eslint-disable-next-line functional/no-loop-statements
     for (const combination of combinationsGenerator) {
       const fileMap = processCombination(filesMapCache, combination)
@@ -123,7 +123,7 @@ const getFilesInfoByExt
       pipe(
         filenames,
         A.filter(filename => path.extname(filename) === `.${ext}`),
-        filenamesByExt => getFilesInfo({ folder, filenames: filenamesByExt }),
+        filenamesByExt => getFilesInfo(folder)(filenamesByExt),
         TE.map(filesInfo => ({ ext, filesInfo }))
       )
 
@@ -155,19 +155,19 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = (fo
             ext === 'torrent'
               ? filesInfo.map(torrentFileInfo => strategies[ext].extractor(torrentFileInfo))
               : filesInfo.map(txtFileInfo => ({
-                  filename: txtFileInfo.absolutePath,
-                  content: strategies[ext].extractor(txtFileInfo),
-                })),
+                filename: txtFileInfo.absolutePath,
+                content: strategies[ext].extractor(txtFileInfo),
+              })),
         }))
         // Remove empty txt of empty torrent field
         .filter(v => v.info.length > 0)
         .reduce((acc, cur) => {
           const content
             = cur.ext === 'txt'
-              ? (cur.info as ReadonlyArray<TContent>).map(content => ({
-                  filename: content.filename,
-                  content: content.content,
-                }))
+              ? (cur.info as Array<TContent>).map(content => ({
+                filename: content.filename,
+                content: content.content,
+              }))
               : cur.info
 
           const el = [

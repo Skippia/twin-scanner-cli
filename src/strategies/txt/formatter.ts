@@ -7,10 +7,10 @@ export type TOutputFormatTxt = readonly {
 }[]
 
 export type TConvertToOutputTxt = (options: { readonly readonly: boolean }) => (
-  raw: ReadonlyArray<{
+  raw: Array<{
     readonly [key: string]: {
-      readonly unique: ReadonlyArray<string>
-      readonly duplicates: ReadonlyArray<string>
+      readonly unique: Array<string>
+      readonly duplicates: Array<string>
       readonly duplicatesLength: number
       readonly uniqueLength: number
     }

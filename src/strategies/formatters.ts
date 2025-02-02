@@ -3,7 +3,7 @@ import { convertToOutputTxt } from './txt/formatter'
 
 import { generateCombinationFolderName } from '@/logic/helpers'
 
-export type TOutputFormatTorrent = ReadonlyArray<{
+export type TOutputFormatTorrent = Array<{
   readonly folder: string
   readonly amount_all_names: number
   readonly amount_unique_names: number
@@ -11,7 +11,7 @@ export type TOutputFormatTorrent = ReadonlyArray<{
   readonly readonlyMode: boolean
 }>
 
-export type TOutputFormatTorrentUniversal = ReadonlyArray<{
+export type TOutputFormatTorrentUniversal = Array<{
   readonly folder_or_filename: string
   readonly amount_all_names: number
   readonly amount_unique_names: number
@@ -20,16 +20,16 @@ export type TOutputFormatTorrentUniversal = ReadonlyArray<{
 }>
 
 export type TConvertToOutputUniversal = (options: { readonly readonly: boolean }) => (formats: {
-  readonly txt?: ReadonlyArray<{
+  readonly txt?: Array<{
     readonly [key: string]: {
-      readonly unique: ReadonlyArray<string>
-      readonly duplicates: ReadonlyArray<string>
+      readonly unique: Array<string>
+      readonly duplicates: Array<string>
       readonly duplicatesLength: number
       readonly uniqueLength: number
     }
   }>
-  readonly torrent?: ReadonlyArray<{
-    readonly pathsForDuplicateFiles: ReadonlyArray<AbsolutePath>
+  readonly torrent?: Array<{
+    readonly pathsForDuplicateFiles: Array<AbsolutePath>
     readonly uniqueLength: number
     readonly duplicateLength: number
     readonly folder: string
@@ -47,18 +47,20 @@ export type TConvertToOutputUniversal = (options: { readonly readonly: boolean }
  * }
  */
 export type TConvertToApplyExtractorStatistics = (options: { readonly readonly: boolean }) => (input: {
-  readonly [key: Filename]: ReadonlyArray<AbsolutePath>
-}) => ReadonlyArray<{
-  readonly duplicate_filename: string
-  readonly amount_duplicates: number
-  readonly common_folders_or_files: string
-  readonly readonly_mode: boolean
-}>
-
-export const sortByAlphabetical = <T>(arr: ReadonlyArray<T>, _extractor?: (el: T) => string): ReadonlyArray<T> => {
+  readonly [key: Filename]: Array<AbsolutePath>
+}) => Array<
+  | {
+    readonly duplicate_filename: string
+    readonly amount_duplicates: number
+    readonly common_folders_or_files: string
+    readonly readonly_mode: boolean
+  }
+  | { amount_duplicates: number }
+>
+export const sortByAlphabetical = <T>(arr: Array<T>, _extractor?: (el: T) => string): Array<T> => {
   const extractor = (_extractor || ((el: T): T => el)) as (el: T) => string
 
-  return [...arr].sort((a, b) => {
+  return arr.toSorted((a, b) => {
     const str1 = extractor(a)
     const str2 = extractor(b)
 
@@ -111,5 +113,5 @@ export const convertToApplyExtractorStatistics: TConvertToApplyExtractorStatisti
     {
       amount_duplicates: formatted.reduce((acc, cur) => acc + cur.amount_duplicates, 0),
     },
-  ] as ReturnType<TConvertToApplyExtractorStatistics>
+  ]
 }

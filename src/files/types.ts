@@ -7,7 +7,7 @@ export type TRemoveFilesEffect = (files: AbsolutePath[]) => TE.TaskEither<Error,
 export type TGetRecursiveFilesAndFolders = (
   folder: AbsolutePath,
   options: {
-    readonly permittedExtensions: ReadonlyArray<ExtractorFileExtensions>
-    readonly banFolders: ReadonlyArray<string>
+    readonly permittedExtensions: Array<ExtractorFileExtensions>
+    readonly banFolders: Array<string>
   },
 ) => TE.TaskEither<Error, AbsolutePath[]>

@@ -14,8 +14,8 @@ export const main = (options: TUserChoices): TE.TaskEither<Error, void> => {
         permittedExtensions: [],
         banFolders: DEFAULT_BAN_FOLDERS,
         flat: true,
-      })) as ReadonlyArray<string>)
-    : ((options.folderPaths || [options.folderPath]) as ReadonlyArray<string>)
+      })) as Array<string>)
+    : ((options.folderPaths || [options.folderPath]) as Array<string>)
 
   return await getRidOfDuplicatesInFoldersEffect(folderList, strategies, options).then(() => {
     const extractCommonFilesInFolders = asyncFlow(

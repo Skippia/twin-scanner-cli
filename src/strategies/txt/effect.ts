@@ -1,38 +1,55 @@
-import type * as TE from 'fp-ts/TaskEither'
+import * as TE from 'fp-ts/TaskEither'
+import * as A from 'fp-ts/Array'
+import * as S from 'fp-ts/string'
 
 import type { TDuplicateFormatTxt } from '../torrent/types'
 
 import { convertTorrentFilenameToURL } from './helpers'
 
 import { writeIntoFileEffect } from '@/files/effects'
-import { getFileContentFromTxt } from '@/files/readers'
 import type { TUpdateContentInTxtFilesEffect } from '@/logic/types'
+import { getFileContentFromTxtTE } from '@/files/system-operations'
+import { pipe } from 'fp-ts/lib/function'
 
-export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect
-  = (converter, options) =>  (fileMap) => {
-    if (options.readonly) return
+const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect = (converter) => (fileMap) =>
+  pipe(
+    Object.entries(fileMap),
+    A.map(([absolutePath, contentMap]) => pipe(
+      contentMap.unique,
+      A.map(converter),
+      A.intercalate(S.Monoid)('\n'),
+      writeIntoFileEffect(absolutePath)
+    )),
+    A.sequence(TE.ApplicativePar),
+  )
 
-    const writeToFilesTasks = Object.entries(fileMap).reduce<Promise<void>[]>((acc, [absolutePath, contentMap]) => {
-      const writeToFileTask = writeIntoFileEffect(absolutePath, contentMap.unique.map(converter).join('\n'))
-      return [...acc, writeToFileTask]
-    }, [])
 
-    return await Promise.all(writeToFilesTasks)
-  }
-
-export const removeContentFromTxtFileEffect =  (
+export const removeContentFromTxtFileEffect = (
   pathToTxtFile: AbsolutePath,
   stringToDelete: string
-): TE.TaskEither<Error, void> => {
-  const rawContent = await getFileContentFromTxt(pathToTxtFile)
-  const parsedContent = rawContent.split('\n')
-  const updatedContent = parsedContent.filter(v => v !== stringToDelete).join('\n')
+): TE.TaskEither<Error, void> => pipe(
+  pathToTxtFile,
+  getFileContentFromTxtTE,
+  TE.map(rawContent => rawContent.split('\n')),
+  TE.flatMap(parsedContent => pipe(
+    parsedContent,
+    A.filter(v => v !== stringToDelete),
+    A.intercalate(S.Monoid)('\n'),
+    updatedContent => pipe(
+      updatedContent,
+      writeIntoFileEffect(pathToTxtFile)
+    )
+  ))
+)
 
-  return writeIntoFileEffect(pathToTxtFile, updatedContent)
-}
+
 
 export const removeDuplicatesFromTxtFileEffect = (
   txtFilesMapDuplicates: TDuplicateFormatTxt,
   readonly: boolean
-): TE.TaskEither<Error, void> =>
-  Promise.all(txtFilesMapDuplicates.map(updateContentInTxtFilesEffect(convertTorrentFilenameToURL, { readonly })))
+): TE.TaskEither<Error, void[][]> => readonly
+    ? TE.right([])
+    : pipe(
+      txtFilesMapDuplicates,
+      A.traverse(TE.ApplicativePar)(updateContentInTxtFilesEffect(convertTorrentFilenameToURL))
+    )
