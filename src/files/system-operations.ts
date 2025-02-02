@@ -13,7 +13,7 @@ export const unlinkTE = (path: string): TE.TaskEither<Error, void> => TE.tryCatc
 export const mkdirTE = (path: string): TE.TaskEither<Error, string | undefined> =>
   TE.tryCatchK(fs.mkdir, E.toError)(path)
 
-export const writeFileTE = (path: string, content: string): TE.TaskEither<Error, void> =>
+export const writeFileTE = (content: string) => (path: string): TE.TaskEither<Error, void> =>
   TE.tryCatchK(fs.writeFile, E.toError)(path, content, { encoding: 'utf-8' })
 
 export const renameTE = (oldPath: string, newPath: string): TE.TaskEither<Error, void> =>
@@ -28,11 +28,13 @@ export const readDirTE = (folder: string): TE.TaskEither<Error, string[]> =>
 export const getFileContentFromTxtTE = (filePath: string): TE.TaskEither<Error, string> =>
   TE.tryCatch(() => fs.readFile(filePath, { encoding: 'utf-8' }), E.toError)
 
-export const checkIfDirectoryT = (fullPath: string): T.Task<boolean> =>
-  () => fs
-    .stat(fullPath)
-    .then(stats => stats.isDirectory())
-    .catch(() => false)
+export const checkIfDirectoryT
+  = (fullPath: string): T.Task<boolean> =>
+    () =>
+      fs
+        .stat(fullPath)
+        .then(stats => stats.isDirectory())
+        .catch(() => false)
 
 export const checkIsFolderExistsT = (pathToFolder: string): T.Task<boolean> =>
   pipe(

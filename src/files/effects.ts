@@ -1,7 +1,6 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-import { task } from 'fp-ts'
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
@@ -47,30 +46,28 @@ const recursivelyRemoveEmptyFolders = (folders: readonly AbsolutePath[]): TE.Tas
   )
 }
 
-const accFolders = (folderPath: string) => (entries: string[]): T.Task<string[]> => pipe(
-  entries,
-  A.traverse(T.ApplicativeSeq)((fileOrFolder) => {
-    const fullPath = path.join(folderPath, fileOrFolder)
+const accFolders
+  = (folderPath: string) =>
+    (entries: string[]): T.Task<string[]> =>
+      pipe(
+        entries,
+        A.traverse(T.ApplicativeSeq)((fileOrFolder) => {
+          const fullPath = path.join(folderPath, fileOrFolder)
 
-    return pipe(
-      fullPath,
-      checkIfDirectoryT,
-      T.map(isFolder => isFolder ? [fullPath] : [])
-    )
-  }),
-  T.map(A.flatten)
-)
+          return pipe(
+            fullPath,
+            checkIfDirectoryT,
+            T.map(isFolder => (isFolder ? [fullPath] : []))
+          )
+        }),
+        T.map(A.flatten)
+      )
 
 const getOnlyFolders = (folderPath: AbsolutePath): TE.TaskEither<Error, string[]> =>
   pipe(
     folderPath,
     readDirTE,
-    TE.map(entries =>
-      pipe(
-        entries,
-        accFolders(folderPath)
-      )
-    ),
+    TE.map(entries => pipe(entries, accFolders(folderPath))),
     TE.chainW(task => TE.fromTask(task))
   )
 

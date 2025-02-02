@@ -38,7 +38,7 @@ const handleMixedFilesEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string,
-  paths: ReadonlyArray<string>
+  paths: Array<string>
 ): TE.TaskEither<Error, void> =>
   await Promise.all(
     paths.map(dAbsPath =>
@@ -54,7 +54,7 @@ const handleTextFilesEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string,
-  paths: ReadonlyArray<string>
+  paths: Array<string>
 ): TE.TaskEither<Error, void> =>
   await appendIntoTxtFileEffect(
     path.join(absolutePathToCommonStorageCur, 'common.txt'),
@@ -71,7 +71,7 @@ const processDuplicateEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   storagePath: AbsolutePath,
   dFilename: string,
-  dAbsPaths: ReadonlyArray<string>
+  dAbsPaths: Array<string>
 ): TE.TaskEither<Error, void> =>
   createFolderEffect(storagePath).then(() =>
     areAllTextFiles(dAbsPaths)
@@ -80,7 +80,7 @@ const processDuplicateEffect = (
   )
 
 const processDuplicatesEffect = (
-  mergedFileMapsExtraction: { readonly [key: string]: ReadonlyArray<string> },
+  mergedFileMapsExtraction: { readonly [key: string]: Array<string> },
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToStorageFolder: string
 ): TE.TaskEither<Error, void> => {
@@ -94,23 +94,22 @@ const processDuplicatesEffect = (
   }
 }
 
-export const applyFilesExtractionEffect: TApplyFileExtractionEffect
-  = (strategies, options) => (fileMapsExtraction) => {
-    const mergedFileMapsExtraction = mergeFileMapsExtraction(fileMapsExtraction)
+export const applyFilesExtractionEffect: TApplyFileExtractionEffect = (strategies, options) => (fileMapsExtraction) => {
+  const mergedFileMapsExtraction = mergeFileMapsExtraction(fileMapsExtraction)
 
-    logExtractionStatistics(mergedFileMapsExtraction, options.readonly)
+  logExtractionStatistics(mergedFileMapsExtraction, options.readonly)
 
-    if (options.readonly) return
+  if (options.readonly) return
 
-    const absolutePathToStorageFolder = getDuplicateStoragePath(options)
+  const absolutePathToStorageFolder = getDuplicateStoragePath(options)
 
-    return await processDuplicatesEffect(mergedFileMapsExtraction, strategies, absolutePathToStorageFolder)
-      .then(() => removeEmptyFoldersInFolderEffect(absolutePathToStorageFolder))
-      .then(() => console.log('Duplicates were extracted to', absolutePathToStorageFolder))
-  }
+  return await processDuplicatesEffect(mergedFileMapsExtraction, strategies, absolutePathToStorageFolder)
+    .then(() => removeEmptyFoldersInFolderEffect(absolutePathToStorageFolder))
+    .then(() => console.log('Duplicates were extracted to', absolutePathToStorageFolder))
+}
 
 export const getRidOfDuplicatesInFoldersEffect = (
-  folderList: ReadonlyArray<string>,
+  folderList: Array<string>,
   strategies: TExtensionsRemoveDuplicatesStrategies,
   options: TUserChoices
 ): TE.TaskEither<Error, void> => {

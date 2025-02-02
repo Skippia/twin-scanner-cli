@@ -21,7 +21,7 @@ const registerInquirerPrompt = (inquirerInstance: Readonly<typeof PromptModule>)
 export type TUserChoices = {
   readonly folderMode: 'single' | 'multiple'
   readonly folderPath?: string
-  readonly folderPaths?: ReadonlyArray<string>
+  readonly folderPaths?: Array<string>
   readonly fileExtensions: string[]
   readonly rootFolder: string
   readonly recursive: boolean

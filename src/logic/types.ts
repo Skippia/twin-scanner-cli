@@ -16,21 +16,20 @@ export type TExtractInfoFromFile = (filePath: AbsolutePath) => TE.TaskEither<Err
 
 export type TExtractorsUsefulInfo = {
   readonly [UFileExtension.TORRENT]: (file: TFileInfo) => string
-  readonly [UFileExtension.TXT]: (file: TFileInfo) => ReadonlyArray<string>
+  readonly [UFileExtension.TXT]: (file: TFileInfo) => Array<string>
 }
 
 export type TMoveFilesInFolders = (options: {
   readonly readonly: boolean
-}) => (commonFiles: { readonly [key: string]: ReadonlyArray<AbsolutePath> }) => TE.TaskEither<Error, void>
+}) => (commonFiles: { readonly [key: string]: Array<AbsolutePath> }) => TE.TaskEither<Error, void>
 
 export type TUpdateContentInTxtFilesEffect = (
   converter: (filename: string) => string,
-  options: { readonly readonly: boolean },
 ) => (fileContentMap: {
   readonly [key: AbsolutePath]: {
-    readonly unique: ReadonlyArray<string>
+    readonly unique: Array<string>
   }
-}) => TE.TaskEither<Error, void>
+}) => TE.TaskEither<Error, void[]>
 
 /**
  * @example
@@ -39,11 +38,11 @@ export type TUpdateContentInTxtFilesEffect = (
 export type TGetUniversalFileMapFromFolders = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   options: TUserChoices,
-) => (folderList: string[]) => TE.TaskEither<Error, ReadonlyArray<TMonogenousUniversalMapEl>>
+) => (folderList: string[]) => TE.TaskEither<Error, Array<TMonogenousUniversalMapEl>>
 
 export type TGetCommonFilesInFileMap = (
-  universalFileMap: ReadonlyArray<TMonogenousUniversalMapEl>,
-) => ReadonlyArray<{ readonly [key: Filename]: ReadonlyArray<AbsolutePath> }>
+  universalFileMap: Array<TMonogenousUniversalMapEl>,
+) => Array<{ readonly [key: Filename]: Array<AbsolutePath> }>
 
 export type TGetUniversalFileMapFromFolder = (
   folder: string,
@@ -52,22 +51,22 @@ export type TGetUniversalFileMapFromFolder = (
 
 export type TContent = {
   filename: string
-  content: ReadonlyArray<string>
+  content: Array<string>
 }
 
 export type THeterogenousUniversalMapEl =
   | {
     readonly folder: string
     readonly type: (typeof UFileExtension)['TXT']
-    readonly content: ReadonlyArray<{
+    readonly content: Array<{
       readonly filename: string
-      readonly content: ReadonlyArray<string>
+      readonly content: Array<string>
     }>
   }
   | {
     readonly folder: string
     readonly type: (typeof UFileExtension)['TORRENT']
-    readonly content: ReadonlyArray<string>
+    readonly content: Array<string>
   }
 
 export type TMonogenousUniversalMapEl = {

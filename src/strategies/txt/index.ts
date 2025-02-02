@@ -11,7 +11,7 @@ export const txtDuplicateStrategy: TExtensionsRemoveDuplicatesStrategies['txt'] 
   getDuplicates: getDuplicatesFromTxtFile,
   removeContentFromFileEffect: removeContentFromTxtFileEffect,
   removeDuplicatesEffect: removeDuplicatesFromTxtFileEffect,
-  getDuplicateMap: (folderList: ReadonlyArray<string>) =>
+  getDuplicateMap: (folderList: Array<string>) =>
     getDuplicateMapFromTxtFilesInFolders(folderList, {
       strategy: txtDuplicateStrategy,
     }),

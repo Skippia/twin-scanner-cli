@@ -23,12 +23,11 @@ export const extractInfoFromFile: TExtractInfoFromFile = (filePath): TE.TaskEith
   )
 }
 
-export const getFilesInfo = (pathOptions: {
-  readonly folder: string
-  readonly filenames: string[]
-}): TE.TaskEither<Error, TFileInfo[]> =>
-  pipe(
-    pathOptions.filenames,
-    A.map(filename => extractInfoFromFile(path.join(pathOptions.folder, filename))),
-    A.sequence(TE.ApplicativePar)
-  )
+export const getFilesInfo
+  = (folder: string) =>
+    (filenames: string[]): TE.TaskEither<Error, TFileInfo[]> =>
+      pipe(
+        filenames,
+        A.map(filename => extractInfoFromFile(path.join(folder, filename))),
+        A.sequence(TE.ApplicativePar)
+      )

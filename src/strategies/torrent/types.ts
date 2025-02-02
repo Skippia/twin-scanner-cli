@@ -8,33 +8,39 @@ export type TTorrentFileInfoExtractor = TExtractorsUsefulInfo['torrent']
 
 export type TGetDuplicatesInFolderTorrent = (strategy: TExtensionsRemoveDuplicatesStrategies['torrent']) => (
   folder: AbsolutePath,
-) => TE.TaskEither<Error, {
-  readonly pathsForDuplicateFiles: ReadonlyArray<AbsolutePath>
-  readonly uniqueLength: number
-  readonly duplicateLength: number
-  readonly folder: string
-}>
-
-export type TGetDuplicatesInFoldersTxt = (folderList: ReadonlyArray<RelativePath>) => TE.TaskEither<Error, {
-  readonly [key: string]: {
-    readonly unique: ReadonlyArray<string>
-    readonly duplicates: ReadonlyArray<string>
-    readonly duplicatesLength: number
+) => TE.TaskEither<
+  Error,
+  {
+    readonly pathsForDuplicateFiles: Array<AbsolutePath>
     readonly uniqueLength: number
+    readonly duplicateLength: number
+    readonly folder: string
   }
-}>
+>
 
-export type TDuplicateFormatTorrent = ReadonlyArray<{
-  readonly pathsForDuplicateFiles: ReadonlyArray<AbsolutePath>
+export type TGetDuplicatesInFoldersTxt = (folderList: Array<RelativePath>) => TE.TaskEither<
+  Error,
+  {
+    readonly [key: string]: {
+      readonly unique: Array<string>
+      readonly duplicates: Array<string>
+      readonly duplicatesLength: number
+      readonly uniqueLength: number
+    }
+  }
+>
+
+export type TDuplicateFormatTorrent = {
+  readonly pathsForDuplicateFiles: AbsolutePath[]
   readonly uniqueLength: number
   readonly duplicateLength: number
   readonly folder: string
-}>
+}[]
 
-export type TDuplicateFormatTxt = ReadonlyArray<{
+export type TDuplicateFormatTxt = Array<{
   readonly [key: string]: {
-    readonly unique: ReadonlyArray<string>
-    readonly duplicates: ReadonlyArray<string>
+    readonly unique: Array<string>
+    readonly duplicates: Array<string>
     readonly duplicatesLength: number
     readonly uniqueLength: number
   }
