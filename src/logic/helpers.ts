@@ -5,21 +5,10 @@ import { pipe } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import * as R from 'fp-ts/Record'
 import * as S from 'fp-ts/string'
-import * as TE from 'fp-ts/TaskEither'
-
-import type {
-  ExtractorFileExtensions,
-  TExtractInfoFromFile,
-  TFileInfo,
-} from './types'
 
 import type { TUserChoices } from '@/cli'
-import { getFileContentFromTxtTE } from '@/files/system-operations'
 import { PREFIX_FILE_FOLDER } from '@/shared/constants'
-import {
-  convertToApplyExtractorStatistics,
-  convertToOutputUniversal,
-} from '@/strategies/formatter'
+import { convertToApplyExtractorStatistics, convertToOutputUniversal } from '@/strategies/formatter'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
 
 export const generateCombinationFolderName = (paths: ReadonlyArray<AbsolutePath>): string => {
@@ -43,10 +32,7 @@ export const extractOriginalFilename = (filename: string): Filename => {
   return original
 }
 
-export const isIndirectDuplicateFilename = (
-  allFilenames: ReadonlyArray<string>,
-  filename: string
-): boolean => {
+export const isIndirectDuplicateFilename = (allFilenames: ReadonlyArray<string>, filename: string): boolean => {
   const isMaybeDuplicate = filename.includes('(')
 
   if (!isMaybeDuplicate) return false
@@ -55,32 +41,6 @@ export const isIndirectDuplicateFilename = (
 
   return allFilenames.includes(originalFilename)
 }
-
-export const extractInfoFromFile: TExtractInfoFromFile = (filePath) => {
-  const ext = path.extname(filePath).slice(1) as ExtractorFileExtensions
-  const filename = path.basename(filePath)
-
-  return pipe(
-    ext === 'txt'
-      ? getFileContentFromTxtTE(filePath)
-      : TE.right(''),
-    TE.map(content => ({
-      absolutePath: filePath,
-      content: content || null,
-      ext,
-      filename,
-    }))
-  )
-}
-
-export const getFilesInfo = (pathOptions: {
-  readonly folder: string
-  readonly filenames: string[]
-}): TE.TaskEither<Error, TFileInfo[]> => pipe(
-  pathOptions.filenames,
-  A.map(filename => extractInfoFromFile(path.join(pathOptions.folder, filename))),
-  A.sequence(TE.ApplicativePar)
-)
 
 export const areAllTextFiles = (paths: ReadonlyArray<string>): boolean => paths.every(path => path.endsWith('.txt'))
 
@@ -109,16 +69,14 @@ function* generateKLengthCombinations(arr: ReadonlyArray<string>, k: number): Ge
   yield * backtrack(0, [])
 }
 
-export const getUniqueNames = (sourceArr: string[]): ReadonlyArray<string> => pipe(
-  sourceArr,
-  A.uniq(S.Eq)
-)
+export const getUniqueNames = (sourceArr: string[]): ReadonlyArray<string> => pipe(sourceArr, A.uniq(S.Eq))
 
-export const isOnlyDigits = (str?: string): boolean => pipe(
-  str,
-  O.fromNullable,
-  O.exists(s => /^\d+$/.test(s))
-)
+export const isOnlyDigits = (str?: string): boolean =>
+  pipe(
+    str,
+    O.fromNullable,
+    O.exists(s => /^\d+$/.test(s))
+  )
 
 export const filterRecordByKeys = <T extends { readonly [key: string]: unknown }>(
   record: T,
@@ -139,21 +97,18 @@ export const getDuplicateStoragePath = (options: TUserChoices): AbsolutePath => 
 export const logExtractionStatistics = (
   fileMap: { readonly [key: string]: ReadonlyArray<string> },
   readonly: boolean
-): void => pipe(
-  fileMap,
-  convertToApplyExtractorStatistics({ readonly }),
-  console.table
-)
+): void => pipe(fileMap, convertToApplyExtractorStatistics({ readonly }), console.table)
 
 export const logUniversalStatistics = (
   duplicateMaps: ReadonlyArray<TDuplicateFormatTorrent | TDuplicateFormatTxt>,
   options: TUserChoices
-): void => pipe(
-  options.fileExtensions,
-  A.reduce({}, (acc, ext) => ({
-    ...acc,
-    [ext]: duplicateMaps[options.fileExtensions.indexOf(ext)],
-  })),
-  convertToOutputUniversal({ readonly: options.readonly }),
-  console.table
-)
+): void =>
+  pipe(
+    options.fileExtensions,
+    A.reduce({}, (acc, ext) => ({
+      ...acc,
+      [ext]: duplicateMaps[options.fileExtensions.indexOf(ext)],
+    })),
+    convertToOutputUniversal({ readonly: options.readonly }),
+    console.table
+  )

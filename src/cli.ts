@@ -12,7 +12,6 @@ import { PROMPTS_RECORD } from './prompts'
 
 const __filename = fileURLToPath(import.meta.url)
 
-// eslint-disable-next-line functional/prefer-immutable-types
 const registerInquirerPrompt = (inquirerInstance: Readonly<typeof PromptModule>): Readonly<typeof PromptModule> => {
   inquirerInstance.registerPrompt('fuzzypath', inquirerFuzzyPath as unknown as LegacyPromptConstructor)
   return inquirerInstance

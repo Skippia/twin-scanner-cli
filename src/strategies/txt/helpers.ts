@@ -39,10 +39,7 @@ export const convertTorrentFilenameToURL = (fileName: string): string => {
 }
 
 export const extractContentFromTxtFile = (file: TFileInfo): ReadonlyArray<string> =>
-  file.content
-    ?.split('\n')
-    .filter(Boolean)
-    .map(extractTorrentFileNameFromURL) || ['']
+  file.content?.split('\n').filter(Boolean).map(extractTorrentFileNameFromURL) || ['']
 
 export const getDuplicatesFromTxtFile = (lines: ReadonlyArray<string>): ReadonlyArray<string> =>
   lines.reduce<ReadonlyArray<string>>(

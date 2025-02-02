@@ -1,5 +1,7 @@
 import path from 'node:path'
 
+import type * as TE from 'fp-ts/TaskEither'
+
 import {
   areAllTextFiles,
   generateCombinationFolderName,
@@ -36,7 +38,7 @@ const handleMixedFilesEffect = async (
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string,
   paths: ReadonlyArray<string>
-): Promise<void[]> =>
+): TE.TaskEither<Error, void> =>
   await Promise.all(
     paths.map(dAbsPath =>
       // 2a. If torrent => move to file to duplicate folder
@@ -47,12 +49,12 @@ const handleMixedFilesEffect = async (
     )
   )
 
-const handleTextFilesEffect = async (
+const handleTextFilesEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string,
   paths: ReadonlyArray<string>
-): Promise<void[]> =>
+): TE.TaskEither<Error, void> =>
   await appendIntoTxtFileEffect(
     path.join(absolutePathToCommonStorageCur, 'common.txt'),
     convertTorrentFilenameToURL(duplicateFilename).concat('\n')
@@ -69,7 +71,7 @@ const processDuplicateEffect = (
   storagePath: AbsolutePath,
   dFilename: string,
   dAbsPaths: ReadonlyArray<string>
-): Promise<void[]> =>
+): TE.TaskEither<Error, void> =>
   createFolderEffect(storagePath).then(() =>
     areAllTextFiles(dAbsPaths)
       ? handleTextFilesEffect(strategies, storagePath, dFilename, dAbsPaths)
@@ -80,7 +82,7 @@ const processDuplicatesEffect = async (
   mergedFileMapsExtraction: { readonly [key: string]: ReadonlyArray<string> },
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToStorageFolder: string
-): Promise<void> => {
+): TE.TaskEither<Error, void>=> {
   // eslint-disable-next-line functional/no-loop-statements
   for (const [duplicateFilename, duplicateAbsolutePaths] of Object.entries(mergedFileMapsExtraction)) {
     const storageFolderName = generateCombinationFolderName(duplicateAbsolutePaths)
@@ -106,11 +108,11 @@ export const applyFilesExtractionEffect: TApplyFileExtractionEffect
       .then(() => console.log('Duplicates were extracted to', absolutePathToStorageFolder))
   }
 
-export const getRidOfDuplicatesInFoldersEffect = async (
+export const getRidOfDuplicatesInFoldersEffect = (
   folderList: ReadonlyArray<string>,
   strategies: TExtensionsRemoveDuplicatesStrategies,
   options: TUserChoices
-): Promise<void> => {
+): TE.TaskEither<Error, void> => {
   const duplicateMaps = await Promise.all(
     options.fileExtensions.map(ext => strategies[ext as 'txt' | 'torrent'].getDuplicateMap(folderList))
   )

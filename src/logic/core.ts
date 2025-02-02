@@ -4,8 +4,18 @@ import * as A from 'fp-ts/Array'
 import { pipe } from 'fp-ts/function'
 import * as TE from 'fp-ts/TaskEither'
 
-import { filterRecordByKeys, getCombinationsGenerator, getFilesInfo } from './helpers'
-import type { ExtractorFileExtensions, TContent, TFileInfo, TGetCommonFilesInFileMap, TGetUniversalFileMapFromFolder, TGetUniversalFileMapFromFolders, THeterogenousUniversalMapEl, TMonogenousUniversalMapEl } from './types'
+import { filterRecordByKeys, getCombinationsGenerator } from './helpers'
+import { getFilesInfo } from './readers'
+import type {
+  ExtractorFileExtensions,
+  TContent,
+  TFileInfo,
+  TGetCommonFilesInFileMap,
+  TGetUniversalFileMapFromFolder,
+  TGetUniversalFileMapFromFolders,
+  THeterogenousUniversalMapEl,
+  TMonogenousUniversalMapEl,
+} from './types'
 
 import { readDirTE } from '@/files/system-operations'
 
@@ -50,9 +60,7 @@ export const processCombination = (
   return pipe(
     sourceMapEl!.content,
     A.reduce({} as { [key: string]: string[] }, (acc, curFilename) => {
-      const isDuplicate = targetMapEls.every(targetMapEl =>
-        targetMapEl.content.includes(curFilename)
-      )
+      const isDuplicate = targetMapEls.every(targetMapEl => targetMapEl.content.includes(curFilename))
 
       if (isDuplicate) {
         const pathsToDuplicateFiles = pipe(
@@ -70,7 +78,7 @@ export const processCombination = (
             sourceMapEl!.type === 'torrent'
               ? path.join(sourceMapEl!.folderOrFilename, curFilename)
               : sourceMapEl!.folderOrFilename,
-            ...pathsToDuplicateFiles
+            ...pathsToDuplicateFiles,
           ],
         }
       }
@@ -101,70 +109,80 @@ export const buildCommonFilesMap = (
   return [...resultGenerator(combinationsGenerator)]
 }
 
-const getFilesInfoByExt = (filenames: string[], folder: string) => (ext: ExtractorFileExtensions):
-TE.TaskEither<Error, {
-  ext: ExtractorFileExtensions
-  filesInfo: TFileInfo[]
-}> =>
-  pipe(
-    filenames,
-    A.filter(filename => path.extname(filename) === `.${ext}`),
-    filenamesByExt => getFilesInfo({ folder, filenames: filenamesByExt }),
-    TE.map(filesInfo => ({ ext, filesInfo }))
-  )
+const getFilesInfoByExt
+  = (filenames: string[], folder: string) =>
+    (
+      ext: ExtractorFileExtensions
+    ): TE.TaskEither<
+      Error,
+      {
+        ext: ExtractorFileExtensions
+        filesInfo: TFileInfo[]
+      }
+    > =>
+      pipe(
+        filenames,
+        A.filter(filename => path.extname(filename) === `.${ext}`),
+        filenamesByExt => getFilesInfo({ folder, filenames: filenamesByExt }),
+        TE.map(filesInfo => ({ ext, filesInfo }))
+      )
 
-const buildFilenamesMapByExts = (folder: string, extensions: ExtractorFileExtensions[]):
-TE.TaskEither<Error, {
-  ext: ExtractorFileExtensions
-  filesInfo: TFileInfo[]
-}[]> =>
+const buildFilenamesMapByExts = (
+  folder: string,
+  extensions: ExtractorFileExtensions[]
+): TE.TaskEither<
+  Error,
+  {
+    ext: ExtractorFileExtensions
+    filesInfo: TFileInfo[]
+  }[]
+> =>
   pipe(
     folder,
     readDirTE,
-    TE.flatMap(filenames => pipe(
-      extensions,
-      A.traverse(TE.ApplicativePar)(getFilesInfoByExt(filenames, folder))
-    ))
+    TE.flatMap(filenames => pipe(extensions, A.traverse(TE.ApplicativePar)(getFilesInfoByExt(filenames, folder))))
   )
 
-export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = (folder, strategies) => pipe(
-  Object.keys(strategies) as ExtractorFileExtensions[],
-  extensions => buildFilenamesMapByExts(folder, extensions),
-  TE.map(filenamesMapByExts => filenamesMapByExts
-    .map(({ ext, filesInfo }) => ({
-      ext,
-      info:
-        ext === 'torrent'
-          ? filesInfo.map(torrentFileInfo => strategies[ext].extractor(torrentFileInfo))
-          : filesInfo.map(txtFileInfo => ({
-              filename: txtFileInfo.absolutePath,
-              content: strategies[ext].extractor(txtFileInfo),
-            })),
-    }))
-    // Remove empty txt of empty torrent field
-    .filter(v => v.info.length > 0)
-    .reduce((acc, cur) => {
-      const content
-        = cur.ext === 'txt'
-          ? (cur.info as ReadonlyArray<TContent>).map(content => ({
-              filename: content.filename,
-              content: content.content,
-            }))
-          : cur.info
+export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = (folder, strategies) =>
+  pipe(
+    Object.keys(strategies) as ExtractorFileExtensions[],
+    extensions => buildFilenamesMapByExts(folder, extensions),
+    TE.map(filenamesMapByExts =>
+      filenamesMapByExts
+        .map(({ ext, filesInfo }) => ({
+          ext,
+          info:
+            ext === 'torrent'
+              ? filesInfo.map(torrentFileInfo => strategies[ext].extractor(torrentFileInfo))
+              : filesInfo.map(txtFileInfo => ({
+                  filename: txtFileInfo.absolutePath,
+                  content: strategies[ext].extractor(txtFileInfo),
+                })),
+        }))
+        // Remove empty txt of empty torrent field
+        .filter(v => v.info.length > 0)
+        .reduce((acc, cur) => {
+          const content
+            = cur.ext === 'txt'
+              ? (cur.info as ReadonlyArray<TContent>).map(content => ({
+                  filename: content.filename,
+                  content: content.content,
+                }))
+              : cur.info
 
-      const el = [
-        ...acc,
-        {
-          folder,
-          type: cur.ext,
-          content,
-        } as THeterogenousUniversalMapEl,
-      ]
+          const el = [
+            ...acc,
+            {
+              folder,
+              type: cur.ext,
+              content,
+            } as THeterogenousUniversalMapEl,
+          ]
 
-      return el
-    }, [] as THeterogenousUniversalMapEl[])
+          return el
+        }, [] as THeterogenousUniversalMapEl[])
+    )
   )
-)
 
 export const getUniversalFileMapFromFolders: TGetUniversalFileMapFromFolders
   = (strategies, options) => (folderList) => {
