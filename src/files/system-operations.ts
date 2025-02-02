@@ -28,9 +28,11 @@ export const readDirTE = (folder: string): TE.TaskEither<Error, string[]> =>
 export const getFileContentFromTxtTE = (filePath: string): TE.TaskEither<Error, string> =>
   TE.tryCatch(() => fs.readFile(filePath, { encoding: 'utf-8' }), E.toError)
 
-export const checkIfDirectory = async (fullPath: string): Promise<boolean> => await fs.stat(fullPath)
-  .then(stats => stats.isDirectory())
-  .catch(() => false)
+export const checkIfDirectoryT = (fullPath: string): T.Task<boolean> =>
+  () => fs
+    .stat(fullPath)
+    .then(stats => stats.isDirectory())
+    .catch(() => false)
 
 export const checkIsFolderExistsT = (pathToFolder: string): T.Task<boolean> =>
   pipe(
@@ -44,17 +46,16 @@ export const checkIsFolderExistsT = (pathToFolder: string): T.Task<boolean> =>
     )
   )
 
-export const validateFolderPath = (folderPath: string): IO.IO<string | boolean> => pipe(
-  IOE.Do,
-  IOE.apS('exists', IOE.tryCatchK(fsSync.existsSync, E.toError)(folderPath)),
-  IOE.apS('stats', IOE.tryCatchK(fsSync.statSync, E.toError)(folderPath)),
-  IOE.flatMap(({ exists, stats }) =>
-    exists && stats?.isDirectory()
-      ? IOE.right(true)
-      : IOE.left(new Error('Please provide a valid folder path'))
-  ),
-  IOE.matchW(
-    ({ message }) => message,
-    () => true
+export const validateFolderPath = (folderPath: string): IO.IO<string | boolean> =>
+  pipe(
+    IOE.Do,
+    IOE.apS('exists', IOE.tryCatchK(fsSync.existsSync, E.toError)(folderPath)),
+    IOE.apS('stats', IOE.tryCatchK(fsSync.statSync, E.toError)(folderPath)),
+    IOE.flatMap(({ exists, stats }) =>
+      exists && stats?.isDirectory() ? IOE.right(true) : IOE.left(new Error('Please provide a valid folder path'))
+    ),
+    IOE.matchW(
+      ({ message }) => message,
+      () => true
+    )
   )
-)

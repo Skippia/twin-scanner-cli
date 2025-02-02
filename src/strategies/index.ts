@@ -11,8 +11,10 @@ export type TExtensionsRemoveDuplicatesStrategies = {
     readonly getUniqueNames: (lines: ReadonlyArray<string>) => ReadonlyArray<string>
     readonly getDuplicates: (lines: ReadonlyArray<string>, uniqueLines: ReadonlyArray<string>) => ReadonlyArray<string>
     readonly removeContentFromFileEffect: (src: AbsolutePath, contentToDelete: string) => Promise<void>
-    readonly removeDuplicatesEffect:
-    (duplicateMap: TDuplicateFormatTxt, readonly: boolean) => Promise<(void[] | undefined)[]>
+    readonly removeDuplicatesEffect: (
+      duplicateMap: TDuplicateFormatTxt,
+      readonly: boolean,
+    ) => Promise<(void[] | undefined)[]>
     readonly getDuplicateMap: (folderList: ReadonlyArray<string>) => Promise<TDuplicateFormatTxt>
   }
   readonly [UFileExtension.TORRENT]: {

@@ -21,7 +21,7 @@ export type TExtractorsUsefulInfo = {
 
 export type TMoveFilesInFolders = (options: {
   readonly readonly: boolean
-}) => (commonFiles: { readonly [key: string]: ReadonlyArray<AbsolutePath> }) => Promise<void>
+}) => (commonFiles: { readonly [key: string]: ReadonlyArray<AbsolutePath> }) => TE.TaskEither<Error, void>
 
 export type TUpdateContentInTxtFilesEffect = (
   converter: (filename: string) => string,
@@ -30,7 +30,7 @@ export type TUpdateContentInTxtFilesEffect = (
   readonly [key: AbsolutePath]: {
     readonly unique: ReadonlyArray<string>
   }
-}) => Promise<void[] | undefined>
+}) => TE.TaskEither<Error, void>
 
 /**
  * @example

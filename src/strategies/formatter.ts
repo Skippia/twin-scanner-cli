@@ -34,8 +34,10 @@ export type TConvertToOutputUniversal = (options: { readonly readonly: boolean }
     readonly duplicateLength: number
     readonly folder: string
   }>
-}) =>
-[...TOutputFormatTorrentUniversal, { readonly amount_all_names: number, readonly amount_duplicates_names: number }]
+}) => [
+  ...TOutputFormatTorrentUniversal,
+  { readonly amount_all_names: number, readonly amount_duplicates_names: number }
+]
 
 /**
  * @example
@@ -44,15 +46,14 @@ export type TConvertToOutputUniversal = (options: { readonly readonly: boolean }
  *  'dog.torrent': ['folder1/dog.torrent', 'folder2/dog.torrent'],.
  * }
  */
-export type TConvertToApplyExtractorStatistics =
-  (options: ({ readonly readonly: boolean })) =>
-  (input: { readonly [key: Filename]: ReadonlyArray<AbsolutePath> }) =>
-  ReadonlyArray<{
-    readonly duplicate_filename: string
-    readonly amount_duplicates: number
-    readonly common_folders_or_files: string
-    readonly readonly_mode: boolean
-  }>
+export type TConvertToApplyExtractorStatistics = (options: { readonly readonly: boolean }) => (input: {
+  readonly [key: Filename]: ReadonlyArray<AbsolutePath>
+}) => ReadonlyArray<{
+  readonly duplicate_filename: string
+  readonly amount_duplicates: number
+  readonly common_folders_or_files: string
+  readonly readonly_mode: boolean
+}>
 
 export const sortByAlphabetical = <T>(arr: ReadonlyArray<T>, _extractor?: (el: T) => string): ReadonlyArray<T> => {
   const extractor = (_extractor || ((el: T): T => el)) as (el: T) => string

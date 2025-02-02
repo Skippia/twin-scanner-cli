@@ -2,8 +2,8 @@ import type { TDuplicateFormatTxt } from '../torrent/types'
 
 import { convertTorrentFilenameToURL } from './helpers'
 
-import { getFileContentFromTxt } from '@/files/readers'
 import { writeIntoFileEffect } from '@/files/effects'
+import { getFileContentFromTxt } from '@/files/readers'
 import type { TUpdateContentInTxtFilesEffect } from '@/logic/types'
 
 export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect
@@ -26,7 +26,7 @@ export const removeContentFromTxtFileEffect = async (
   const parsedContent = rawContent.split('\n')
   const updatedContent = parsedContent.filter(v => v !== stringToDelete).join('\n')
 
-  return await writeIntoFileEffect(pathToTxtFile, updatedContent)
+  return writeIntoFileEffect(pathToTxtFile, updatedContent)
 }
 
 export const removeDuplicatesFromTxtFileEffect = async (

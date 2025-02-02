@@ -10,5 +10,4 @@ export type TGetRecursiveFilesAndFolders = (
     readonly permittedExtensions: ReadonlyArray<ExtractorFileExtensions>
     readonly banFolders: ReadonlyArray<string>
   },
-)
-=> TE.TaskEither<Error, AbsolutePath[]>
+) => TE.TaskEither<Error, AbsolutePath[]>
