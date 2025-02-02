@@ -1,3 +1,5 @@
+import type * as TE from 'fp-ts/TaskEither'
+
 import type { TUserChoices } from './cli'
 import { getRecursiveFilesAndFolders } from './files/readers'
 import { getCommonFilesInFileMap, getUniversalFileMapFromFolders } from './logic/core'
@@ -6,7 +8,7 @@ import { DEFAULT_BAN_FOLDERS } from './shared/constants'
 import { asyncFlow } from './shared/helpers'
 import { strategies } from './strategies'
 
-export const main = async (options: TUserChoices): Promise<void> => {
+export const main = (options: TUserChoices): TE.TaskEither<Error, void> => {
   const folderList = options.recursive
     ? ((await getRecursiveFilesAndFolders(options.folderPath as AbsolutePath, {
         permittedExtensions: [],

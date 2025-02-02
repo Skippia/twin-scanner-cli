@@ -1,4 +1,4 @@
-import type { TOutputFormatTorrent } from '../formatter'
+import type { TOutputFormatTorrent } from '../formatters'
 
 export type TConvertToOutputTorrent = (options: { readonly readonly: boolean }) => (
   raw: ReadonlyArray<{

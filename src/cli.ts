@@ -2,6 +2,7 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
+import type * as TE from 'fp-ts/TaskEither'
 import type PromptModule from 'inquirer'
 import inquirer from 'inquirer'
 import inquirerFuzzyPath from 'inquirer-fuzzy-path'
@@ -27,7 +28,7 @@ export type TUserChoices = {
   readonly readonly: boolean
 }
 
-const collectUserChoices = async (): Promise<TUserChoices> => {
+const collectUserChoices = (): TE.TaskEither<Error, TUserChoices> => {
   const rootPathFolder = path.join(__filename, '../../../')
 
   // eslint-disable-next-line functional/no-expression-statements
@@ -62,9 +63,9 @@ const handleError = (error: unknown): never => {
   return process.exit(1)
 }
 
-const startCLI = async (): Promise<void> => {
+const startCLI = (): TE.TaskEither<Error, void> => {
   const userChoices = await collectUserChoices()
-  return await main(userChoices)
+  return main(userChoices)
 }
 
 // Run the CLI
