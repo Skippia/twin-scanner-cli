@@ -1,6 +1,7 @@
 import path from 'node:path'
 
 import type * as TE from 'fp-ts/TaskEither'
+import type * as TE from 'fp-ts/TaskEither'
 
 import {
   areAllTextFiles,
@@ -25,15 +26,15 @@ const processFileTypeHandlers = (
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string
 ): {
-    readonly [key in ExtractorFileExtensions]: (dAbsPath: AbsolutePath) => Promise<void>
+    readonly [key in ExtractorFileExtensions]: (dAbsPath: AbsolutePath) => TE.TaskEither<Error, void>
   } => ({
-  torrent: (dAbsPath: AbsolutePath): Promise<void> =>
+  torrent: (dAbsPath: AbsolutePath): TE.TaskEither<Error, void> =>
     strategies.torrent.moveFileEffect(dAbsPath, path.join(absolutePathToCommonStorageCur, duplicateFilename)),
-  txt: (duplicateAbsolutePath: AbsolutePath): Promise<void> =>
+  txt: (duplicateAbsolutePath: AbsolutePath): TE.TaskEither<Error, void> =>
     strategies.txt.removeContentFromFileEffect(duplicateAbsolutePath, convertTorrentFilenameToURL(duplicateFilename)),
 })
 
-const handleMixedFilesEffect = async (
+const handleMixedFilesEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string,
@@ -78,11 +79,11 @@ const processDuplicateEffect = (
       : handleMixedFilesEffect(strategies, storagePath, dFilename, dAbsPaths)
   )
 
-const processDuplicatesEffect = async (
+const processDuplicatesEffect = (
   mergedFileMapsExtraction: { readonly [key: string]: ReadonlyArray<string> },
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToStorageFolder: string
-): TE.TaskEither<Error, void>=> {
+): TE.TaskEither<Error, void> => {
   // eslint-disable-next-line functional/no-loop-statements
   for (const [duplicateFilename, duplicateAbsolutePaths] of Object.entries(mergedFileMapsExtraction)) {
     const storageFolderName = generateCombinationFolderName(duplicateAbsolutePaths)
@@ -94,7 +95,7 @@ const processDuplicatesEffect = async (
 }
 
 export const applyFilesExtractionEffect: TApplyFileExtractionEffect
-  = (strategies, options) => async (fileMapsExtraction) => {
+  = (strategies, options) => (fileMapsExtraction) => {
     const mergedFileMapsExtraction = mergeFileMapsExtraction(fileMapsExtraction)
 
     logExtractionStatistics(mergedFileMapsExtraction, options.readonly)

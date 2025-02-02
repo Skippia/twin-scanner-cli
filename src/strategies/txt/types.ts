@@ -1,3 +1,5 @@
+import type * as TE from 'fp-ts/TaskEither'
+
 import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 import type { TExtractorsUsefulInfo } from '../../logic/types'
 
@@ -5,7 +7,7 @@ import type { TUserChoices } from '@/cli'
 
 export type TGetDuplicatesFromTxtFilesInFolder = (strategy: TExtensionsRemoveDuplicatesStrategies['txt']) => (
   folder: AbsolutePath,
-) => Promise<{
+) => TE.TaskEither<Error, {
   [key: AbsolutePath]: {
     readonly unique: ReadonlyArray<string>
     readonly duplicates: ReadonlyArray<string>
@@ -19,4 +21,5 @@ export type TTxtFileInfoExtractor = TExtractorsUsefulInfo['txt']
 export type TApplyFileExtractionEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   options: TUserChoices,
-) => (fileMapExtraction: ReadonlyArray<{ readonly [key: Filename]: ReadonlyArray<AbsolutePath> }>) => Promise<void>
+) => (fileMapExtraction: ReadonlyArray<{ readonly [key: Filename]: ReadonlyArray<AbsolutePath> }>) =>
+TE.TaskEither<Error, void>

@@ -1,3 +1,5 @@
+import type * as TE from 'fp-ts/TaskEither'
+
 import type { TDuplicateFormatTxt } from '../torrent/types'
 
 import { convertTorrentFilenameToURL } from './helpers'
@@ -7,7 +9,7 @@ import { getFileContentFromTxt } from '@/files/readers'
 import type { TUpdateContentInTxtFilesEffect } from '@/logic/types'
 
 export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect
-  = (converter, options) => async (fileMap) => {
+  = (converter, options) =>  (fileMap) => {
     if (options.readonly) return
 
     const writeToFilesTasks = Object.entries(fileMap).reduce<Promise<void>[]>((acc, [absolutePath, contentMap]) => {
@@ -18,10 +20,10 @@ export const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect
     return await Promise.all(writeToFilesTasks)
   }
 
-export const removeContentFromTxtFileEffect = async (
+export const removeContentFromTxtFileEffect =  (
   pathToTxtFile: AbsolutePath,
   stringToDelete: string
-): Promise<void> => {
+): TE.TaskEither<Error, void> => {
   const rawContent = await getFileContentFromTxt(pathToTxtFile)
   const parsedContent = rawContent.split('\n')
   const updatedContent = parsedContent.filter(v => v !== stringToDelete).join('\n')
@@ -29,8 +31,8 @@ export const removeContentFromTxtFileEffect = async (
   return writeIntoFileEffect(pathToTxtFile, updatedContent)
 }
 
-export const removeDuplicatesFromTxtFileEffect = async (
+export const removeDuplicatesFromTxtFileEffect = (
   txtFilesMapDuplicates: TDuplicateFormatTxt,
   readonly: boolean
-): Promise<(void[] | undefined)[]> =>
-  await Promise.all(txtFilesMapDuplicates.map(updateContentInTxtFilesEffect(convertTorrentFilenameToURL, { readonly })))
+): TE.TaskEither<Error, void> =>
+  Promise.all(txtFilesMapDuplicates.map(updateContentInTxtFilesEffect(convertTorrentFilenameToURL, { readonly })))

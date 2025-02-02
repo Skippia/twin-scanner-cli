@@ -8,7 +8,7 @@ import * as S from 'fp-ts/string'
 
 import type { TUserChoices } from '@/cli'
 import { PREFIX_FILE_FOLDER } from '@/shared/constants'
-import { convertToApplyExtractorStatistics, convertToOutputUniversal } from '@/strategies/formatter'
+import { convertToApplyExtractorStatistics, convertToOutputUniversal } from '@/strategies/formatters'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
 
 export const generateCombinationFolderName = (paths: ReadonlyArray<AbsolutePath>): string => {

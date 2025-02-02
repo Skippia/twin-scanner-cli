@@ -1,5 +1,5 @@
 import path from 'node:path'
-
+import * as TE from 'fp-ts/TaskEither'
 import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 
 import type { TDuplicateFormatTorrent, TGetDuplicatesInFolderTorrent } from './types'
@@ -13,7 +13,7 @@ export const isDuplicateTorrent
     (curFile: TFileInfo): boolean =>
       isIndirectDuplicateFilename(filenames, curFile.filename)
 
-const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strategy => async (folder) => {
+const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strategy => (folder) => {
   const filenames = await readDir(folder)
   const torrentFilenames = filenames.filter(filename => path.extname(filename) === '.torrent')
 
@@ -54,10 +54,10 @@ const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strateg
  * @description
  * Create duplicate maps for all .txt files in folders
  */
-export const getDuplicateTorrentsFilesInFolders = async (
+export const getDuplicateTorrentsFilesInFolders = (
   folderList: ReadonlyArray<string>,
   options: { readonly strategy: TExtensionsRemoveDuplicatesStrategies['torrent'] }
-): Promise<TDuplicateFormatTorrent> => {
+): TE.TaskEither<Error, TDuplicateFormatTorrent> => {
   const duplicates = await Promise.all(folderList.map(getDuplicateTorrentsFilesInFolder(options.strategy)))
 
   return duplicates.filter(v => v.uniqueLength > 0)

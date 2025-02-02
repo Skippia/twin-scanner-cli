@@ -1,3 +1,5 @@
+import type * as TE from 'fp-ts/TaskEither'
+
 import { torrentDuplicateStrategy } from './torrent/index'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from './torrent/types'
 import { txtDuplicateStrategy } from './txt/index'
@@ -10,22 +12,22 @@ export type TExtensionsRemoveDuplicatesStrategies = {
     readonly extractor: TExtractorsUsefulInfo['txt']
     readonly getUniqueNames: (lines: ReadonlyArray<string>) => ReadonlyArray<string>
     readonly getDuplicates: (lines: ReadonlyArray<string>, uniqueLines: ReadonlyArray<string>) => ReadonlyArray<string>
-    readonly removeContentFromFileEffect: (src: AbsolutePath, contentToDelete: string) => Promise<void>
+    readonly removeContentFromFileEffect: (src: AbsolutePath, contentToDelete: string) => TE.TaskEither<Error, void>
     readonly removeDuplicatesEffect: (
       duplicateMap: TDuplicateFormatTxt,
       readonly: boolean,
-    ) => Promise<(void[] | undefined)[]>
-    readonly getDuplicateMap: (folderList: ReadonlyArray<string>) => Promise<TDuplicateFormatTxt>
+    ) => TE.TaskEither<Error, void>
+    readonly getDuplicateMap: (folderList: ReadonlyArray<string>) => TE.TaskEither<Error, TDuplicateFormatTxt>
   }
   readonly [UFileExtension.TORRENT]: {
     readonly extractor: TExtractorsUsefulInfo['torrent']
     readonly isDuplicate: (filenames: ReadonlyArray<string>) => (curFile: TFileInfo) => boolean
-    readonly moveFileEffect: (src: AbsolutePath, dest: AbsolutePath) => Promise<void>
+    readonly moveFileEffect: (src: AbsolutePath, dest: AbsolutePath) => TE.TaskEither<Error, void>
     readonly removeDuplicatesEffect: (
       duplicateMap: TDuplicateFormatTorrent,
       readonly: boolean,
-    ) => Promise<void[] | undefined>
-    readonly getDuplicateMap: (folderList: ReadonlyArray<string>) => Promise<TDuplicateFormatTorrent>
+    ) => TE.TaskEither<Error, void>
+    readonly getDuplicateMap: (folderList: ReadonlyArray<string>) => TE.TaskEither<Error, TDuplicateFormatTorrent>
   }
 }
 
