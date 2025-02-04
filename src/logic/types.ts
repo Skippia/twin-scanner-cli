@@ -23,9 +23,7 @@ export type TMoveFilesInFolders = (options: {
   readonly readonly: boolean
 }) => (commonFiles: { readonly [key: string]: Array<AbsolutePath> }) => TE.TaskEither<Error, void>
 
-export type TUpdateContentInTxtFilesEffect = (
-  converter: (filename: string) => string,
-) => (fileContentMap: {
+export type TUpdateContentInTxtFilesEffect = (converter: (filename: string) => string) => (fileContentMap: {
   readonly [key: AbsolutePath]: {
     readonly unique: Array<string>
   }
