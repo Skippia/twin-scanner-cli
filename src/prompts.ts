@@ -86,4 +86,4 @@ export const PROMPTS_RECORD = {
       { name: 'Yes', value: false },
     ],
   }),
-} as const satisfies { readonly [key: string]: FunctionReturningTPromptEl }
+} as const satisfies Readonly<Record<string, FunctionReturningTPromptEl>>

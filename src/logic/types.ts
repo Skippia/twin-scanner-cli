@@ -21,13 +21,18 @@ export type TExtractorsUsefulInfo = {
 
 export type TMoveFilesInFolders = (options: {
   readonly readonly: boolean
-}) => (commonFiles: { readonly [key: string]: Array<AbsolutePath> }) => TE.TaskEither<Error, void>
+}) => (commonFiles: Readonly<Record<string, Array<AbsolutePath>>>) => TE.TaskEither<Error, void>
 
-export type TUpdateContentInTxtFilesEffect = (converter: (filename: string) => string) => (fileContentMap: {
-  readonly [key: AbsolutePath]: {
-    readonly unique: Array<string>
-  }
-}) => TE.TaskEither<Error, void[]>
+export type TUpdateContentInTxtFilesEffect = (converter: (filename: string) => string) => (
+  fileContentMap: Readonly<
+    Record<
+      AbsolutePath,
+      {
+        readonly unique: Array<string>
+      }
+    >
+  >,
+) => TE.TaskEither<Error, void[]>
 
 /**
  * @example
@@ -40,7 +45,7 @@ export type TGetUniversalFileMapFromFolders = (
 
 export type TGetCommonFilesInFileMap = (
   universalFileMap: Array<TMonogenousUniversalMapEl>,
-) => Array<{ readonly [key: Filename]: Array<AbsolutePath> }>
+) => Array<Readonly<Record<Filename, Array<AbsolutePath>>>>
 
 export type TGetUniversalFileMapFromFolder = (
   folder: string,

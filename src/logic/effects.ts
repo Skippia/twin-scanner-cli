@@ -27,9 +27,7 @@ const processFileTypeHandlers = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string
-): {
-    readonly [key in ExtractorFileExtensions]: (dAbsPath: AbsolutePath) => TE.TaskEither<Error, void>
-  } => ({
+): Readonly<Record<ExtractorFileExtensions, (dAbsPath: AbsolutePath) => TE.TaskEither<Error, void>>> => ({
   torrent: (dAbsPath: AbsolutePath): TE.TaskEither<Error, void> =>
     strategies.torrent.moveFileEffect(dAbsPath, path.join(absolutePathToCommonStorageCur, duplicateFilename)),
   txt: (duplicateAbsolutePath: AbsolutePath): TE.TaskEither<Error, void> =>
@@ -92,7 +90,7 @@ const processDuplicateEffect = (
 
 const processDuplicatesEffect
   = (
-    mergedFileMapsExtraction: { readonly [key: string]: Array<string> },
+    mergedFileMapsExtraction: Readonly<Record<string, Array<string>>>,
     strategies: TExtensionsRemoveDuplicatesStrategies
   ) =>
     (absolutePathToStorageFolder: string): TE.TaskEither<Error, void[][]> =>

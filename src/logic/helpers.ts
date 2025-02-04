@@ -78,7 +78,7 @@ export const isOnlyDigits = (str?: string): boolean =>
     O.exists(s => /^\d+$/.test(s))
   )
 
-export const filterRecordByKeys = <T extends { readonly [key: string]: unknown }>(
+export const filterRecordByKeys = <T extends Readonly<Record<string, unknown>>>(
   record: T,
   keys: Array<string>
 ): Readonly<T> =>
@@ -96,7 +96,7 @@ export const getDuplicateStoragePath = (options: TUserChoices): AbsolutePath => 
 
 export const logExtractionStatistics
   = (readonly: boolean) =>
-    (fileMap: { readonly [key: string]: Array<string> }): void =>
+    (fileMap: Readonly<Record<string, Array<string>>>): void =>
       pipe(fileMap, convertToApplyExtractorStatistics({ readonly }), console.table)
 
 export const logUniversalStatistics = (
@@ -113,9 +113,7 @@ export const logUniversalStatistics = (
     console.table
   )
 
-export const mergeFileMapsExtraction = (
-  fileMapsExtraction: { [key: string]: string[] }[]
-): { [key: string]: string[] } => {
+export const mergeFileMapsExtraction = (fileMapsExtraction: Record<string, string[]>[]): Record<string, string[]> => {
   const flattenFileMapsExtraction = pipe(
     fileMapsExtraction,
     A.flatMap(record =>
@@ -129,7 +127,7 @@ export const mergeFileMapsExtraction = (
 
   return pipe(
     flattenFileMapsExtraction,
-    A.reduce({} as { [key: string]: string[] }, (acc, cur) => {
+    A.reduce({} as Record<string, string[]>, (acc, cur) => {
       const currentFilename = Object.keys(cur)[0]!
       const currentAbsolutePaths = Object.values(cur)[0]!
 
