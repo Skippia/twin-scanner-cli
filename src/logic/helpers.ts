@@ -94,8 +94,10 @@ export const getDuplicateStoragePath = (options: TUserChoices): AbsolutePath => 
   return absolutePathToStorageFolder
 }
 
-export const logExtractionStatistics = (fileMap: { readonly [key: string]: Array<string> }, readonly: boolean): void =>
-  pipe(fileMap, convertToApplyExtractorStatistics({ readonly }), console.table)
+export const logExtractionStatistics
+  = (readonly: boolean) =>
+    (fileMap: { readonly [key: string]: Array<string> }): void =>
+      pipe(fileMap, convertToApplyExtractorStatistics({ readonly }), console.table)
 
 export const logUniversalStatistics = (
   duplicateMaps: Array<TDuplicateFormatTorrent | TDuplicateFormatTxt>,
@@ -110,3 +112,34 @@ export const logUniversalStatistics = (
     convertToOutputUniversal({ readonly: options.readonly }),
     console.table
   )
+
+export const mergeFileMapsExtraction = (
+  fileMapsExtraction: { [key: string]: string[] }[]
+): { [key: string]: string[] } => {
+  const flattenFileMapsExtraction = pipe(
+    fileMapsExtraction,
+    A.flatMap(record =>
+      pipe(
+        record,
+        R.toEntries,
+        A.map(([key, value]) => ({ [key]: value }))
+      )
+    )
+  )
+
+  return pipe(
+    flattenFileMapsExtraction,
+    A.reduce({} as { [key: string]: string[] }, (acc, cur) => {
+      const currentFilename = Object.keys(cur)[0]!
+      const currentAbsolutePaths = Object.values(cur)[0]!
+
+      return {
+        ...acc,
+        [currentFilename]:
+          (acc[currentFilename]?.length || 0) > currentAbsolutePaths.length
+            ? acc[currentFilename]!
+            : currentAbsolutePaths,
+      }
+    })
+  )
+}

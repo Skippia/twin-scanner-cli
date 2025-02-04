@@ -1,6 +1,6 @@
 import type inquirer from 'inquirer'
 
-import { validateFolderPath } from './files/effects'
+import { validateFolderPath } from '@/files/system-operations'
 
 type FunctionReturningTPromptEl = (() => TPromptEl) | ((val: string) => TPromptEl)
 
@@ -46,7 +46,7 @@ export const PROMPTS_RECORD = {
     suggestOnly: false,
     depthLimit: 1,
     // @ts-expect-error ...
-    validate: ({ short }: { readonly short: string }) => validateFolderPath(short),
+    validate: ({ short }: { readonly short: string }) => validateFolderPath(short)(),
   }),
   getMultipleFoldersPrompt: (): TPromptEl => ({
     type: 'input',
@@ -55,7 +55,7 @@ export const PROMPTS_RECORD = {
     validate: (input: string): boolean | string => {
       const paths = input.split(',').map(p => p.trim())
       const invalidPath = paths.find(folderPath => typeof validateFolderPath(folderPath) === 'string')
-      return invalidPath ? `Invalid path: ${invalidPath}; ${validateFolderPath(invalidPath)}` : true
+      return invalidPath ? `Invalid path: ${invalidPath}; ${validateFolderPath(invalidPath)()}` : true
     },
     filter: (input: string) => input.split(',').map(p => p.trim()),
   }),

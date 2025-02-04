@@ -155,9 +155,9 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = (fo
             ext === 'torrent'
               ? filesInfo.map(torrentFileInfo => strategies[ext].extractor(torrentFileInfo))
               : filesInfo.map(txtFileInfo => ({
-                filename: txtFileInfo.absolutePath,
-                content: strategies[ext].extractor(txtFileInfo),
-              })),
+                  filename: txtFileInfo.absolutePath,
+                  content: strategies[ext].extractor(txtFileInfo),
+                })),
         }))
         // Remove empty txt of empty torrent field
         .filter(v => v.info.length > 0)
@@ -165,9 +165,9 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = (fo
           const content
             = cur.ext === 'txt'
               ? (cur.info as Array<TContent>).map(content => ({
-                filename: content.filename,
-                content: content.content,
-              }))
+                  filename: content.filename,
+                  content: content.content,
+                }))
               : cur.info
 
           const el = [
