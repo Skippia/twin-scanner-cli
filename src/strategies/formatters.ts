@@ -20,14 +20,19 @@ export type TOutputFormatTorrentUniversal = Array<{
 }>
 
 export type TConvertToOutputUniversal = (options: { readonly readonly: boolean }) => (formats: {
-  readonly txt?: Array<{
-    readonly [key: string]: {
-      readonly unique: Array<string>
-      readonly duplicates: Array<string>
-      readonly duplicatesLength: number
-      readonly uniqueLength: number
-    }
-  }>
+  readonly txt?: Array<
+    Readonly<
+      Record<
+        string,
+        {
+          readonly unique: Array<string>
+          readonly duplicates: Array<string>
+          readonly duplicatesLength: number
+          readonly uniqueLength: number
+        }
+      >
+    >
+  >
   readonly torrent?: Array<{
     readonly pathsForDuplicateFiles: Array<AbsolutePath>
     readonly uniqueLength: number
@@ -46,9 +51,9 @@ export type TConvertToOutputUniversal = (options: { readonly readonly: boolean }
  *  'dog.torrent': ['folder1/dog.torrent', 'folder2/dog.torrent'],.
  * }
  */
-export type TConvertToApplyExtractorStatistics = (options: { readonly readonly: boolean }) => (input: {
-  readonly [key: Filename]: Array<AbsolutePath>
-}) => Array<
+export type TConvertToApplyExtractorStatistics = (options: { readonly readonly: boolean }) => (
+  input: Readonly<Record<Filename, Array<AbsolutePath>>>,
+) => Array<
   | {
     readonly duplicate_filename: string
     readonly amount_duplicates: number

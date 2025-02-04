@@ -401,14 +401,14 @@ export default antfu(
       // https://typescript-eslint.io/rules/#extension-rules
       'ts/adjacent-overload-signatures': 'error',
       // 'ts/array-type': ['error', { default: 'generic' }],
-      'ts/await-thenable': 'error', // TODO: fix ANTFU doesn' support it?
+      'ts/await-thenable': 'error', // TODO: fix ANTFU doesn't support it?
       'ts/ban-ts-comment': ['error', { 'ts-expect-error': false }],
       'ts/ban-tslint-comment': 'error',
       'ts/class-literal-property-style': 'error',
       'ts/consistent-generic-constructors': 'error',
       'ts/consistent-indexed-object-style': [
         'error',
-        'index-signature',
+        'record',
       ],
       'ts/consistent-type-assertions': 'error',
       'ts/consistent-type-definitions': ['error', 'type'],

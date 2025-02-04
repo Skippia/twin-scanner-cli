@@ -48,9 +48,9 @@ export const convertHeteroUniversalMapToMono = (
 }
 
 export const processCombination = (
-  filesMapCache: { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl },
+  filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
   folderOrFilenames: readonly string[]
-): { readonly [key: string]: Array<string> } => {
+): Readonly<Record<string, Array<string>>> => {
   const files = folderOrFilenames
     .map(folderOrFilename => filesMapCache[folderOrFilename]!)
     .sort((a, b) => (a.amount > b.amount ? 1 : -1))
@@ -59,7 +59,7 @@ export const processCombination = (
 
   return pipe(
     sourceMapEl!.content,
-    A.reduce({} as { [key: string]: string[] }, (acc, curFilename) => {
+    A.reduce({} as Record<string, string[]>, (acc, curFilename) => {
       const isDuplicate = targetMapEls.every(targetMapEl => targetMapEl.content.includes(curFilename))
 
       if (isDuplicate) {
@@ -89,12 +89,12 @@ export const processCombination = (
 }
 
 export const buildCommonFilesMap = (
-  filesMapCache: { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl },
+  filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
   combinationsGenerator: Generator<Array<string>>
 ): ReturnType<TGetCommonFilesInFileMap> => {
   const resultGenerator = function* (
     combinationsGenerator: Generator<Array<string>>
-  ): Generator<{ [key: string]: Array<string> }> {
+  ): Generator<Record<string, Array<string>>> {
     // eslint-disable-next-line functional/no-loop-statements
     for (const combination of combinationsGenerator) {
       const fileMap = processCombination(filesMapCache, combination)
@@ -200,12 +200,12 @@ export const getCommonFilesInFileMap: TGetCommonFilesInFileMap = (universalFileM
   const absolutePaths = universalFileMap.map(v => v.folderOrFilename)
   const nextCombinationGenerator = getCombinationsGenerator(absolutePaths)
 
-  const filesMapCache: { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl } = absolutePaths.reduce(
+  const filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>> = absolutePaths.reduce(
     (acc, folderOrFilename) =>
       ({
         ...acc,
         [folderOrFilename]: universalFileMap.find(el => el.folderOrFilename === folderOrFilename),
-      }) satisfies { readonly [key: AbsolutePath]: TMonogenousUniversalMapEl },
+      }) satisfies Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
     {}
   )
 

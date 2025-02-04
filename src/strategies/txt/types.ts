@@ -9,14 +9,15 @@ export type TGetDuplicatesFromTxtFilesInFolder = (strategy: TExtensionsRemoveDup
   folder: AbsolutePath,
 ) => TE.TaskEither<
   Error,
-  {
-    [key: AbsolutePath]: {
+  Record<
+    AbsolutePath,
+    {
       readonly unique: Array<string>
       readonly duplicates: Array<string>
       readonly duplicatesLength: number
       readonly uniqueLength: number
     }
-  }
+  >
 >
 
 export type TTxtFileInfoExtractor = TExtractorsUsefulInfo['txt']
@@ -24,4 +25,4 @@ export type TTxtFileInfoExtractor = TExtractorsUsefulInfo['txt']
 export type TApplyFileExtractionEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   options: TUserChoices,
-) => (fileMapExtraction: Array<{ readonly [key: Filename]: Array<AbsolutePath> }>) => TE.TaskEither<Error, void>
+) => (fileMapExtraction: Array<Readonly<Record<Filename, Array<AbsolutePath>>>>) => TE.TaskEither<Error, void>

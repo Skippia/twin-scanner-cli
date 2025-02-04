@@ -20,14 +20,17 @@ export type TGetDuplicatesInFolderTorrent = (strategy: TExtensionsRemoveDuplicat
 
 export type TGetDuplicatesInFoldersTxt = (folderList: Array<RelativePath>) => TE.TaskEither<
   Error,
-  {
-    readonly [key: string]: {
-      readonly unique: Array<string>
-      readonly duplicates: Array<string>
-      readonly duplicatesLength: number
-      readonly uniqueLength: number
-    }
-  }
+  Readonly<
+    Record<
+      string,
+      {
+        readonly unique: Array<string>
+        readonly duplicates: Array<string>
+        readonly duplicatesLength: number
+        readonly uniqueLength: number
+      }
+    >
+  >
 >
 
 export type TDuplicateFormatTorrent = {
@@ -37,11 +40,16 @@ export type TDuplicateFormatTorrent = {
   readonly folder: string
 }[]
 
-export type TDuplicateFormatTxt = Array<{
-  readonly [key: string]: {
-    readonly unique: Array<string>
-    readonly duplicates: Array<string>
-    readonly duplicatesLength: number
-    readonly uniqueLength: number
-  }
-}>
+export type TDuplicateFormatTxt = Array<
+  Readonly<
+    Record<
+      string,
+      {
+        readonly unique: Array<string>
+        readonly duplicates: Array<string>
+        readonly duplicatesLength: number
+        readonly uniqueLength: number
+      }
+    >
+  >
+>
