@@ -1,11 +1,11 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-import * as A from 'fp-ts/Array'
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
-import * as T from 'fp-ts/Task'
-import * as TE from 'fp-ts/TaskEither'
+import * as A from 'fp-ts/lib/Array'
+import * as E from 'fp-ts/lib/Either'
+import { pipe } from 'fp-ts/lib/function'
+import * as T from 'fp-ts/lib/Task'
+import * as TE from 'fp-ts/lib/TaskEither'
 
 import {
   appendFileTE,
@@ -26,7 +26,9 @@ export const appendIntoTxtFileEffect = appendFileTE
 export const removeFilesEffect: TRemoveFilesEffect = filenamePaths =>
   pipe(filenamePaths, A.map(unlinkTE), A.sequence(TE.ApplicativePar))
 
-const recursivelyRemoveEmptyFolders = (folders: readonly AbsolutePath[]): TE.TaskEither<Error, void> => {
+const recursivelyRemoveEmptyFolders = (
+  folders: readonly AbsolutePath[]
+): TE.TaskEither<Error, void> => {
   if (folders.length === 0) {
     return TE.right(undefined)
   }
@@ -71,5 +73,7 @@ const getOnlyFolders = (folderPath: AbsolutePath): TE.TaskEither<Error, string[]
     TE.chainW(task => TE.fromTask(task))
   )
 
-export const removeEmptyFoldersInFolderEffect = (folderPath: AbsolutePath): TE.TaskEither<Error, void> =>
+export const removeEmptyFoldersInFolderEffect = (
+  folderPath: AbsolutePath
+): TE.TaskEither<Error, void> =>
   pipe(folderPath, getOnlyFolders, TE.flatMap(recursivelyRemoveEmptyFolders))

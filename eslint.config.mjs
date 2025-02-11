@@ -5,12 +5,6 @@ import tseslint from 'typescript-eslint'
 
 const allPathPattern = ['**/*.ts']
 const fpPathPattern = allPathPattern
-// const fpPathPattern = [
-//   'src/shared/**/*.ts',
-//   'src/logic/**/*.ts',
-//   'src/files/**/*.ts',
-//   'src/strategies/**/*.ts',
-// ]
 
 export default antfu(
   {
@@ -73,7 +67,7 @@ export default antfu(
       'style/max-len': [
         'error',
         {
-          code: 120,
+          code: 100,
           comments: 120,
           ignoreStrings: true,
           ignoreTemplateLiterals: true,
@@ -400,7 +394,7 @@ export default antfu(
       // !-------------------Supported Rules-------------------
       // https://typescript-eslint.io/rules/#extension-rules
       'ts/adjacent-overload-signatures': 'error',
-      // 'ts/array-type': ['error', { default: 'generic' }],
+      'ts/array-type': ['error', { default: 'array' }],
       'ts/await-thenable': 'error', // TODO: fix ANTFU doesn't support it?
       'ts/ban-ts-comment': ['error', { 'ts-expect-error': false }],
       'ts/ban-tslint-comment': 'error',
@@ -587,7 +581,7 @@ export default antfu(
           },
         ],
       }],
-      'functional/type-declaration-immutability': 'off',
+      'functional/type-declaration-immutability': ['off'],
       // 'functional/prefer-immutable-types': ['error', {
       //   enforcement: 'None',
       //   ignoreInferredTypes: true,
@@ -606,6 +600,3 @@ export default antfu(
     ignores: ['node_modules/*', 'tsconfig.json', 'vite.config.ts'],
   },
 )
-
-// functional.configs.recommended,
-// functional.configs.stylistic,

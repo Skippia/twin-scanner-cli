@@ -1,7 +1,7 @@
-import * as A from 'fp-ts/Array'
+import * as A from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
-import * as S from 'fp-ts/string'
-import * as TE from 'fp-ts/TaskEither'
+import * as S from 'fp-ts/lib/string'
+import * as TE from 'fp-ts/lib/TaskEither'
 
 import type { TDuplicateFormatTxt } from '../torrent/types'
 
@@ -15,7 +15,12 @@ const updateContentInTxtFilesEffect: TUpdateContentInTxtFilesEffect = converter 
   pipe(
     Object.entries(fileMap),
     A.map(([absolutePath, contentMap]) =>
-      pipe(contentMap.unique, A.map(converter), A.intercalate(S.Monoid)('\n'), writeIntoFileEffect(absolutePath))
+      pipe(
+        contentMap.unique,
+        A.map(converter),
+        A.intercalate(S.Monoid)('\n'),
+        writeIntoFileEffect(absolutePath)
+      )
     ),
     A.sequence(TE.ApplicativePar)
   )

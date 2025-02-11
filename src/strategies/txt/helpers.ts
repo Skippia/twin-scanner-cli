@@ -1,9 +1,9 @@
 import path from 'node:path'
 
-import * as A from 'fp-ts/Array'
-import * as E from 'fp-ts/Either'
+import * as A from 'fp-ts/lib/Array'
+import * as E from 'fp-ts/lib/Either'
 import { identity, pipe } from 'fp-ts/lib/function'
-import * as TE from 'fp-ts/TaskEither'
+import * as TE from 'fp-ts/lib/TaskEither'
 
 import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 import type { TDuplicateFormatTxt } from '../torrent/types'
@@ -53,9 +53,10 @@ export const extractContentFromTxtFile = (file: TFileInfo): string[] =>
     E.match(() => [], identity)
   )
 
-export const getDuplicatesFromTxtFile = (lines: Array<string>): Array<string> =>
-  lines.reduce<Array<string>>(
-    (acc, cur, idx) => (lines.indexOf(cur, idx) !== lines.lastIndexOf(cur) ? [...acc, cur] : [...acc]),
+export const getDuplicatesFromTxtFile = (lines: string[]): string[] =>
+  lines.reduce<string[]>(
+    (acc, cur, idx) =>
+      lines.indexOf(cur, idx) !== lines.lastIndexOf(cur) ? [...acc, cur] : [...acc],
     []
   )
 
@@ -66,8 +67,8 @@ const updateTxtMapFiles
     ): Record<
       string,
       {
-        unique: Array<string>
-        duplicates: Array<string>
+        unique: string[]
+        duplicates: string[]
         duplicatesLength: number
         uniqueLength: number
       }
@@ -91,34 +92,38 @@ const updateTxtMapFiles
         {} as Record<
           AbsolutePath,
           {
-            unique: Array<string>
-            duplicates: Array<string>
+            unique: string[]
+            duplicates: string[]
             duplicatesLength: number
             uniqueLength: number
           }
         >
       )
 
-const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder = strategy => folder =>
-  pipe(
-    folder,
-    readDirTE,
-    TE.flatMap(filenames =>
-      pipe(
-        filenames,
-        A.filter(filename => path.extname(filename) === '.txt'),
-        getFilesInfo(folder),
-        TE.map(updateTxtMapFiles(strategy))
+const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder
+  = strategy => folder =>
+    pipe(
+      folder,
+      readDirTE,
+      TE.flatMap(filenames =>
+        pipe(
+          filenames,
+          A.filter(filename => path.extname(filename) === '.txt'),
+          getFilesInfo(folder),
+          TE.map(updateTxtMapFiles(strategy))
+        )
       )
     )
-  )
 
 /**
  * @description
  * Create duplicate maps for all .txt files in folders
  */
 export const getDuplicateMapFromTxtFilesInFolders = (
-  folderList: Array<string>,
+  folderList: string[],
   options: { readonly strategy: TExtensionsRemoveDuplicatesStrategies['txt'] }
 ): TE.TaskEither<Error, TDuplicateFormatTxt> =>
-  pipe(folderList, A.traverse(TE.ApplicativePar)(getDuplicateMapFromTxtFilesInFolder(options.strategy)))
+  pipe(
+    folderList,
+    A.traverse(TE.ApplicativePar)(getDuplicateMapFromTxtFilesInFolder(options.strategy))
+  )
