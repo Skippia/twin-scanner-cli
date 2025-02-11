@@ -11,43 +11,26 @@ export type TGetDuplicatesInFolderTorrent = (
 ) => (folder: AbsolutePath) => TE.TaskEither<
   Error,
   {
-    readonly pathsForDuplicateFiles: AbsolutePath[]
-    readonly uniqueLength: number
-    readonly duplicateLength: number
-    readonly folder: string
+    pathsForDuplicateFiles: AbsolutePath[]
+    uniqueLength: number
+    duplicateLength: number
+    folder: string
   }
 >
 
-export type TGetDuplicatesInFoldersTxt = (folderList: RelativePath[]) => TE.TaskEither<
-  Error,
-  Readonly<
-    Record<
-      string,
-      {
-        readonly unique: string[]
-        readonly duplicates: string[]
-        readonly duplicatesLength: number
-        readonly uniqueLength: number
-      }
-    >
-  >
->
-
 export type TDuplicateFormatTorrent = {
-  readonly pathsForDuplicateFiles: AbsolutePath[]
-  readonly uniqueLength: number
-  readonly duplicateLength: number
-  readonly folder: string
+  pathsForDuplicateFiles: AbsolutePath[]
+  uniqueLength: number
+  duplicateLength: number
+  folder: string
 }[]
 
-export type TDuplicateFormatTxt = Readonly<
-  Record<
-    string,
-    {
-      readonly unique: string[]
-      readonly duplicates: string[]
-      readonly duplicatesLength: number
-      readonly uniqueLength: number
-    }
-  >
+export type TDuplicateFormatTxt = Record<
+  string,
+  {
+    unique: string[]
+    duplicates: string[]
+    duplicatesLength: number
+    uniqueLength: number
+  }
 >[]

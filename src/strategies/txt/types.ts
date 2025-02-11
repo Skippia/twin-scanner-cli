@@ -1,9 +1,7 @@
 import type * as TE from 'fp-ts/lib/TaskEither'
 
 import type { TExtensionsRemoveDuplicatesStrategies } from '..'
-import type { TExtractorsUsefulInfo } from '../../logic/types'
-
-import type { TUserChoices } from '@/cli'
+import type { TExtractorsUsefulInfo, TUserChoices } from '../../logic/types'
 
 export type TGetDuplicatesFromTxtFilesInFolder = (
   strategy: TExtensionsRemoveDuplicatesStrategies['txt'],
@@ -12,10 +10,10 @@ export type TGetDuplicatesFromTxtFilesInFolder = (
   Record<
     AbsolutePath,
     {
-      readonly unique: string[]
-      readonly duplicates: string[]
-      readonly duplicatesLength: number
-      readonly uniqueLength: number
+      unique: string[]
+      duplicates: string[]
+      duplicatesLength: number
+      uniqueLength: number
     }
   >
 >
@@ -25,4 +23,4 @@ export type TTxtFileInfoExtractor = TExtractorsUsefulInfo['txt']
 export type TApplyFileExtractionEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   options: TUserChoices,
-) => (fileMapExtraction: Readonly<Record<Filename, AbsolutePath[]>>[]) => TE.TaskEither<Error, void>
+) => (fileMapExtraction: Record<Filename, AbsolutePath[]>[]) => TE.TaskEither<Error, void>

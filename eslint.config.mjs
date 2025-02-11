@@ -9,12 +9,13 @@ const fpPathPattern = allPathPattern
 export default antfu(
   {
     stylistic: {
-      indent: 2,
       quotes: 'single',
+      indent: 2,
     },
     rules: {
       'unused-imports/no-unused-vars': 'warn',
       'unused-imports/no-unused-imports': 'off',
+      'antfu/curly': 2,
     },
   },
   // ?------------COMMON CONFIG------------
@@ -35,10 +36,10 @@ export default antfu(
       // 'no-redeclare': 'off',
       // 'require-await': 'off',
       // 'no-unused-expressions': 'off',
+      'curly': ['error', 'multi-line', 'consistent'],
       'no-throw-literal': 'off',
       'no-shadow': 'off',
       'no-unused-vars': 'off',
-
       'no-useless-constructor': 'off',
 
       'style/comma-dangle': [
@@ -109,7 +110,7 @@ export default antfu(
 
       // !-------------------Style guide-------------------
       // https://github.com/benmosher/eslint-plugin-import#style-guide
-      'import/exports-last': 'off',
+      'import/exports-last': 'error',
       'import/no-duplicates': 'error',
       // 'import/no-namespace': 'error',
       'import/first': 'error',
@@ -366,12 +367,29 @@ export default antfu(
       'lines-around-comment': 'off',
       'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
       'max-statements-per-line': 'off',
-      // 'style/padding-line-between-statements': ["error",
-      // { blankLine: "always", prev: "*", next: "return" },
-      // { blankLine: "always", prev: ["const", "let", "var"], next: "*" },
-      // { blankLine: "any", prev: ["const", "let", "var"], next: ["const", "let", "var"] }
+      'style/padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: 'multiline-expression', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'multiline-expression' },
 
-      // ],
+        { blankLine: 'always', prev: '*', next: 'function' },
+        { blankLine: 'always', prev: 'function', next: 'function' },
+
+        { blankLine: 'always', prev: 'multiline-block-like', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'multiline-block-like' },
+
+        { blankLine: 'any', prev: ['singleline-const'], next: ['singleline-const'] },
+        { blankLine: 'any', prev: ['singleline-let'], next: ['singleline-let'] },
+        { blankLine: 'any', prev: ['singleline-var'], next: ['singleline-var'] },
+        { blankLine: 'any', prev: ['singleline-export'], next: ['singleline-export'] },
+
+        { blankLine: 'always', prev: ['multiline-export'], next: ['*'] },
+        { blankLine: 'always', prev: ['*'], next: ['multiline-export'] },
+
+        { blankLine: 'always', prev: 'let', next: 'const' },
+        { blankLine: 'always', prev: 'const', next: 'let' },
+        { blankLine: 'always', prev: '*', next: 'return' },
+      ],
       'quotes': ['error', 'single', { avoidEscape: true }],
     },
   },
@@ -582,11 +600,12 @@ export default antfu(
         ],
       }],
       'functional/type-declaration-immutability': ['off'],
+      // ! Is not compatible with FP-TS
       // 'functional/prefer-immutable-types': ['error', {
       //   enforcement: 'None',
       //   ignoreInferredTypes: true,
       //   parameters: {
-      //     enforcement: 'ReadonlyDeep',
+      //     enforcement: 'ReadonlyShallow',
       //   },
       // }],
       'functional/prefer-immutable-types': ['off'],

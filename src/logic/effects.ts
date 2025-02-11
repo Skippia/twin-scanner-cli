@@ -12,9 +12,8 @@ import {
   logUniversalStatistics,
   mergeFileMapsExtraction,
 } from './helpers'
-import type { ExtractorFileExtensions } from './types'
+import type { ExtractorFileExtensions, TUserChoices } from './types'
 
-import type { TUserChoices } from '@/cli'
 import {
   appendIntoTxtFileEffect,
   createFolderEffect,
@@ -31,9 +30,7 @@ const processFileTypeHandlers = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string
-): Readonly<
-    Record<ExtractorFileExtensions, (dAbsPath: AbsolutePath) => TE.TaskEither<Error, void>>
-  > => ({
+): Record<ExtractorFileExtensions, (dAbsPath: AbsolutePath) => TE.TaskEither<Error, void>> => ({
   torrent: (dAbsPath: AbsolutePath): TE.TaskEither<Error, void> =>
     strategies.torrent.moveFileEffect(
       dAbsPath,
@@ -113,7 +110,7 @@ const processDuplicateEffect = (
 
 const processDuplicatesEffect
   = (
-    mergedFileMapsExtraction: Readonly<Record<string, string[]>>,
+    mergedFileMapsExtraction: Record<string, string[]>,
     strategies: TExtensionsRemoveDuplicatesStrategies
   ) =>
     (absolutePathToStorageFolder: string): TE.TaskEither<Error, void[][]> =>
@@ -121,6 +118,7 @@ const processDuplicatesEffect
         Object.entries(mergedFileMapsExtraction),
         A.traverse(TE.ApplicativeSeq)(([duplicateFilename, duplicateAbsolutePaths]) => {
           const storageFolderName = generateCombinationFolderName(duplicateAbsolutePaths)
+
           const absolutePathToCommonStorageCur = path.join(
             absolutePathToStorageFolder,
             storageFolderName

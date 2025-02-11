@@ -8,31 +8,29 @@ import type { TExtractorsUsefulInfo, TFileInfo } from '@/logic/types'
 import type { UFileExtension } from '@/shared/constants'
 
 export type TExtensionsRemoveDuplicatesStrategies = {
-  readonly [UFileExtension.TXT]: {
-    readonly extractor: TExtractorsUsefulInfo['txt']
-    readonly getUniqueNames: (lines: string[]) => string[]
-    readonly getDuplicates: (lines: string[], uniqueLines: string[]) => string[]
-    readonly removeContentFromFileEffect: (
+  [UFileExtension.TXT]: {
+    extractor: TExtractorsUsefulInfo['txt']
+    getUniqueNames: (lines: string[]) => string[]
+    getDuplicates: (lines: string[], uniqueLines: string[]) => string[]
+    removeContentFromFileEffect: (
       src: AbsolutePath,
       contentToDelete: string,
     ) => TE.TaskEither<Error, void>
-    readonly removeDuplicatesEffect: (
+    removeDuplicatesEffect: (
       duplicateMap: TDuplicateFormatTxt,
       readonly: boolean,
     ) => TE.TaskEither<Error, void[][]>
-    readonly getDuplicateMap: (folderList: string[]) => TE.TaskEither<Error, TDuplicateFormatTxt>
+    getDuplicateMap: (folderList: string[]) => TE.TaskEither<Error, TDuplicateFormatTxt>
   }
-  readonly [UFileExtension.TORRENT]: {
-    readonly extractor: TExtractorsUsefulInfo['torrent']
-    readonly isDuplicate: (filenames: string[]) => (curFile: TFileInfo) => boolean
-    readonly moveFileEffect: (src: AbsolutePath, dest: AbsolutePath) => TE.TaskEither<Error, void>
-    readonly removeDuplicatesEffect: (
+  [UFileExtension.TORRENT]: {
+    extractor: TExtractorsUsefulInfo['torrent']
+    isDuplicate: (filenames: string[]) => (curFile: TFileInfo) => boolean
+    moveFileEffect: (src: AbsolutePath, dest: AbsolutePath) => TE.TaskEither<Error, void>
+    removeDuplicatesEffect: (
       duplicateMap: TDuplicateFormatTorrent,
       readonly: boolean,
     ) => TE.TaskEither<Error, void[]>
-    readonly getDuplicateMap: (
-      folderList: string[],
-    ) => TE.TaskEither<Error, TDuplicateFormatTorrent>
+    getDuplicateMap: (folderList: string[]) => TE.TaskEither<Error, TDuplicateFormatTorrent>
   }
 }
 

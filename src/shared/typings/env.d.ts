@@ -2,9 +2,9 @@
 /* eslint-disable import/unambiguous */
 
 interface ImportMetaEnv {
-  readonly VITE_APP_TORRENT_URL: string
+  VITE_APP_TORRENT_URL: string
 }
 
 interface ImportMeta {
-  readonly env: ImportMetaEnv
+  env: ImportMetaEnv
 }

@@ -16,50 +16,6 @@ import { getFilesInfo } from '@/logic/readers'
 import type { TFileInfo } from '@/logic/types'
 import { environments } from '@/shared/environments'
 
-export const extractTorrentFileNameFromURL = (url: string): E.Either<Error, string> =>
-  E.tryCatch(
-    () => {
-      const urlObj = new URL(url)
-      const domain = urlObj.hostname
-      const params = new URLSearchParams(urlObj.search)
-      const topicId = params.get('t')?.replace(/^t/, '') || ''
-
-      return `[${domain}].t${topicId}.torrent`
-    },
-    () => {
-      console.error('[url]: ', url)
-      // eslint-disable-next-line functional/no-throw-statements
-      throw new Error('invalid_url.torrent')
-    }
-  )
-
-export const convertTorrentFilenameToURL = (fileName: string): string => {
-  const topicId = fileName.split('.')[2]?.slice(1)
-
-  if (!isOnlyDigits(topicId)) {
-    console.error('[filename]: ', fileName)
-    // eslint-disable-next-line functional/no-throw-statements
-    throw new Error('invalid_filename.torrent')
-  }
-
-  return `${environments.TORRENT_URL}?t=${topicId}`
-}
-
-export const extractContentFromTxtFile = (file: TFileInfo): string[] =>
-  pipe(
-    file.content?.split('\n') || [],
-    A.filter(Boolean),
-    A.traverse(E.Applicative)(extractTorrentFileNameFromURL),
-    E.match(() => [], identity)
-  )
-
-export const getDuplicatesFromTxtFile = (lines: string[]): string[] =>
-  lines.reduce<string[]>(
-    (acc, cur, idx) =>
-      lines.indexOf(cur, idx) !== lines.lastIndexOf(cur) ? [...acc, cur] : [...acc],
-    []
-  )
-
 const updateTxtMapFiles
   = (strategy: TExtensionsRemoveDuplicatesStrategies['txt']) =>
     (
@@ -115,13 +71,57 @@ const getDuplicateMapFromTxtFilesInFolder: TGetDuplicatesFromTxtFilesInFolder
       )
     )
 
+export const extractTorrentFileNameFromURL = (url: string): E.Either<Error, string> =>
+  E.tryCatch(
+    () => {
+      const urlObj = new URL(url)
+      const domain = urlObj.hostname
+      const params = new URLSearchParams(urlObj.search)
+      const topicId = params.get('t')?.replace(/^t/, '') || ''
+
+      return `[${domain}].t${topicId}.torrent`
+    },
+    () => {
+      console.error('[url]: ', url)
+      // eslint-disable-next-line functional/no-throw-statements
+      throw new Error('invalid_url.torrent')
+    }
+  )
+
+export const convertTorrentFilenameToURL = (fileName: string): string => {
+  const topicId = fileName.split('.')[2]?.slice(1)
+
+  if (!isOnlyDigits(topicId)) {
+    console.error('[filename]: ', fileName)
+    // eslint-disable-next-line functional/no-throw-statements
+    throw new Error('invalid_filename.torrent')
+  }
+
+  return `${environments.TORRENT_URL}?t=${topicId}`
+}
+
+export const extractContentFromTxtFile = (file: TFileInfo): string[] =>
+  pipe(
+    file.content?.split('\n') || [],
+    A.filter(Boolean),
+    A.traverse(E.Applicative)(extractTorrentFileNameFromURL),
+    E.match(() => [], identity)
+  )
+
+export const getDuplicatesFromTxtFile = (lines: string[]): string[] =>
+  lines.reduce<string[]>(
+    (acc, cur, idx) =>
+      lines.indexOf(cur, idx) !== lines.lastIndexOf(cur) ? [...acc, cur] : [...acc],
+    []
+  )
+
 /**
  * @description
  * Create duplicate maps for all .txt files in folders
  */
 export const getDuplicateMapFromTxtFilesInFolders = (
   folderList: string[],
-  options: { readonly strategy: TExtensionsRemoveDuplicatesStrategies['txt'] }
+  options: { strategy: TExtensionsRemoveDuplicatesStrategies['txt'] }
 ): TE.TaskEither<Error, TDuplicateFormatTxt> =>
   pipe(
     folderList,

@@ -1,21 +1,30 @@
 import path from 'node:path'
 
+import * as A from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import * as T from 'fp-ts/lib/Task'
 import * as TE from 'fp-ts/lib/TaskEither'
 
 import { checkIfDirectoryT, readDirTE } from './system-operations'
-import type { TGetRecursiveFilesAndFolders } from './types'
 
 import type { ExtractorFileExtensions } from '@/logic/types'
 
-export const isNameInArrNames = ({
-  name,
-  arrNames,
-}: {
-  readonly name: string
-  readonly arrNames: string[]
-}): boolean => arrNames.every(names => names.includes(name))
+const accFolders
+  = (folderPath: string) =>
+    (entries: string[]): T.Task<string[]> =>
+      pipe(
+        entries,
+        A.traverse(T.ApplicativeSeq)((fileOrFolder) => {
+          const fullPath = path.join(folderPath, fileOrFolder)
+
+          return pipe(
+            fullPath,
+            checkIfDirectoryT,
+            T.map(isFolder => (isFolder ? [fullPath] : []))
+          )
+        }),
+        T.map(A.flatten)
+      )
 
 const getFilesAndFoldersFromFolder = ({
   rootFolder,
@@ -25,17 +34,15 @@ const getFilesAndFoldersFromFolder = ({
   options,
 }: {
   rootFolder: string
-  entries: readonly string[]
-  folders: readonly string[]
-  files: readonly string[]
+  entries: string[]
+  folders: string[]
+  files: string[]
   options: {
-    readonly permittedExtensions: ExtractorFileExtensions[]
-    readonly banFolders: string[]
+    permittedExtensions: ExtractorFileExtensions[]
+    banFolders: string[]
   }
-}): TE.TaskEither<Error, { folders: readonly string[], files: readonly string[] }> => {
-  if (entries.length === 0) {
-    return TE.of({ folders: [...folders], files: [...files] })
-  }
+}): TE.TaskEither<Error, { folders: string[], files: string[] }> => {
+  if (entries.length === 0) return TE.of({ folders: [...folders], files: [...files] })
 
   const [currentEl, ...remainingEntries] = entries
 
@@ -50,6 +57,7 @@ const getFilesAndFoldersFromFolder = ({
   }
 
   const fullPath = path.join(rootFolder, currentEl!)
+
   return pipe(
     fullPath,
     checkIfDirectoryT,
@@ -58,7 +66,7 @@ const getFilesAndFoldersFromFolder = ({
         return pipe(
           readDirTE(fullPath),
           TE.map(childEntries => childEntries.map(child => path.join(currentEl!, child))),
-          TE.chain(childEntriesFullPath =>
+          TE.flatMap(childEntriesFullPath =>
             getFilesAndFoldersFromFolder({
               rootFolder,
               entries: [...remainingEntries, ...childEntriesFullPath],
@@ -73,6 +81,7 @@ const getFilesAndFoldersFromFolder = ({
       const isPermittedFile = options.permittedExtensions.some(ext =>
         currentEl!.endsWith(`.${ext}`)
       )
+
       return isPermittedFile
         ? getFilesAndFoldersFromFolder({
             rootFolder,
@@ -92,13 +101,16 @@ const getFilesAndFoldersFromFolder = ({
   )
 }
 
-export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = (
-  folder,
-  options
+export const getRecursiveFilesAndFolders = (
+  folder: AbsolutePath,
+  options: {
+    permittedExtensions: ExtractorFileExtensions[]
+    banFolders: string[]
+  }
 ): TE.TaskEither<Error, string[]> =>
   pipe(
     readDirTE(folder),
-    TE.chain(initialEntries =>
+    TE.flatMap(initialEntries =>
       getFilesAndFoldersFromFolder({
         rootFolder: folder,
         entries: initialEntries,
@@ -108,4 +120,12 @@ export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = (
       })
     ),
     TE.map(({ folders, files }) => [...folders, ...files])
+  )
+
+export const getOnlyFolders = (folderPath: AbsolutePath): TE.TaskEither<Error, string[]> =>
+  pipe(
+    folderPath,
+    readDirTE,
+    TE.map(entries => pipe(entries, accFolders(folderPath))),
+    TE.flatMap(task => TE.fromTask(task))
   )

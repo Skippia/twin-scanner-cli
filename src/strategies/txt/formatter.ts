@@ -1,22 +1,20 @@
-export type TOutputFormatTxt = readonly {
-  readonly filename: string
-  readonly amount_all_names: number
-  readonly amount_unique_names: number
-  readonly amount_duplicates_names: number
-  readonly readonlyMode: boolean
+export type TOutputFormatTxt = {
+  filename: string
+  amount_all_names: number
+  amount_unique_names: number
+  amount_duplicates_names: number
+  readonlyMode: boolean
 }[]
 
-export type TConvertToOutputTxt = (options: { readonly readonly: boolean }) => (
-  raw: Readonly<
-    Record<
-      string,
-      {
-        readonly unique: string[]
-        readonly duplicates: string[]
-        readonly duplicatesLength: number
-        readonly uniqueLength: number
-      }
-    >
+export type TConvertToOutputTxt = (options: { readonly: boolean }) => (
+  raw: Record<
+    string,
+    {
+      unique: string[]
+      duplicates: string[]
+      duplicatesLength: number
+      uniqueLength: number
+    }
   >[],
 ) => TOutputFormatTxt
 

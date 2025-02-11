@@ -2,10 +2,10 @@ import * as A from 'fp-ts/lib/Array'
 import { flow, pipe } from 'fp-ts/lib/function'
 import * as TE from 'fp-ts/lib/TaskEither'
 
-import type { TUserChoices } from './cli'
 import { getRecursiveFilesAndFolders } from './files/readers'
 import { getCommonFilesInFileMap, getUniversalFileMapFromFolders } from './logic/core'
 import { applyFilesExtractionEffect, getRidOfDuplicatesInFoldersEffect } from './logic/effects'
+import type { TUserChoices } from './logic/types'
 import { DEFAULT_BAN_FOLDERS } from './shared/constants'
 import { strategies } from './strategies'
 
@@ -22,11 +22,8 @@ const getFolderList = (
 export const main = (options: TUserChoices): TE.TaskEither<Error, void[]> => {
   const extractCommonFilesInFolders = flow(
     getUniversalFileMapFromFolders(strategies, options),
-    TE.flatMap(mapEls => pipe(
-      mapEls,
-      getCommonFilesInFileMap,
-      applyFilesExtractionEffect(strategies, options)
-    )
+    TE.flatMap(mapEls =>
+      pipe(mapEls, getCommonFilesInFileMap, applyFilesExtractionEffect(strategies, options))
     )
   )
 

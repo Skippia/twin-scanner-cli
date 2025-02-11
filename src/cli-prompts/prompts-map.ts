@@ -4,7 +4,7 @@ import { validateFolderPath } from '@/files/system-operations'
 
 type FunctionReturningTPromptEl = (() => TPromptEl) | ((val: string) => TPromptEl)
 
-export type TPromptEl = Readonly<Parameters<(typeof inquirer)['prompt']>[0]>
+export type TPromptEl = Parameters<(typeof inquirer)['prompt']>[0]
 
 export const PROMPTS_RECORD = {
   getRootFolderPrompt: (rootPathFolder: string): TPromptEl => ({
@@ -18,7 +18,7 @@ export const PROMPTS_RECORD = {
     suggestOnly: false,
     depthLimit: 1,
     // @ts-expect-error ...
-    validate: ({ short }: { readonly short: string }) => validateFolderPath(short)(),
+    validate: ({ short }: { short: string }) => validateFolderPath(short)(),
   }),
   getFolderModePrompt: (): TPromptEl => ({
     type: 'list',
@@ -46,7 +46,7 @@ export const PROMPTS_RECORD = {
     suggestOnly: false,
     depthLimit: 1,
     // @ts-expect-error ...
-    validate: ({ short }: { readonly short: string }) => validateFolderPath(short)(),
+    validate: ({ short }: { short: string }) => validateFolderPath(short)(),
   }),
   getMultipleFoldersPrompt: (): TPromptEl => ({
     type: 'input',
@@ -57,6 +57,7 @@ export const PROMPTS_RECORD = {
       const invalidPath = paths.find(
         folderPath => typeof validateFolderPath(folderPath)() === 'string'
       )
+
       return invalidPath
         ? `Invalid path: ${invalidPath}; ${validateFolderPath(invalidPath)()}`
         : true
@@ -93,4 +94,4 @@ export const PROMPTS_RECORD = {
       { name: 'Yes', value: false },
     ],
   }),
-} as const satisfies Readonly<Record<string, FunctionReturningTPromptEl>>
+} as const satisfies Record<string, FunctionReturningTPromptEl>
