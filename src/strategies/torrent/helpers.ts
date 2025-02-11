@@ -1,8 +1,8 @@
 import path from 'node:path'
 
-import * as A from 'fp-ts/Array'
+import * as A from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
-import * as TE from 'fp-ts/TaskEither'
+import * as TE from 'fp-ts/lib/TaskEither'
 
 import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 
@@ -47,7 +47,7 @@ const getDuplicateAbsolutePaths
       )
 
 export const isDuplicateTorrent
-  = (filenames: Array<string>) =>
+  = (filenames: string[]) =>
     (curFile: TFileInfo): boolean =>
       isIndirectDuplicateFilename(filenames, curFile.filename)
 
@@ -78,7 +78,9 @@ const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strateg
  */
 export const getDuplicateTorrentsFilesInFolders = (
   folderList: string[],
-  options: { readonly strategy: TExtensionsRemoveDuplicatesStrategies['torrent'] }
+  options: {
+    readonly strategy: TExtensionsRemoveDuplicatesStrategies['torrent']
+  }
 ): TE.TaskEither<Error, TDuplicateFormatTorrent> =>
   pipe(
     folderList,

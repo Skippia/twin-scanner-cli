@@ -1,9 +1,8 @@
 import path from 'node:path'
 
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
-import * as T from 'fp-ts/Task'
-import * as TE from 'fp-ts/TaskEither'
+import { pipe } from 'fp-ts/lib/function'
+import * as T from 'fp-ts/lib/Task'
+import * as TE from 'fp-ts/lib/TaskEither'
 
 import { checkIfDirectoryT, readDirTE } from './system-operations'
 import type { TGetRecursiveFilesAndFolders } from './types'
@@ -15,7 +14,7 @@ export const isNameInArrNames = ({
   arrNames,
 }: {
   readonly name: string
-  readonly arrNames: Array<string>
+  readonly arrNames: string[]
 }): boolean => arrNames.every(names => names.includes(name))
 
 const getFilesAndFoldersFromFolder = ({
@@ -30,8 +29,8 @@ const getFilesAndFoldersFromFolder = ({
   folders: readonly string[]
   files: readonly string[]
   options: {
-    readonly permittedExtensions: Array<ExtractorFileExtensions>
-    readonly banFolders: Array<string>
+    readonly permittedExtensions: ExtractorFileExtensions[]
+    readonly banFolders: string[]
   }
 }): TE.TaskEither<Error, { folders: readonly string[], files: readonly string[] }> => {
   if (entries.length === 0) {
@@ -41,7 +40,13 @@ const getFilesAndFoldersFromFolder = ({
   const [currentEl, ...remainingEntries] = entries
 
   if (options.banFolders.includes(currentEl!)) {
-    return getFilesAndFoldersFromFolder({ rootFolder, entries: remainingEntries, folders, files, options })
+    return getFilesAndFoldersFromFolder({
+      rootFolder,
+      entries: remainingEntries,
+      folders,
+      files,
+      options,
+    })
   }
 
   const fullPath = path.join(rootFolder, currentEl!)
@@ -65,7 +70,9 @@ const getFilesAndFoldersFromFolder = ({
         )
       }
 
-      const isPermittedFile = options.permittedExtensions.some(ext => currentEl!.endsWith(`.${ext}`))
+      const isPermittedFile = options.permittedExtensions.some(ext =>
+        currentEl!.endsWith(`.${ext}`)
+      )
       return isPermittedFile
         ? getFilesAndFoldersFromFolder({
             rootFolder,
@@ -74,7 +81,13 @@ const getFilesAndFoldersFromFolder = ({
             files: [...files, fullPath],
             options,
           })
-        : getFilesAndFoldersFromFolder({ rootFolder, entries: remainingEntries, folders, files, options })
+        : getFilesAndFoldersFromFolder({
+            rootFolder,
+            entries: remainingEntries,
+            folders,
+            files,
+            options,
+          })
     })
   )
 }
@@ -86,7 +99,13 @@ export const getRecursiveFilesAndFolders: TGetRecursiveFilesAndFolders = (
   pipe(
     readDirTE(folder),
     TE.chain(initialEntries =>
-      getFilesAndFoldersFromFolder({ rootFolder: folder, entries: initialEntries, folders: [], files: [], options })
+      getFilesAndFoldersFromFolder({
+        rootFolder: folder,
+        entries: initialEntries,
+        folders: [],
+        files: [],
+        options,
+      })
     ),
     TE.map(({ folders, files }) => [...folders, ...files])
   )

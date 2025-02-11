@@ -18,7 +18,7 @@ export const PROMPTS_RECORD = {
     suggestOnly: false,
     depthLimit: 1,
     // @ts-expect-error ...
-    validate: ({ short }: { readonly short: string }) => validateFolderPath(short),
+    validate: ({ short }: { readonly short: string }) => validateFolderPath(short)(),
   }),
   getFolderModePrompt: (): TPromptEl => ({
     type: 'list',
@@ -54,8 +54,12 @@ export const PROMPTS_RECORD = {
     message: 'Input absolute paths to folders (separated by comma):',
     validate: (input: string): boolean | string => {
       const paths = input.split(',').map(p => p.trim())
-      const invalidPath = paths.find(folderPath => typeof validateFolderPath(folderPath) === 'string')
-      return invalidPath ? `Invalid path: ${invalidPath}; ${validateFolderPath(invalidPath)()}` : true
+      const invalidPath = paths.find(
+        folderPath => typeof validateFolderPath(folderPath)() === 'string'
+      )
+      return invalidPath
+        ? `Invalid path: ${invalidPath}; ${validateFolderPath(invalidPath)()}`
+        : true
     },
     filter: (input: string) => input.split(',').map(p => p.trim()),
   }),
@@ -82,7 +86,10 @@ export const PROMPTS_RECORD = {
     name: 'readonly',
     message: 'Do you want to extract duplicates into separate folders?',
     choices: [
-      { name: 'No, just get info about duplicates (readonly mode)', value: true },
+      {
+        name: 'No, just get info about duplicates (readonly mode)',
+        value: true,
+      },
       { name: 'Yes', value: false },
     ],
   }),

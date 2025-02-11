@@ -1,14 +1,15 @@
 import fsSync from 'node:fs'
 import fs from 'node:fs/promises'
 
-import * as E from 'fp-ts/Either'
-import type * as IO from 'fp-ts/IO'
-import * as IOE from 'fp-ts/IOEither'
+import * as E from 'fp-ts/lib/Either'
 import { pipe } from 'fp-ts/lib/function'
-import type * as T from 'fp-ts/Task'
-import * as TE from 'fp-ts/TaskEither'
+import type * as IO from 'fp-ts/lib/IO'
+import * as IOE from 'fp-ts/lib/IOEither'
+import type * as T from 'fp-ts/lib/Task'
+import * as TE from 'fp-ts/lib/TaskEither'
 
-export const unlinkTE = (path: string): TE.TaskEither<Error, void> => TE.tryCatchK(fs.unlink, E.toError)(path)
+export const unlinkTE = (path: string): TE.TaskEither<Error, void> =>
+  TE.tryCatchK(fs.unlink, E.toError)(path)
 
 export const mkdirTE = (path: string): TE.TaskEither<Error, string | undefined> =>
   TE.tryCatchK(fs.mkdir, E.toError)(path)
@@ -53,10 +54,12 @@ export const checkIsFolderExistsT = (pathToFolder: string): T.Task<boolean> =>
 export const validateFolderPath = (folderPath: string): IO.IO<string | boolean> =>
   pipe(
     IOE.Do,
-    IOE.apS('exists', IOE.tryCatchK(fsSync.existsSync, E.toError)(folderPath)),
-    IOE.apS('stats', IOE.tryCatchK(fsSync.statSync, E.toError)(folderPath)),
+    IOE.bind('exists', () => IOE.tryCatchK(fsSync.existsSync, E.toError)(folderPath)),
+    IOE.bind('stats', () => IOE.tryCatchK(fsSync.statSync, E.toError)(folderPath)),
     IOE.flatMap(({ exists, stats }) =>
-      exists && stats?.isDirectory() ? IOE.right(true) : IOE.left(new Error('Please provide a valid folder path'))
+      exists && stats?.isDirectory()
+        ? IOE.right(true)
+        : IOE.left(new Error('Please provide a valid folder path'))
     ),
     IOE.matchW(
       ({ message }) => message,

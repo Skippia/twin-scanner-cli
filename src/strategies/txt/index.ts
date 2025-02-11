@@ -1,7 +1,11 @@
 import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 
 import { removeContentFromTxtFileEffect, removeDuplicatesFromTxtFileEffect } from './effect'
-import { extractContentFromTxtFile, getDuplicateMapFromTxtFilesInFolders, getDuplicatesFromTxtFile } from './helpers'
+import {
+  extractContentFromTxtFile,
+  getDuplicateMapFromTxtFilesInFolders,
+  getDuplicatesFromTxtFile,
+} from './helpers'
 
 import { getUniqueNames } from '@/logic/helpers'
 
@@ -11,7 +15,7 @@ export const txtDuplicateStrategy: TExtensionsRemoveDuplicatesStrategies['txt'] 
   getDuplicates: getDuplicatesFromTxtFile,
   removeContentFromFileEffect: removeContentFromTxtFileEffect,
   removeDuplicatesEffect: removeDuplicatesFromTxtFileEffect,
-  getDuplicateMap: (folderList: Array<string>) =>
+  getDuplicateMap: (folderList: string[]) =>
     getDuplicateMapFromTxtFilesInFolders(folderList, {
       strategy: txtDuplicateStrategy,
     }),

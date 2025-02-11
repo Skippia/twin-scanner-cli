@@ -1,8 +1,8 @@
 import path from 'node:path'
 
-import * as A from 'fp-ts/Array'
+import * as A from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
-import * as TE from 'fp-ts/TaskEither'
+import * as TE from 'fp-ts/lib/TaskEither'
 
 import {
   areAllTextFiles,
@@ -15,7 +15,11 @@ import {
 import type { ExtractorFileExtensions } from './types'
 
 import type { TUserChoices } from '@/cli'
-import { appendIntoTxtFileEffect, createFolderEffect, removeEmptyFoldersInFolderEffect } from '@/files/effects'
+import {
+  appendIntoTxtFileEffect,
+  createFolderEffect,
+  removeEmptyFoldersInFolderEffect,
+} from '@/files/effects'
 import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
 import { torrentDuplicateStrategy } from '@/strategies/torrent'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
@@ -27,18 +31,26 @@ const processFileTypeHandlers = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string
-): Readonly<Record<ExtractorFileExtensions, (dAbsPath: AbsolutePath) => TE.TaskEither<Error, void>>> => ({
+): Readonly<
+    Record<ExtractorFileExtensions, (dAbsPath: AbsolutePath) => TE.TaskEither<Error, void>>
+  > => ({
   torrent: (dAbsPath: AbsolutePath): TE.TaskEither<Error, void> =>
-    strategies.torrent.moveFileEffect(dAbsPath, path.join(absolutePathToCommonStorageCur, duplicateFilename)),
+    strategies.torrent.moveFileEffect(
+      dAbsPath,
+      path.join(absolutePathToCommonStorageCur, duplicateFilename)
+    ),
   txt: (duplicateAbsolutePath: AbsolutePath): TE.TaskEither<Error, void> =>
-    strategies.txt.removeContentFromFileEffect(duplicateAbsolutePath, convertTorrentFilenameToURL(duplicateFilename)),
+    strategies.txt.removeContentFromFileEffect(
+      duplicateAbsolutePath,
+      convertTorrentFilenameToURL(duplicateFilename)
+    ),
 })
 
 const handleMixedFilesEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string,
-  paths: Array<string>
+  paths: string[]
 ): TE.TaskEither<Error, void[]> =>
   pipe(
     paths,
@@ -46,8 +58,16 @@ const handleMixedFilesEffect = (
       // 2a. If torrent => move to file to duplicate folder
       // 2b. Since there is a real file => just remove from source txt file
       dAbsPath.endsWith('.torrent')
-        ? processFileTypeHandlers(strategies, absolutePathToCommonStorageCur, duplicateFilename).torrent(dAbsPath)
-        : processFileTypeHandlers(strategies, absolutePathToCommonStorageCur, duplicateFilename).txt(dAbsPath)
+        ? processFileTypeHandlers(
+            strategies,
+            absolutePathToCommonStorageCur,
+            duplicateFilename
+          ).torrent(dAbsPath)
+        : processFileTypeHandlers(
+            strategies,
+            absolutePathToCommonStorageCur,
+            duplicateFilename
+          ).txt(dAbsPath)
     )
   )
 
@@ -55,7 +75,7 @@ const handleTextFilesEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   absolutePathToCommonStorageCur: string,
   duplicateFilename: string,
-  paths: Array<string>
+  paths: string[]
 ): TE.TaskEither<Error, void[]> =>
   pipe(
     appendIntoTxtFileEffect(
@@ -66,7 +86,10 @@ const handleTextFilesEffect = (
       pipe(
         paths,
         A.traverse(TE.ApplicativePar)(duplicatePath =>
-          strategies.txt.removeContentFromFileEffect(duplicatePath, convertTorrentFilenameToURL(duplicateFilename))
+          strategies.txt.removeContentFromFileEffect(
+            duplicatePath,
+            convertTorrentFilenameToURL(duplicateFilename)
+          )
         )
       )
     )
@@ -76,7 +99,7 @@ const processDuplicateEffect = (
   strategies: TExtensionsRemoveDuplicatesStrategies,
   storagePath: AbsolutePath,
   dFilename: string,
-  dAbsPaths: Array<string>
+  dAbsPaths: string[]
 ): TE.TaskEither<Error, void[]> =>
   pipe(
     storagePath,
@@ -90,7 +113,7 @@ const processDuplicateEffect = (
 
 const processDuplicatesEffect
   = (
-    mergedFileMapsExtraction: Readonly<Record<string, Array<string>>>,
+    mergedFileMapsExtraction: Readonly<Record<string, string[]>>,
     strategies: TExtensionsRemoveDuplicatesStrategies
   ) =>
     (absolutePathToStorageFolder: string): TE.TaskEither<Error, void[][]> =>
@@ -98,7 +121,10 @@ const processDuplicatesEffect
         Object.entries(mergedFileMapsExtraction),
         A.traverse(TE.ApplicativeSeq)(([duplicateFilename, duplicateAbsolutePaths]) => {
           const storageFolderName = generateCombinationFolderName(duplicateAbsolutePaths)
-          const absolutePathToCommonStorageCur = path.join(absolutePathToStorageFolder, storageFolderName)
+          const absolutePathToCommonStorageCur = path.join(
+            absolutePathToStorageFolder,
+            storageFolderName
+          )
 
           return processDuplicateEffect(
             strategies,
@@ -109,18 +135,21 @@ const processDuplicatesEffect
         })
       )
 
-export const applyFilesExtractionEffect: TApplyFileExtractionEffect = (strategies, options) => fileMapsExtraction =>
-  pipe(fileMapsExtraction, mergeFileMapsExtraction, mergedFileMapsExtraction =>
-    pipe(mergedFileMapsExtraction, logExtractionStatistics(options.readonly), () =>
-      options.readonly
-        ? TE.right(undefined)
-        : pipe(options, getDuplicateStoragePath, absolutePathToStorageFolder =>
-            pipe(
-              absolutePathToStorageFolder,
-              processDuplicatesEffect(mergedFileMapsExtraction, strategies),
-              TE.map(() => removeEmptyFoldersInFolderEffect(absolutePathToStorageFolder)),
-              TE.map(() => console.log('Duplicates were extracted to', absolutePathToStorageFolder))
-            ))))
+export const applyFilesExtractionEffect: TApplyFileExtractionEffect
+  = (strategies, options) => fileMapsExtraction =>
+    pipe(fileMapsExtraction, mergeFileMapsExtraction, mergedFileMapsExtraction =>
+      pipe(mergedFileMapsExtraction, logExtractionStatistics(options.readonly), () =>
+        options.readonly
+          ? TE.right(undefined)
+          : pipe(options, getDuplicateStoragePath, absolutePathToStorageFolder =>
+              pipe(
+                absolutePathToStorageFolder,
+                processDuplicatesEffect(mergedFileMapsExtraction, strategies),
+                TE.map(() => removeEmptyFoldersInFolderEffect(absolutePathToStorageFolder)),
+                TE.map(() =>
+                  console.log('Duplicates were extracted to', absolutePathToStorageFolder)
+                )
+              ))))
 
 export const getRidOfDuplicatesInFoldersEffect = (
   folderList: string[],

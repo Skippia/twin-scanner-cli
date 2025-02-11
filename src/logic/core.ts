@@ -1,8 +1,8 @@
 import path from 'node:path'
 
-import * as A from 'fp-ts/Array'
-import { pipe } from 'fp-ts/function'
-import * as TE from 'fp-ts/TaskEither'
+import * as A from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
+import * as TE from 'fp-ts/lib/TaskEither'
 
 import { filterRecordByKeys, getCombinationsGenerator } from './helpers'
 import { getFilesInfo } from './readers'
@@ -21,7 +21,7 @@ import { readDirTE } from '@/files/system-operations'
 
 export const convertHeteroUniversalMapToMono = (
   heterogenousUniversalMap: THeterogenousUniversalMapEl[]
-): Array<TMonogenousUniversalMapEl> => {
+): TMonogenousUniversalMapEl[] => {
   const arr = heterogenousUniversalMap
     .filter(v => Object.keys(v).length > 0)
     .map((v) => {
@@ -50,7 +50,7 @@ export const convertHeteroUniversalMapToMono = (
 export const processCombination = (
   filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
   folderOrFilenames: readonly string[]
-): Readonly<Record<string, Array<string>>> => {
+): Readonly<Record<string, string[]>> => {
   const files = folderOrFilenames
     .map(folderOrFilename => filesMapCache[folderOrFilename]!)
     .sort((a, b) => (a.amount > b.amount ? 1 : -1))
@@ -60,7 +60,9 @@ export const processCombination = (
   return pipe(
     sourceMapEl!.content,
     A.reduce({} as Record<string, string[]>, (acc, curFilename) => {
-      const isDuplicate = targetMapEls.every(targetMapEl => targetMapEl.content.includes(curFilename))
+      const isDuplicate = targetMapEls.every(targetMapEl =>
+        targetMapEl.content.includes(curFilename)
+      )
 
       if (isDuplicate) {
         const pathsToDuplicateFiles = pipe(
@@ -90,11 +92,11 @@ export const processCombination = (
 
 export const buildCommonFilesMap = (
   filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
-  combinationsGenerator: Generator<Array<string>>
+  combinationsGenerator: Generator<string[]>
 ): ReturnType<TGetCommonFilesInFileMap> => {
   const resultGenerator = function* (
-    combinationsGenerator: Generator<Array<string>>
-  ): Generator<Record<string, Array<string>>> {
+    combinationsGenerator: Generator<string[]>
+  ): Generator<Record<string, string[]>> {
     // eslint-disable-next-line functional/no-loop-statements
     for (const combination of combinationsGenerator) {
       const fileMap = processCombination(filesMapCache, combination)
@@ -140,7 +142,9 @@ const buildFilenamesMapByExts = (
   pipe(
     folder,
     readDirTE,
-    TE.flatMap(filenames => pipe(extensions, A.traverse(TE.ApplicativePar)(getFilesInfoByExt(filenames, folder))))
+    TE.flatMap(filenames =>
+      pipe(extensions, A.traverse(TE.ApplicativePar)(getFilesInfoByExt(filenames, folder)))
+    )
   )
 
 export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = (folder, strategies) =>
@@ -164,7 +168,7 @@ export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = (fo
         .reduce((acc, cur) => {
           const content
             = cur.ext === 'txt'
-              ? (cur.info as Array<TContent>).map(content => ({
+              ? (cur.info as TContent[]).map(content => ({
                   filename: content.filename,
                   content: content.content,
                 }))
@@ -190,7 +194,9 @@ export const getUniversalFileMapFromFolders: TGetUniversalFileMapFromFolders
 
     return pipe(
       folderList,
-      A.traverse(TE.ApplicativePar)(folder => getUniversalFileMapFromFolder(folder, filteredStrategies)),
+      A.traverse(TE.ApplicativePar)(folder =>
+        getUniversalFileMapFromFolder(folder, filteredStrategies)
+      ),
       TE.map(A.flatten),
       TE.map(convertHeteroUniversalMapToMono)
     )
@@ -200,14 +206,17 @@ export const getCommonFilesInFileMap: TGetCommonFilesInFileMap = (universalFileM
   const absolutePaths = universalFileMap.map(v => v.folderOrFilename)
   const nextCombinationGenerator = getCombinationsGenerator(absolutePaths)
 
-  const filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>> = absolutePaths.reduce(
-    (acc, folderOrFilename) =>
-      ({
-        ...acc,
-        [folderOrFilename]: universalFileMap.find(el => el.folderOrFilename === folderOrFilename),
-      }) satisfies Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
-    {}
-  )
+  const filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>
+    = absolutePaths.reduce(
+      (acc, folderOrFilename) =>
+        ({
+          ...acc,
+          [folderOrFilename]: universalFileMap.find(
+            el => el.folderOrFilename === folderOrFilename
+          ),
+        }) satisfies Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
+      {}
+    )
 
   const commonFilesMap = buildCommonFilesMap(filesMapCache, nextCombinationGenerator)
 

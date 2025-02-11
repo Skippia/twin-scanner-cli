@@ -1,6 +1,6 @@
-import * as A from 'fp-ts/Array'
+import * as A from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
-import * as TE from 'fp-ts/TaskEither'
+import * as TE from 'fp-ts/lib/TaskEither'
 
 import type { TDuplicateFormatTorrent } from './types'
 
