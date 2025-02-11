@@ -1,11 +1,11 @@
 import type { TOutputFormatTorrent } from '../formatters'
 
-export type TConvertToOutputTorrent = (options: { readonly readonly: boolean }) => (
+export type TConvertToOutputTorrent = (options: { readonly: boolean }) => (
   raw: {
-    readonly pathsForDuplicateFiles: AbsolutePath[]
-    readonly uniqueLength: number
-    readonly duplicateLength: number
-    readonly folder: string
+    pathsForDuplicateFiles: AbsolutePath[]
+    uniqueLength: number
+    duplicateLength: number
+    folder: string
   }[],
 ) => TOutputFormatTorrent
 

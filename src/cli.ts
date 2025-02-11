@@ -19,6 +19,7 @@ import {
   getRootFolderPrompt,
   getSingleFolderPrompt,
 } from './cli-prompts/prompts-helpers'
+import type { TUserChoices } from './logic/types'
 import { main } from './main'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -28,15 +29,6 @@ const registerInquirerPrompt = IOE.tryCatch(
     inquirer.registerPrompt('fuzzypath', inquirerFuzzyPath as unknown as LegacyPromptConstructor),
   E.toError
 )
-
-export type TUserChoices = {
-  readonly folderMode: 'single' | 'multiple'
-  readonly folderConfig: string[]
-  readonly fileExtensions: string[]
-  readonly rootFolder: string
-  readonly recursive: boolean
-  readonly readonly: boolean
-}
 
 const collectUserChoices = (): TE.TaskEither<Error, TUserChoices> => {
   const rootPathFolder = path.join(__filename, '../../../')
@@ -65,6 +57,8 @@ const collectUserChoices = (): TE.TaskEither<Error, TUserChoices> => {
   )
 }
 
+console.time('Program has been completed:')
+
 const startCLI = pipe(
   TE.fromIOEither(registerInquirerPrompt),
   TE.flatMap(collectUserChoices),
@@ -72,9 +66,10 @@ const startCLI = pipe(
   TE.match(
     (err) => {
       console.error(JSON.stringify(err, null, 2))
+
       return process.exit(1)
     },
-    () => console.log('Program has been completed')
+    () => console.timeEnd('Program has been completed:')
   )
 )
 

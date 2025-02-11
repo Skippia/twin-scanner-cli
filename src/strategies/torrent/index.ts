@@ -1,6 +1,6 @@
 import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 
-import { removeDuplicatesTorrentEffect } from './effect'
+import { removeDuplicatesTorrentEffect } from './effects'
 import { getDuplicateTorrentsFilesInFolders, isDuplicateTorrent } from './helpers'
 
 import { moveFileEffect } from '@/files/effects'

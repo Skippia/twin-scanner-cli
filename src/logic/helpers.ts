@@ -3,16 +3,35 @@ import path from 'node:path'
 import * as A from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import * as O from 'fp-ts/lib/Option'
+import type * as Ord from 'fp-ts/lib/Ord'
 import * as R from 'fp-ts/lib/Record'
 import * as S from 'fp-ts/lib/string'
 
-import type { TUserChoices } from '@/cli'
+import type { TMonogenousUniversalMapEl, TUserChoices } from './types'
+
 import { PREFIX_FILE_FOLDER } from '@/shared/constants'
 import {
   convertToApplyExtractorStatistics,
   convertToOutputUniversal,
 } from '@/strategies/formatters'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
+
+function* generateKLengthCombinations(arr: string[], k: number): Generator<string[]> {
+  function* backtrack(start: number, current: string[]): Generator<string[]> {
+    if (current.length === k) {
+      yield current
+
+      return
+    }
+
+    // eslint-disable-next-line functional/no-loop-statements, functional/no-let
+    for (let i = start; i < arr.length; i++) {
+      yield * backtrack(i + 1, [...current, arr[i]!])
+    }
+  }
+
+  yield * backtrack(0, [])
+}
 
 export const generateCombinationFolderName = (paths: AbsolutePath[]): string => {
   const getFolderNameForPath = (path: AbsolutePath): string => {
@@ -21,6 +40,7 @@ export const generateCombinationFolderName = (paths: AbsolutePath[]): string => 
     if (isTorrent) return path.split('/').at(-2)!
 
     const [parentFolder, fileName] = path.split('/').slice(-2)
+
     return `${parentFolder}--${fileName?.split('.')[0]}`
   }
 
@@ -29,7 +49,6 @@ export const generateCombinationFolderName = (paths: AbsolutePath[]): string => 
 
 export const extractOriginalFilename = (filename: string): Filename => {
   const [leftIdx, rightIdx] = [filename.indexOf('('), filename.indexOf(')')]
-
   const original = `${filename.slice(0, leftIdx)}${filename.slice(rightIdx + 1)}`.replace(/\s/g, '')
 
   return original
@@ -45,8 +64,7 @@ export const isIndirectDuplicateFilename = (allFilenames: string[], filename: st
   return allFilenames.includes(originalFilename)
 }
 
-export const areAllTextFiles = (paths: string[]): boolean =>
-  paths.every(path => path.endsWith('.txt'))
+export const areAllTextFiles = (paths: string[]): boolean => paths.every(path => path.endsWith('.txt'))
 
 export function* getCombinationsGenerator(arr: string[]): Generator<string[]> {
   const n = arr.length
@@ -55,22 +73,6 @@ export function* getCombinationsGenerator(arr: string[]): Generator<string[]> {
   for (let k = n; k >= 2; k--) {
     yield * generateKLengthCombinations(arr, k)
   }
-}
-
-function* generateKLengthCombinations(arr: string[], k: number): Generator<string[]> {
-  function* backtrack(start: number, current: string[]): Generator<string[]> {
-    if (current.length === k) {
-      yield current
-      return
-    }
-
-    // eslint-disable-next-line functional/no-loop-statements, functional/no-let
-    for (let i = start; i < arr.length; i++) {
-      yield * backtrack(i + 1, [...current, arr[i]!])
-    }
-  }
-
-  yield * backtrack(0, [])
 }
 
 export const getUniqueNames = (sourceArr: string[]): string[] => pipe(sourceArr, A.uniq(S.Eq))
@@ -82,10 +84,10 @@ export const isOnlyDigits = (str?: string): boolean =>
     O.exists(s => /^\d+$/.test(s))
   )
 
-export const filterRecordByKeys = <T extends Readonly<Record<string, unknown>>>(
+export const filterRecordByKeys = <T extends Record<string, unknown>>(
   record: T,
   keys: string[]
-): Readonly<T> =>
+): T =>
   pipe(
     record,
     R.filterWithIndex(key => keys.includes(key))
@@ -100,7 +102,7 @@ export const getDuplicateStoragePath = (options: TUserChoices): AbsolutePath => 
 
 export const logExtractionStatistics
   = (readonly: boolean) =>
-    (fileMap: Readonly<Record<string, string[]>>): void =>
+    (fileMap: Record<string, string[]>): void =>
       pipe(fileMap, convertToApplyExtractorStatistics({ readonly }), console.table)
 
 export const logUniversalStatistics = (
@@ -146,4 +148,9 @@ export const mergeFileMapsExtraction = (
       }
     })
   )
+}
+
+export const ordUniversalMapEl: Ord.Ord<TMonogenousUniversalMapEl> = {
+  equals: (a, b) => a.amount === b.amount,
+  compare: (a, b) => (a.amount > b.amount ? 1 : -1),
 }

@@ -1,6 +1,6 @@
 import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 
-import { removeContentFromTxtFileEffect, removeDuplicatesFromTxtFileEffect } from './effect'
+import { removeContentFromTxtFileEffect, removeDuplicatesFromTxtFileEffect } from './effects'
 import {
   extractContentFromTxtFile,
   getDuplicateMapFromTxtFilesInFolders,

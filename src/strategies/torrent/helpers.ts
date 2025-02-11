@@ -13,16 +13,14 @@ import { isIndirectDuplicateFilename } from '@/logic/helpers'
 import { getFilesInfo } from '@/logic/readers'
 import type { TFileInfo } from '@/logic/types'
 
-type X = {
-  pathsForDuplicateFiles: string[]
-  folder: string
-  uniqueLength: number
-  duplicateLength: number
-}
-
 const getDuplicateAbsolutePaths
   = (folder: string, filesInfo: TFileInfo[]) =>
-    (isConsideredDuplicate: (curFile: TFileInfo) => boolean): X =>
+    (isConsideredDuplicate: (curFile: TFileInfo) => boolean): {
+      pathsForDuplicateFiles: string[]
+      folder: string
+      uniqueLength: number
+      duplicateLength: number
+    } =>
       filesInfo.reduce(
         (acc, cur) => {
           const isDuplicate = isConsideredDuplicate(cur)
@@ -43,13 +41,13 @@ const getDuplicateAbsolutePaths
         folder,
         uniqueLength: 0,
         duplicateLength: 0,
-      } satisfies X
+      } satisfies {
+        pathsForDuplicateFiles: string[]
+        folder: string
+        uniqueLength: number
+        duplicateLength: number
+      }
       )
-
-export const isDuplicateTorrent
-  = (filenames: string[]) =>
-    (curFile: TFileInfo): boolean =>
-      isIndirectDuplicateFilename(filenames, curFile.filename)
 
 const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strategy => folder =>
   pipe(
@@ -79,7 +77,7 @@ const getDuplicateTorrentsFilesInFolder: TGetDuplicatesInFolderTorrent = strateg
 export const getDuplicateTorrentsFilesInFolders = (
   folderList: string[],
   options: {
-    readonly strategy: TExtensionsRemoveDuplicatesStrategies['torrent']
+    strategy: TExtensionsRemoveDuplicatesStrategies['torrent']
   }
 ): TE.TaskEither<Error, TDuplicateFormatTorrent> =>
   pipe(
@@ -92,3 +90,8 @@ export const getDuplicateTorrentsFilesInFolders = (
       )
     )
   )
+
+export const isDuplicateTorrent
+  = (filenames: string[]) =>
+    (curFile: TFileInfo): boolean =>
+      isIndirectDuplicateFilename(filenames, curFile.filename)

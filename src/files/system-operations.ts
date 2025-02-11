@@ -12,11 +12,11 @@ export const unlinkTE = (path: string): TE.TaskEither<Error, void> =>
   TE.tryCatchK(fs.unlink, E.toError)(path)
 
 export const mkdirTE = (path: string): TE.TaskEither<Error, string | undefined> =>
-  TE.tryCatchK(fs.mkdir, E.toError)(path)
+  TE.tryCatchK(fs.mkdir, E.toError)(path, { recursive: true })
 
 export const writeFileTE
-  = (content: string) =>
-    (path: string): TE.TaskEither<Error, void> =>
+  = (path: string) =>
+    (content: string): TE.TaskEither<Error, void> =>
       TE.tryCatchK(fs.writeFile, E.toError)(path, content, { encoding: 'utf-8' })
 
 export const renameTE = (oldPath: string, newPath: string): TE.TaskEither<Error, void> =>
@@ -45,6 +45,7 @@ export const checkIsFolderExistsT = (pathToFolder: string): T.Task<boolean> =>
     TE.match(
       () => {
         console.warn(`Folder ${pathToFolder} not exists`)
+
         return false
       },
       () => true

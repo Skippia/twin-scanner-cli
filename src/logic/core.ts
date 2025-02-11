@@ -4,20 +4,54 @@ import * as A from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import * as TE from 'fp-ts/lib/TaskEither'
 
-import { filterRecordByKeys, getCombinationsGenerator } from './helpers'
+import { filterRecordByKeys, getCombinationsGenerator, ordUniversalMapEl } from './helpers'
 import { getFilesInfo } from './readers'
 import type {
   ExtractorFileExtensions,
   TContent,
   TFileInfo,
-  TGetCommonFilesInFileMap,
-  TGetUniversalFileMapFromFolder,
   TGetUniversalFileMapFromFolders,
   THeterogenousUniversalMapEl,
   TMonogenousUniversalMapEl,
 } from './types'
 
 import { readDirTE } from '@/files/system-operations'
+import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
+
+const getFilesInfoByExt = (filenames: string[], folder: string) =>
+  (
+    ext: ExtractorFileExtensions
+  ): TE.TaskEither<
+    Error,
+    {
+      ext: ExtractorFileExtensions
+      filesInfo: TFileInfo[]
+    }
+  > =>
+    pipe(
+      filenames,
+      A.filter(filename => path.extname(filename) === `.${ext}`),
+      filenamesByExt => getFilesInfo(folder)(filenamesByExt),
+      TE.map(filesInfo => ({ ext, filesInfo }))
+    )
+
+const buildFilenamesMapByExts = (
+  folder: string,
+  extensions: ExtractorFileExtensions[]
+): TE.TaskEither<
+  Error,
+  {
+    ext: ExtractorFileExtensions
+    filesInfo: TFileInfo[]
+  }[]
+> =>
+  pipe(
+    folder,
+    readDirTE,
+    TE.flatMap(filenames =>
+      pipe(extensions, A.traverse(TE.ApplicativePar)(getFilesInfoByExt(filenames, folder)))
+    )
+  )
 
 export const convertHeteroUniversalMapToMono = (
   heterogenousUniversalMap: THeterogenousUniversalMapEl[]
@@ -48,12 +82,14 @@ export const convertHeteroUniversalMapToMono = (
 }
 
 export const processCombination = (
-  filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
-  folderOrFilenames: readonly string[]
-): Readonly<Record<string, string[]>> => {
-  const files = folderOrFilenames
-    .map(folderOrFilename => filesMapCache[folderOrFilename]!)
-    .sort((a, b) => (a.amount > b.amount ? 1 : -1))
+  filesMapCache: Record<AbsolutePath, TMonogenousUniversalMapEl>,
+  folderOrFilenames: string[]
+): Record<string, string[]> => {
+  const files = pipe(
+    folderOrFilenames,
+    A.map(folderOrFilename => filesMapCache[folderOrFilename]!),
+    A.sort(ordUniversalMapEl)
+  )
 
   const [sourceMapEl, ...targetMapEls] = files
 
@@ -91,9 +127,9 @@ export const processCombination = (
 }
 
 export const buildCommonFilesMap = (
-  filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
+  filesMapCache: Record<AbsolutePath, TMonogenousUniversalMapEl>,
   combinationsGenerator: Generator<string[]>
-): ReturnType<TGetCommonFilesInFileMap> => {
+): Record<Filename, AbsolutePath[]>[] => {
   const resultGenerator = function* (
     combinationsGenerator: Generator<string[]>
   ): Generator<Record<string, string[]>> {
@@ -111,43 +147,10 @@ export const buildCommonFilesMap = (
   return [...resultGenerator(combinationsGenerator)]
 }
 
-const getFilesInfoByExt
-  = (filenames: string[], folder: string) =>
-    (
-      ext: ExtractorFileExtensions
-    ): TE.TaskEither<
-      Error,
-      {
-        ext: ExtractorFileExtensions
-        filesInfo: TFileInfo[]
-      }
-    > =>
-      pipe(
-        filenames,
-        A.filter(filename => path.extname(filename) === `.${ext}`),
-        filenamesByExt => getFilesInfo(folder)(filenamesByExt),
-        TE.map(filesInfo => ({ ext, filesInfo }))
-      )
-
-const buildFilenamesMapByExts = (
+export const getUniversalFileMapFromFolder = (
   folder: string,
-  extensions: ExtractorFileExtensions[]
-): TE.TaskEither<
-  Error,
-  {
-    ext: ExtractorFileExtensions
-    filesInfo: TFileInfo[]
-  }[]
-> =>
-  pipe(
-    folder,
-    readDirTE,
-    TE.flatMap(filenames =>
-      pipe(extensions, A.traverse(TE.ApplicativePar)(getFilesInfoByExt(filenames, folder)))
-    )
-  )
-
-export const getUniversalFileMapFromFolder: TGetUniversalFileMapFromFolder = (folder, strategies) =>
+  strategies: TExtensionsRemoveDuplicatesStrategies
+): TE.TaskEither<Error, THeterogenousUniversalMapEl[]> =>
   pipe(
     Object.keys(strategies) as ExtractorFileExtensions[],
     extensions => buildFilenamesMapByExts(folder, extensions),
@@ -202,21 +205,20 @@ export const getUniversalFileMapFromFolders: TGetUniversalFileMapFromFolders
     )
   }
 
-export const getCommonFilesInFileMap: TGetCommonFilesInFileMap = (universalFileMap) => {
+export const getCommonFilesInFileMap = (
+  universalFileMap: TMonogenousUniversalMapEl[]
+): Record<Filename, AbsolutePath[]>[] => {
   const absolutePaths = universalFileMap.map(v => v.folderOrFilename)
   const nextCombinationGenerator = getCombinationsGenerator(absolutePaths)
 
-  const filesMapCache: Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>
-    = absolutePaths.reduce(
-      (acc, folderOrFilename) =>
-        ({
-          ...acc,
-          [folderOrFilename]: universalFileMap.find(
-            el => el.folderOrFilename === folderOrFilename
-          ),
-        }) satisfies Readonly<Record<AbsolutePath, TMonogenousUniversalMapEl>>,
-      {}
-    )
+  const filesMapCache: Record<AbsolutePath, TMonogenousUniversalMapEl> = absolutePaths.reduce(
+    (acc, folderOrFilename) =>
+      ({
+        ...acc,
+        [folderOrFilename]: universalFileMap.find(el => el.folderOrFilename === folderOrFilename),
+      }) satisfies Record<AbsolutePath, TMonogenousUniversalMapEl>,
+    {}
+  )
 
   const commonFilesMap = buildCommonFilesMap(filesMapCache, nextCombinationGenerator)
 
