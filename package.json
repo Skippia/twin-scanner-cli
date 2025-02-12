@@ -1,10 +1,15 @@
 {
   "name": "duplicates-extractor",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
+  "packageManager": "pnpm@10.2.0",
   "description": "",
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Skippia/twin-scanner-cli.git"
+  },
   "keywords": [],
   "main": "./src/index.mts",
   "types": "./dist/dts/",
@@ -25,7 +30,13 @@
     "start": "npx tsx --env-file=.env ./src/cli.ts",
     "start:prod": "NODE_ENV=production node --env-file=.env ./dist/cli.js",
     "debug": "npx tsx --inspect --env-file=.env ./src/cli.ts",
+    "commit": "cz",
     "flamegraph": "NODE_ENV=production 0x -- node --env-file=.env ./dist/cli.js",
+    "graph:deps:generate:v1": "npx depcruise src --include-only '^src' --output-type dot | dot -T svg > ./docs/dependency-graph-v1.svg",
+    "graph:deps:generate:v2": "npx depcruise src --include-only '^src' --progress  --config .dependency-cruiser.cjs --output-type dot | dot -T svg -Grankdir=TD | tee docs/dependency-graph-v2.svg | node node_modules/dependency-cruiser/bin/wrap-stream-in-html.mjs > docs/dependency-graph-v2.html",
+    "graph:deps:generate:top-level": "npx depcruise src --include-only '^src' --config .dependency-cruiser.cjs --output-type ddot | dot -T svg -Grankdir=TD | tee docs/dependency-graph-top-level.svg | node node_modules/dependency-cruiser/bin/wrap-stream-in-html.mjs > docs/dependency-graph-top-level.html",
+    "graph:deps:generate:all": "npm run graph:deps:generate:v1 && npm run graph:deps:generate:v2 && npm run graph:deps:generate:top-level",
+    "graph:deps:check": "npx depcruise src",
     "prebuild": "npx rimraf --glob ./dist",
     "build": "npx vite build",
     "typecheck": "tsc --noEmit",
@@ -36,7 +47,7 @@
     "upgrade:check": "npx npm-check-updates --format group",
     "upgrade": "npx npm-check-updates --interactive",
     "upgrade:all": "npx npm-check-updates --format group -u",
-    "semantic-release": "semantic-release",
+    "semantic-release": "semantic-release --branches master",
     "release": "npm run build && np",
     "update-git-hooks": "npx simple-git-hooks"
   },
@@ -58,13 +69,15 @@
     "@semantic-release/release-notes-generator": "^13.0.0",
     "@types/inquirer-fuzzy-path": "^2.3.9",
     "@types/node": "^22.10.10",
+    "cz-conventional-changelog": "^3.3.0",
+    "dependency-cruiser": "^16.9.0",
     "eslint": "^9.18.0",
     "eslint-plugin-functional": "^8.0.0",
     "globals": "^15.14.0",
     "np": "^10.1.0",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
-    "semantic-release": "^23.0.0",
+    "semantic-release": "^24.2.2",
     "simple-git-hooks": "^2.11.1",
     "tsx": "^4.19.2",
     "type-fest": "^4.33.0",
@@ -78,5 +91,10 @@
   },
   "simple-git-hooks": {
     "pre-push": "npm run typecheck"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
