@@ -1,5 +1,5 @@
 {
-  "name": "duplicates-extractor",
+  "name": "twin-scanner-cli",
   "type": "module",
   "version": "0.0.0-development",
   "packageManager": "pnpm@10.2.0",
