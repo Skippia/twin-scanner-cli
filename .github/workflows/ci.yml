@@ -15,10 +15,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: 10
+          version: 10.2.0
+          run_install: false
 
       - name: Install Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -28,7 +32,7 @@ jobs:
           cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Lint
         run: pnpm run eslint
