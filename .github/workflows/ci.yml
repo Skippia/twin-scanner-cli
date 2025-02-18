@@ -3,14 +3,14 @@ name: Release pipeline
 on:
   workflow_dispatch:
   push:
-    branches: [feature/**, hotfix/**]
+    branches: [master, develop, feature/**, hotfix/**]
   pull_request:
     branches: [master, develop]
 
 jobs:
   ci:
     name: Quality checks
-    uses: ./.github/workflows/ci-common-steps.yml
+    uses: ./.github/workflows/common.yml
     permissions:
       actions: read
       contents: write
@@ -23,31 +23,21 @@ jobs:
       run-lint: true
       run-build: true
 
-  ci-release:
-    name: CI release
-    uses: ./.github/workflows/ci-common-steps.yml
+  release:
+    name: Release on production
+    uses: ./.github/workflows/common.yml
     needs: [ci]
     if: ${{ github.ref == 'refs/heads/master' }}
-    with:
-      node-version: 20.x
-      run-build: true
-      run-sbom: true
-
-  release:
-    name: Release to production
-    needs: [ci-release]
-    runs-on: ubuntu-24.04
-    environment: production`
     permissions:
       contents: write
       issues: write
       pull-requests: write
       deployments: write
-
-    steps:
-      - name: Semantic release
-        run: npm run semantic-release
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_USERCONFIG: ./.npmrc
+    with:
+      node-version: 20.x
+      run-build: true
+      run-sbom: true
+      run-release: true
+    secrets:
+      SECRET_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      SECRET_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
