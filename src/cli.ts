@@ -65,7 +65,7 @@ const startCLI = pipe(
   TE.flatMap(main),
   TE.match(
     (err) => {
-      console.error(JSON.stringify(err, null, 2))
+      console.error(err)
 
       return process.exit(1)
     },
