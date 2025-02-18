@@ -1,6 +1,6 @@
 ### Pre-requisites
 
-- Linux or MacOS
+- Linux
 - Node.js
 - pnpm
 
