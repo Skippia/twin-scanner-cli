@@ -65,10 +65,8 @@ On the image is described file structure before and after applying CLI:
 ### Graph dependencies
 - Top-level
   - ![SVG](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-top-level.svg?raw=true)
-  - ![HTML](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-top-level.html?raw=true)
 - All code
   - ![All code](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-nested.svg?raw=true)
-  - ![All code](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-nested.html?raw=true)
 
 ### Pre-requisites
 
