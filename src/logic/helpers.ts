@@ -10,11 +10,6 @@ import * as S from 'fp-ts/lib/string'
 import type { TMonogenousUniversalMapEl, TUserChoices } from './types'
 
 import { PREFIX_FILE_FOLDER } from '@/shared/constants'
-import {
-  convertToApplyExtractorStatistics,
-  convertToOutputUniversal,
-} from '@/strategies/formatters'
-import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
 
 function* generateKLengthCombinations(arr: string[], k: number): Generator<string[]> {
   function* backtrack(start: number, current: string[]): Generator<string[]> {
@@ -64,7 +59,8 @@ export const isIndirectDuplicateFilename = (allFilenames: string[], filename: st
   return allFilenames.includes(originalFilename)
 }
 
-export const areAllTextFiles = (paths: string[]): boolean => paths.every(path => path.endsWith('.txt'))
+export const areAllTextFiles = (paths: string[]): boolean =>
+  paths.every(path => path.endsWith('.txt'))
 
 export function* getCombinationsGenerator(arr: string[]): Generator<string[]> {
   const n = arr.length
@@ -99,25 +95,6 @@ export const getDuplicateStoragePath = (options: TUserChoices): AbsolutePath => 
 
   return absolutePathToStorageFolder
 }
-
-export const logExtractionStatistics
-  = (readonly: boolean) =>
-    (fileMap: Record<string, string[]>): void =>
-      pipe(fileMap, convertToApplyExtractorStatistics({ readonly }), console.table)
-
-export const logUniversalStatistics = (
-  duplicateMaps: (TDuplicateFormatTorrent | TDuplicateFormatTxt)[],
-  options: TUserChoices
-): void =>
-  pipe(
-    options.fileExtensions,
-    A.reduce({}, (acc, ext) => ({
-      ...acc,
-      [ext]: duplicateMaps[options.fileExtensions.indexOf(ext)],
-    })),
-    convertToOutputUniversal({ readonly: options.readonly }),
-    console.table
-  )
 
 export const mergeFileMapsExtraction = (
   fileMapsExtraction: Record<string, string[]>[]
