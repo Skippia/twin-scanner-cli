@@ -1,7 +1,7 @@
 import type * as TE from 'fp-ts/lib/TaskEither'
 
 import type { UFileExtension } from '@/shared/constants'
-import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
+import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies/types'
 
 export type TFileInfo = {
   ext: ExtractorFileExtensions

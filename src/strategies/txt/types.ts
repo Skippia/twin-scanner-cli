@@ -1,7 +1,7 @@
 import type * as TE from 'fp-ts/lib/TaskEither'
 
-import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 import type { TExtractorsUsefulInfo, TUserChoices } from '../../logic/types'
+import type { TExtensionsRemoveDuplicatesStrategies } from '../types'
 
 export type TGetDuplicatesFromTxtFilesInFolder = (
   strategy: TExtensionsRemoveDuplicatesStrategies['txt'],

@@ -1,4 +1,4 @@
-import type { TExtensionsRemoveDuplicatesStrategies } from '..'
+import type { TExtensionsRemoveDuplicatesStrategies } from '../types'
 
 import { removeContentFromTxtFileEffect, removeDuplicatesFromTxtFileEffect } from './effects'
 import {

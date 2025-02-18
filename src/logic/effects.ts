@@ -17,13 +17,13 @@ import {
   createFolderEffect,
   removeEmptyFoldersInFolderEffect,
 } from '@/files/effects'
-import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
 import { logExtractionStatistics, logUniversalStatistics } from '@/strategies/formatters'
 import { torrentDuplicateStrategy } from '@/strategies/torrent'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
 import { txtDuplicateStrategy } from '@/strategies/txt'
 import { convertTorrentFilenameToURL } from '@/strategies/txt/helpers'
 import type { TApplyFileExtractionEffect } from '@/strategies/txt/types'
+import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies/types'
 
 const processFileTypeHandlers = (
   strategies: TExtensionsRemoveDuplicatesStrategies,

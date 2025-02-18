@@ -16,7 +16,7 @@ import type {
 } from './types'
 
 import { readDirTE } from '@/files/system-operations'
-import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
+import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies/types'
 
 const getFilesInfoByExt
   = (filenames: string[], folder: string) =>

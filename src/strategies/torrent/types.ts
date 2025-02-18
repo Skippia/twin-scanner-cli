@@ -1,6 +1,6 @@
 import type * as TE from 'fp-ts/lib/TaskEither'
 
-import type { TExtensionsRemoveDuplicatesStrategies } from '..'
+import type { TExtensionsRemoveDuplicatesStrategies } from '../types'
 
 import type { TExtractorsUsefulInfo } from '@/logic/types'
 

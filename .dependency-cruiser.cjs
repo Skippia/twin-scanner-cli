@@ -91,6 +91,7 @@ module.exports = {
         + 'in your package.json.',
       from: {},
       to: {
+        pathNot: ['node_modules/inquirer/dist/esm/ui/prompt.js'],
         dependencyTypes: [
           'npm-no-pkg',
           'npm-unknown',

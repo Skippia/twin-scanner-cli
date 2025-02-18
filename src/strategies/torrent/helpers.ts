@@ -4,7 +4,7 @@ import * as A from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import * as TE from 'fp-ts/lib/TaskEither'
 
-import type { TExtensionsRemoveDuplicatesStrategies } from '..'
+import type { TExtensionsRemoveDuplicatesStrategies } from '../types'
 
 import type { TDuplicateFormatTorrent, TGetDuplicatesInFolderTorrent } from './types'
 

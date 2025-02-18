@@ -8,14 +8,6 @@ import { convertToOutputTxt } from './txt/formatter'
 import { generateCombinationFolderName } from '@/logic/helpers'
 import type { TUserChoices } from '@/logic/types'
 
-export type TOutputFormatTorrent = {
-  folder: string
-  amount_all_names: number
-  amount_unique_names: number
-  amount_duplicates_names: number
-  readonlyMode: boolean
-}[]
-
 export type TOutputFormatTorrentUniversal = {
   folder_or_filename: string
   amount_all_names: number
