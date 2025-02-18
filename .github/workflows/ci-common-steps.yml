@@ -9,14 +9,8 @@ on:
         type: string
       run-build:
         description: Whether to run the build step
-        required: false
+        required: true
         type: boolean
-        default: true
-    secrets:
-      NPM_TOKEN:
-        required: false
-      GITHUB_TOKEN:
-        required: false
 
 jobs:
   common:
