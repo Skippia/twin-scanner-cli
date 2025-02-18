@@ -18,22 +18,23 @@ import type {
 import { readDirTE } from '@/files/system-operations'
 import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
 
-const getFilesInfoByExt = (filenames: string[], folder: string) =>
-  (
-    ext: ExtractorFileExtensions
-  ): TE.TaskEither<
-    Error,
-    {
+const getFilesInfoByExt
+  = (filenames: string[], folder: string) =>
+    (
       ext: ExtractorFileExtensions
-      filesInfo: TFileInfo[]
-    }
-  > =>
-    pipe(
-      filenames,
-      A.filter(filename => path.extname(filename) === `.${ext}`),
-      filenamesByExt => getFilesInfo(folder)(filenamesByExt),
-      TE.map(filesInfo => ({ ext, filesInfo }))
-    )
+    ): TE.TaskEither<
+      Error,
+      {
+        ext: ExtractorFileExtensions
+        filesInfo: TFileInfo[]
+      }
+    > =>
+      pipe(
+        filenames,
+        A.filter(filename => path.extname(filename) === `.${ext}`),
+        filenamesByExt => getFilesInfo(folder)(filenamesByExt),
+        TE.map(filesInfo => ({ ext, filesInfo }))
+      )
 
 const buildFilenamesMapByExts = (
   folder: string,

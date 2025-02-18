@@ -8,8 +8,6 @@ import {
   areAllTextFiles,
   generateCombinationFolderName,
   getDuplicateStoragePath,
-  logExtractionStatistics,
-  logUniversalStatistics,
   mergeFileMapsExtraction,
 } from './helpers'
 import type { ExtractorFileExtensions, TUserChoices } from './types'
@@ -20,6 +18,7 @@ import {
   removeEmptyFoldersInFolderEffect,
 } from '@/files/effects'
 import type { TExtensionsRemoveDuplicatesStrategies } from '@/strategies'
+import { logExtractionStatistics, logUniversalStatistics } from '@/strategies/formatters'
 import { torrentDuplicateStrategy } from '@/strategies/torrent'
 import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from '@/strategies/torrent/types'
 import { txtDuplicateStrategy } from '@/strategies/txt'

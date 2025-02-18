@@ -1,7 +1,12 @@
+import * as A from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
+
 import { convertToOutputTorrent } from './torrent/formatter'
+import type { TDuplicateFormatTorrent, TDuplicateFormatTxt } from './torrent/types'
 import { convertToOutputTxt } from './txt/formatter'
 
 import { generateCombinationFolderName } from '@/logic/helpers'
+import type { TUserChoices } from '@/logic/types'
 
 export type TOutputFormatTorrent = {
   folder: string
@@ -136,3 +141,22 @@ export const convertToApplyExtractorStatistics: TConvertToApplyExtractorStatisti
       },
     ]
   }
+
+export const logExtractionStatistics
+  = (readonly: boolean) =>
+    (fileMap: Record<string, string[]>): void =>
+      pipe(fileMap, convertToApplyExtractorStatistics({ readonly }), console.table)
+
+export const logUniversalStatistics = (
+  duplicateMaps: (TDuplicateFormatTorrent | TDuplicateFormatTxt)[],
+  options: TUserChoices
+): void =>
+  pipe(
+    options.fileExtensions,
+    A.reduce({}, (acc, ext) => ({
+      ...acc,
+      [ext]: duplicateMaps[options.fileExtensions.indexOf(ext)],
+    })),
+    convertToOutputUniversal({ readonly: options.readonly }),
+    console.table
+  )

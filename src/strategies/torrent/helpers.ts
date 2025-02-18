@@ -15,7 +15,9 @@ import type { TFileInfo } from '@/logic/types'
 
 const getDuplicateAbsolutePaths
   = (folder: string, filesInfo: TFileInfo[]) =>
-    (isConsideredDuplicate: (curFile: TFileInfo) => boolean): {
+    (
+      isConsideredDuplicate: (curFile: TFileInfo) => boolean
+    ): {
       pathsForDuplicateFiles: string[]
       folder: string
       uniqueLength: number
