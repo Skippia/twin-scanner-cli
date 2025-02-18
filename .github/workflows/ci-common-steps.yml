@@ -7,16 +7,26 @@ on:
         description: Node.js version
         required: true
         type: string
+      run-audit:
+        description: Whether to run the audit step
+        required: false
+        type: boolean
+        default: false
+      run-lint:
+        description: Whether to run the eslint step
+        required: false
+        type: boolean
+        default: false
       run-build:
         description: Whether to run the build step
         required: false
         type: boolean
-        default: true
-    secrets:
-      NPM_TOKEN:
+        default: false
+      run-sbom:
+        description: Whether to run generation and upload SBOM artifacts step
         required: false
-      GITHUB_TOKEN:
-        required: false
+        type: boolean
+        default: false
 
 jobs:
   common:
@@ -43,8 +53,32 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Build Project
+      - name: Security Audit
+        run: pnpm audit --prod
+        if: ${{ inputs.run-audit }}
+
+      - name: Lint
+        run: npm run eslint
+        if: ${{ inputs.run-lint }}
+
+      - name: Build project
+        run: npm run build
         if: ${{ inputs.run-build }}
-        run: pnpm run build
         env:
           NODE_ENV: production
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        if: ${{ inputs.run-sbom }}
+        with:
+          format: cyclonedx-json
+          output-file: sbom.json
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ inputs.run-sbom }}
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+          retention-days: 7
