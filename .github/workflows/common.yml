@@ -1,4 +1,4 @@
-name: Common CI Steps
+name: Common (reusable) steps
 
 on:
   workflow_call:
@@ -27,6 +27,16 @@ on:
         required: false
         type: boolean
         default: false
+      run-release:
+        description: Whether to run semantic release step
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      SECRET_NPM_TOKEN:
+        required: false
+      SECRET_GITHUB_TOKEN:
+        required: false
 
 jobs:
   common:
@@ -82,3 +92,11 @@ jobs:
           path: |
             dist/
           retention-days: 7
+
+      - name: Semantic release
+        if: ${{ inputs.run-release }}
+        run: npm run semantic-release
+        env:
+          NPM_TOKEN: ${{ secrets.SECRET_NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+          NPM_CONFIG_USERCONFIG: ./.npmrc
