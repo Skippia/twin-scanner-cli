@@ -11,17 +11,17 @@
   <a href="#miscellaneous">Miscellaneous</a> •
 </p>
 
-### Description
+## Description
 - Find duplicate files in multiple folder(s) scanning .txt or/and .torrent files and depending on the selected mode (readonly: true | false) get information about duplicated files /+ extract them into new folders.
 
-### Technical Stack
+## Technical Stack
 - fp-ts
 - inquirer
 - inquirer-autocomplete-standalone
 - inquirer-fuzzy-path
 - zod
 
-### Features
+## Features
 
 - Nested scanning in one/multi folders to get info about files
 - Interactive CLI with step-by-step configuration and autocomplete for path selection
@@ -32,7 +32,7 @@
   2. For .txt files: remove equal and duplicate (by analogy with torrent file names logic) lines from .txt file
 - Supporting opportunity to define own custom mapper between torrent file name (`[rutracker.org].3021606.torrent`) and URL to torrent file locating in some txt file (`https://rutracker.org/forum/viewtopic.php?t=3021606`)
 
-### DX features
+## DX features
 
 - [semantic-release deploy](https://github.com/semantic-release/semantic-release)
 - strict functional eslint config based on [eslint-plugin-functional](https://www.npmjs.com/package/eslint-plugin-functional)
@@ -46,9 +46,9 @@
 - debug mode
 - [This repo was built based on functional version of my custom template](https://github.com/Skippia/Universal-starter-templates)
 
-### Documentation
+## Documentation
 
-#### Example of manual configuration
+### Example of manual configuration
 
 - Setting VITE_APP_TORRENT_URL=`https://rutracker.org/forum/viewtopic.php` means that:
   - line in txt file `https://rutracker.org/forum/viewtopic.php?t=3021606` and
@@ -56,25 +56,25 @@
 
 - For overriding default mapper between torrent file and URL to torrent file, change `extractTorrentFileNameFromURL`, `convertTorrentFilenameToURL` functions and rebuild app.
 
-#### Demo
+### Demo
 
 On the image is described file structure before and after applying CLI:
 
 ![Demo](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/diagram.png?raw=true)
 
-### Graph dependencies
+## Graph dependencies
 - Top-level
   - ![SVG](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-top-level.svg?raw=true)
 - All code
   - ![All code](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-nested.svg?raw=true)
 
-### Pre-requisites
+## Pre-requisites
 
 - Linux based / Windows based
 - Node.js (checked on v20.15.1)
 - pnpm
 
-### Quick start
+## Quick start
 
 1. Clone actual version of app
 ```sh
