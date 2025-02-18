@@ -1,4 +1,10 @@
-import type { TOutputFormatTorrent } from '../formatters'
+export type TOutputFormatTorrent = {
+  folder: string
+  amount_all_names: number
+  amount_unique_names: number
+  amount_duplicates_names: number
+  readonlyMode: boolean
+}[]
 
 export type TConvertToOutputTorrent = (options: { readonly: boolean }) => (
   raw: {

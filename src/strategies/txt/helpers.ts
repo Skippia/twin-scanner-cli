@@ -5,8 +5,8 @@ import * as E from 'fp-ts/lib/Either'
 import { identity, pipe } from 'fp-ts/lib/function'
 import * as TE from 'fp-ts/lib/TaskEither'
 
-import type { TExtensionsRemoveDuplicatesStrategies } from '..'
 import type { TDuplicateFormatTxt } from '../torrent/types'
+import type { TExtensionsRemoveDuplicatesStrategies } from '../types'
 
 import type { TGetDuplicatesFromTxtFilesInFolder } from './types'
 
