@@ -57,7 +57,7 @@
     "upgrade:check": "npx npm-check-updates --format group",
     "upgrade:interactive": "npx npm-check-updates --interactive",
     "upgrade:all": "npx npm-check-updates --format group -u",
-    "semantic-release": "semantic-release --branches master",
+    "semantic-release": "semantic-release --extends ./releaserc.json",
     "update-git-hooks": "npx simple-git-hooks"
   },
   "dependencies": {
