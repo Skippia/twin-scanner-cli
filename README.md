@@ -21,29 +21,30 @@
 - inquirer-fuzzy-path
 - zod
 
-### DX features
-
-- [semantic-release](https://github.com/semantic-release/semantic-release)
-- [strict functional eslint config based on `eslint-plugin-functional`](https://www.npmjs.com/package/eslint-plugin-functional)
-- [dependency graph builder](https://github.com/sverweij/dependency-cruiser)
-- [flamegraph profiling](https://github.com/davidmarkclements/0x)
-- [git hooks](https://github.com/toplenboren/simple-git-hooks)
-- [typescript with dev server](https://tsx.is/)
-- [vite bundler](https://vite.dev/)
-- [CI for quality analysis and auto deploy to NPM](.gitub/workflows)
-- [one command upgrade dependencies](https://github.com/raineorshine/npm-check-updates)
-- debug mode
-- [This repo was built based on functional version of my custom template]()
-
 ### Features
 
 - Nested scanning in one/multi folders to get info about files
+- Interactive CLI with step-by-step configuration and autocomplete for path selection
 - Supporting only .txt, .torrent file scanning or both formats simultaneously to find duplicates between multiple folders
 - Supporting readonly mode for casual listing info about duplicates without extraction them
 - Supporting of removing duplicates not only between cross folders, but into the same folder as well f.e:
-  - 1. For .torrent files: [ `cat.torrent`, `cat (1).torrent`, `cat (19).torrent`] => [`cat.torrent`]
-  - 2. For .txt files: remove duplicate (and using the same idea as for .torrent files) lines from .txt file
+  1. For .torrent files: [ "cat.torrent", "cat (1).torrent", "cat (19).torrent"] => ["cat.torrent"]
+  2. For .txt files: remove equal and duplicate (by analogy with torrent file names logic) lines from .txt file
 - Supporting opportunity to define own custom mapper between torrent file name (`[rutracker.org].3021606.torrent`) and URL to torrent file locating in some txt file (`https://rutracker.org/forum/viewtopic.php?t=3021606`)
+
+### DX features
+
+- [semantic-release deploy](https://github.com/semantic-release/semantic-release)
+- strict functional eslint config based on [eslint-plugin-functional](https://www.npmjs.com/package/eslint-plugin-functional)
+- [dependency graph builder](https://github.com/sverweij/dependency-cruiser)
+- [flamegraph profiling](https://github.com/davidmarkclements/0x)
+- [git hooks](https://github.com/toplenboren/simple-git-hooks)
+- typescript with [dev server](https://tsx.is/)
+- [vite bundler](https://vite.dev/)
+- [CI for quality analysis and auto deploy to NPM](.github/workflows)
+- one command [upgrade dependencies](https://github.com/raineorshine/npm-check-updates)
+- debug mode
+- [This repo was built based on functional version of my custom template](https://github.com/Skippia/Universal-starter-templates)
 
 ### Documentation
 
@@ -62,9 +63,12 @@ On the image is described file structure before and after applying CLI:
 ![Demo](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/diagram.png?raw=true)
 
 ### Graph dependencies
-
-![Top-level](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-top-level.svg?raw=true)
-![All code](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-nested.svg?raw=true)
+- Top-level
+  - ![SVG](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-top-level.svg?raw=true)
+  - ![HTML](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-top-level.html?raw=true)
+- All code
+  - ![All code](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-nested.svg?raw=true)
+  - ![All code](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/dependency-graph-nested.html?raw=true)
 
 ### Pre-requisites
 
