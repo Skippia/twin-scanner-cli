@@ -3,7 +3,7 @@ name: Release pipeline
 on:
   workflow_dispatch:
   push:
-    branches: [feature/**, hotfix/**]
+    branches: [master, develop, feature/**, hotfix/**]
   pull_request:
     branches: [master, develop]
 
