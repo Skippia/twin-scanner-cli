@@ -48,6 +48,8 @@
 
 ## Documentation
 
+- By default initial root folder for searching target folder(s) is defined as combination of first 2 subpaths to folder with cloned repository. F.e you have cloned repo in '/home/username/projects/twin-scanner-cli', in such case initial root folder will be set as `/home/username`
+
 ### Example of manual configuration
 
 - Setting VITE_APP_TORRENT_URL=`https://rutracker.org/forum/viewtopic.php` means that:
@@ -57,10 +59,12 @@
 - For overriding default mapper between torrent file and URL to torrent file, change `extractTorrentFileNameFromURL`, `convertTorrentFilenameToURL` functions and rebuild app.
 
 ### Demo
+1. Setup configuration via CLI and its output:
+![Demo](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/cli-demo.png?raw=true)
 
-On the image is described file structure before and after applying CLI:
+2. Result (on the image is described file structure before and after applying CLI):
 
-![Demo](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/diagram.png?raw=true)
+![Demo](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/result.png?raw=true)
 
 ## Graph dependencies
 - Top-level
@@ -76,7 +80,7 @@ On the image is described file structure before and after applying CLI:
 
 ## Quick start
 
-1. Clone actual version of app
+1. Clone actual version of app **on the same disk where is located folder(s) with duplicate files**
 ```sh
 git clone --depth 1 https://github.com/Skippia/twin-scanner-cli.git
 ```
@@ -85,10 +89,14 @@ git clone --depth 1 https://github.com/Skippia/twin-scanner-cli.git
 cd ./twin-scanner-cli && pnpm i
 ```
 3. Set env (url) for mapping between torrent name and torrent URL in txt files
+   1. Rename `.env.example` -> `.env`
+   2. Update env variable(s)
+
+4. Build project
 ```sh
-Rename .env.example -> .env and update variables
+npm run build
 ```
-4. Build and run
+5. Run project
 ```sh
-npm run build && npm run start:prod
+npm run start:prod
 ```
