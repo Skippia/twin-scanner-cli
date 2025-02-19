@@ -13,9 +13,9 @@
 ## Description
 - Find duplicate files in multiple folder(s) scanning .txt or/and .torrent files and depending on the selected mode (readonly: true | false) get information about duplicated files /+ extract them into new folders.
 - Repo is implemented with emphasis on **functional programming paradigm** (where it's possible / adequate). The repository has undergone several major refactorings (though with minor changes to functionality). To track down this refactoring check the following branches, increasing the amount of functional code:
-1. `original` — imperative code
-2. `refactor/functional-eslint` — fullfilling [eslint-plugin-functional](https://www.npmjs.com/package/eslint-plugin-functional)
-3. `refactor/fp-ts` — huge refactoring rewriting main codebase to [FP-TS](https://github.com/gcanti/fp-ts)
+  1. `original` — imperative code
+  2. `refactor/functional-eslint` — fullfilling [eslint-plugin-functional](https://www.npmjs.com/package/eslint-plugin-functional)
+  3. `refactor/fp-ts` — huge refactoring rewriting main codebase to [FP-TS](https://github.com/gcanti/fp-ts)
 
 ## Technical Stack
 - [fp-ts](https://github.com/gcanti/fp-ts)
@@ -30,8 +30,8 @@
 - Supporting only .txt, .torrent file scanning or both formats simultaneously to find duplicates between multiple folders
 - Supporting readonly mode for casual listing info about duplicates without extraction them
 - Supporting of removing duplicates not only between cross folders, but into the same folder as well f.e:
-  1. For .torrent files: [ "cat.torrent", "cat (1).torrent", "cat (19).torrent"] => ["cat.torrent"]
-  2. For .txt files: remove equal and duplicate (by analogy with torrent file names logic) lines from .txt file
+  - For .torrent files: [ "cat.torrent", "cat (1).torrent", "cat (19).torrent"] => ["cat.torrent"]
+  - For .txt files: remove equal and duplicate (by analogy with torrent file names logic) lines from .txt file
 - Supporting opportunity to define own custom mapper between torrent file name (`[rutracker.org].3021606.torrent`) and URL to torrent file locating in some txt file (`https://rutracker.org/forum/viewtopic.php?t=3021606`)
 
 ## DX features
