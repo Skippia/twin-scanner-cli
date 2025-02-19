@@ -7,7 +7,7 @@
   <a href="#dx-features">DX features</a> •
   <a href="#documentation">Documentation</a> •
   <a href="#pre-requisites">Pre-requisites</a> •
-  <a href="#quick-start">Quick start</a> •
+  <a href="#quick-start">Quick start</a>
 </p>
 
 ## Description
@@ -81,7 +81,10 @@
 
 ## Quick start
 
-1. Clone actual version of app **on the same disk where is located folder(s) with duplicate files**
+1. Clone actual version of app (or only last version of app) **on the same disk where is located folder(s) with duplicate files**:
+```sh
+git clone https://github.com/Skippia/twin-scanner-cli.git
+
 ```sh
 git clone --depth 1 https://github.com/Skippia/twin-scanner-cli.git
 ```
@@ -90,9 +93,8 @@ git clone --depth 1 https://github.com/Skippia/twin-scanner-cli.git
 cd ./twin-scanner-cli && pnpm i
 ```
 3. Set env (url) for mapping between torrent name and torrent URL in txt files
-  1. Rename `.env.example` -> `.env`
-  2. Update env variable(s)
-
+   - Rename `.env.example` -> `.env`
+   - Update env variable(s)
 4. Build project
 ```sh
 npm run build
