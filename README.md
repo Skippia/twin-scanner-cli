@@ -70,7 +70,7 @@ On the image is described file structure before and after applying CLI:
 
 ## Pre-requisites
 
-- Linux based / Windows based
+- Linux-based OS
 - Node.js (checked on v20.15.1)
 - pnpm
 
