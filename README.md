@@ -8,18 +8,20 @@
   <a href="#documentation">Documentation</a> •
   <a href="#pre-requisites">Pre-requisites</a> •
   <a href="#quick-start">Quick start</a> •
-  <a href="#miscellaneous">Miscellaneous</a> •
 </p>
 
 ## Description
 - Find duplicate files in multiple folder(s) scanning .txt or/and .torrent files and depending on the selected mode (readonly: true | false) get information about duplicated files /+ extract them into new folders.
+- Repo is implemented with emphasis on **functional programming paradigm** (where it's possible / adequate). The repository has undergone several major refactorings (though with minor changes to functionality). To track down this refactoring check the following branches, increasing the amount of functional code:
+1. `original` — imperative code
+2. `refactor/functional-eslint` — fullfilling [eslint-plugin-functional](https://www.npmjs.com/package/eslint-plugin-functional)
+3. `refactor/fp-ts` — huge refactoring rewriting main codebase to [FP-TS](https://github.com/gcanti/fp-ts)
 
 ## Technical Stack
-- fp-ts
-- inquirer
-- inquirer-autocomplete-standalone
-- inquirer-fuzzy-path
-- zod
+- [fp-ts](https://github.com/gcanti/fp-ts)
+- [inquirer](https://github.com/SBoudrias/Inquirer.js)
+- [inquirer-fuzzy-path](https://github.com/adelsz/inquirer-fuzzy-path)
+- [zod](https://github.com/SBoudrias/Inquirer.js)
 
 ## Features
 
@@ -48,7 +50,14 @@
 
 ## Documentation
 
-- By default initial root folder for searching target folder(s) is defined as combination of first 2 subpaths to folder with cloned repository. F.e you have cloned repo in '/home/username/projects/twin-scanner-cli', in such case initial root folder will be set as `/home/username`
+- By default initial root folder for searching target folder(s) is defined as combination of first 2 subpaths to folder with cloned repository. F.e you have cloned repo in `/home/username/projects/twin-scanner-cli`, in such case initial root folder will be set as `/home/username`
+
+### Demo
+1. Setup configuration via CLI and its output:
+![Demo](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/cli-demo.png?raw=true)
+
+2. Result (on the image is described file structure before and after applying CLI):
+![Demo](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/result.png?raw=true)
 
 ### Example of manual configuration
 
@@ -57,14 +66,6 @@
  torrent file `[rutracker.org].3021606.torrent` will be considered the same during deduplication process
 
 - For overriding default mapper between torrent file and URL to torrent file, change `extractTorrentFileNameFromURL`, `convertTorrentFilenameToURL` functions and rebuild app.
-
-### Demo
-1. Setup configuration via CLI and its output:
-![Demo](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/cli-demo.png?raw=true)
-
-2. Result (on the image is described file structure before and after applying CLI):
-
-![Demo](https://github.com/Skippia/twin-scanner-cli/blob/master/docs/result.png?raw=true)
 
 ## Graph dependencies
 - Top-level
@@ -89,8 +90,8 @@ git clone --depth 1 https://github.com/Skippia/twin-scanner-cli.git
 cd ./twin-scanner-cli && pnpm i
 ```
 3. Set env (url) for mapping between torrent name and torrent URL in txt files
-   1. Rename `.env.example` -> `.env`
-   2. Update env variable(s)
+  1. Rename `.env.example` -> `.env`
+  2. Update env variable(s)
 
 4. Build project
 ```sh
