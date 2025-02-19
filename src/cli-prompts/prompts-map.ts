@@ -16,7 +16,7 @@ export const PROMPTS_RECORD = {
     itemType: 'directory',
     rootPath: rootPathFolder,
     suggestOnly: false,
-    depthLimit: 1,
+    depthLimit: 2,
     // @ts-expect-error ...
     validate: ({ short }: { short: string }) => validateFolderPath(short)(),
   }),
@@ -44,7 +44,7 @@ export const PROMPTS_RECORD = {
     itemType: 'directory',
     rootPath: rootFolder,
     suggestOnly: false,
-    depthLimit: 1,
+    depthLimit: 2,
     // @ts-expect-error ...
     validate: ({ short }: { short: string }) => validateFolderPath(short)(),
   }),
