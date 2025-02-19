@@ -31,14 +31,18 @@ const registerInquirerPrompt = IOE.tryCatch(
 )
 
 const collectUserChoices = (): TE.TaskEither<Error, TUserChoices> => {
-  const rootPathFolder = path.join(__filename, '../../../')
+  const initialRootPathFolder = path
+    .join(__filename, '../../../')
+    .split('/')
+    .slice(0, 3)
+    .join('/')
 
   return pipe(
     TE.Do,
-    TE.bind('rootFolder', () => getRootFolderPrompt(rootPathFolder)),
+    TE.bind('rootFolder', () => getRootFolderPrompt(initialRootPathFolder)),
     TE.bind('folderMode', getFolderModePrompt),
-    TE.bind('folderConfig', ({ folderMode }) =>
-      folderMode === 'single' ? getSingleFolderPrompt(rootPathFolder) : getMultipleFoldersPrompt()),
+    TE.bind('folderConfig', ({ folderMode, rootFolder }) =>
+      folderMode === 'single' ? getSingleFolderPrompt(rootFolder) : getMultipleFoldersPrompt()),
     TE.bind('recursive', ({ folderMode }) =>
       folderMode === 'single' ? getRecursivePrompt() : TE.right(false)),
     TE.bind('fileExtensions', getExtensionsPrompt),
