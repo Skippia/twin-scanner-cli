@@ -61,15 +61,15 @@
     "update-git-hooks": "npx simple-git-hooks"
   },
   "dependencies": {
-    "fp-ts": "^2.16.9",
-    "inquirer": "^12.4.2",
-    "inquirer-fuzzy-path": "^2.3.0",
-    "zod": "^3.24.2"
+    "fp-ts": "^2.15.0",
+    "inquirer": "^12.1.0",
+    "inquirer-fuzzy-path": "^2.2.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "0x": "^5.8.0",
     "@antfu/eslint-config": "^4.3.0",
-    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.1",
