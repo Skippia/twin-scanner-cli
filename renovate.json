@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
+    "config:recommended",
     ":separatePatchReleases",
     "helpers:disableTypesNodeMajor",
     "helpers:pinGitHubActionDigests",
@@ -39,7 +39,6 @@
     "enabled": true,
     "automerge": true,
     "schedule": ["before 4am on monday"]
-
   },
   "rebaseWhen": "behind-base-branch",
   "prConcurrentLimit": 10,
