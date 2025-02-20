@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    ":separatePatchReleases",
     "helpers:disableTypesNodeMajor",
     "helpers:pinGitHubActionDigests",
     "npm:unpublishSafe"
@@ -24,7 +23,7 @@
       "addLabels": ["minor"],
       "commitMessagePrefix": "fix(renovate): [minor]",
       "groupName": "minor",
-      "automerge": false
+      "automerge": true
     },
     {
       "description": "Major updates require manual review",
@@ -37,12 +36,9 @@
   ],
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": true,
-    "schedule": ["before 4am on monday"]
+    "automerge": true
   },
   "rebaseWhen": "behind-base-branch",
-  "prConcurrentLimit": 10,
-  "prHourlyLimit": 0,
   "labels": ["dependencies"],
   "rangeStrategy": "bump"
 }
