@@ -13,8 +13,7 @@
       "labels": ["dependencies", "patch"],
       "automerge": true,
       "groupName": "patch updates",
-      "commitMessagePrefix": "fix(renovate):",
-      "matchPackageNames": ["*"]
+      "commitMessagePrefix": "fix(renovate-patch):"
     },
     {
       "description": "Minor updates require manual review",
@@ -23,8 +22,7 @@
       "automerge": false,
       "labels": ["dependencies", "minor"],
       "groupName": "minor updates",
-      "commitMessagePrefix": "fix(renovate):",
-      "matchPackageNames": ["*"]
+      "commitMessagePrefix": "fix(renovate-minor):"
     },
     {
       "description": "Major updates require manual review",
@@ -33,7 +31,7 @@
       "automerge": false,
       "labels": ["dependencies", "update"],
       "groupName": "major updates",
-      "commitMessagePrefix": "fix(renovate):"
+      "commitMessagePrefix": "fix(renovate-major):"
     },
     {
       "enabled": false,
