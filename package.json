@@ -64,7 +64,7 @@
     "fp-ts": "^2.16.9",
     "inquirer": "^12.4.2",
     "inquirer-fuzzy-path": "^2.3.0",
-    "zod": "^3.24.2"
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "0x": "^5.7.0",

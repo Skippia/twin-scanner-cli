@@ -18,8 +18,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       zod:
-        specifier: ^3.24.2
-        version: 3.24.2
+        specifier: ^3.23.0
+        version: 3.23.0
     devDependencies:
       0x:
         specifier: ^5.7.0
@@ -4598,8 +4598,8 @@ packages:
     resolution: {integrity: sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ==}
     engines: {node: '>=18'}
 
-  zod@3.24.2:
-    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
+  zod@3.23.0:
+    resolution: {integrity: sha512-OFLT+LTocvabn6q76BTwVB0hExEBS0IduTr3cqZyMqEDbOnYmcU+y0tUAYbND4uwclpBGi4I4UUBGzylWpjLGA==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -4646,7 +4646,7 @@ snapshots:
       '@eslint-community/eslint-plugin-eslint-comments': 4.4.1(eslint@9.20.1(jiti@2.4.2))
       '@eslint/markdown': 6.2.2
       '@stylistic/eslint-plugin': 4.0.0(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
-      '@typescript-eslint/eslint-plugin': 8.24.1(@typescript-eslint/parser@8.24.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2))(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
+      '@typescript-eslint/eslint-plugin': 8.24.1(@typescript-eslint/parser@8.23.0(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2))(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
       '@typescript-eslint/parser': 8.24.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
       '@vitest/eslint-plugin': 1.1.31(@typescript-eslint/utils@8.24.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2))(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
       ansis: 3.15.0
@@ -5577,10 +5577,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/eslint-plugin@8.24.1(@typescript-eslint/parser@8.24.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2))(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)':
+  '@typescript-eslint/eslint-plugin@8.24.1(@typescript-eslint/parser@8.23.0(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2))(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
-      '@typescript-eslint/parser': 8.24.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
+      '@typescript-eslint/parser': 8.23.0(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
       '@typescript-eslint/scope-manager': 8.24.1
       '@typescript-eslint/type-utils': 8.24.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
       '@typescript-eslint/utils': 8.24.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
@@ -6988,7 +6988,7 @@ snapshots:
     dependencies:
       eslint: 9.20.1(jiti@2.4.2)
     optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 8.24.1(@typescript-eslint/parser@8.24.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2))(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
+      '@typescript-eslint/eslint-plugin': 8.24.1(@typescript-eslint/parser@8.23.0(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2))(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.2)
 
   eslint-plugin-vue@9.32.0(eslint@9.20.1(jiti@2.4.2)):
     dependencies:
@@ -9608,6 +9608,6 @@ snapshots:
 
   yoctocolors@2.1.1: {}
 
-  zod@3.24.2: {}
+  zod@3.23.0: {}
 
   zwitch@2.0.4: {}
