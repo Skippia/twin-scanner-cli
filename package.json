@@ -86,13 +86,13 @@
     "rimraf": "^6.0.1",
     "semantic-release": "^24.2.3",
     "simple-git-hooks": "^2.11.1",
-    "tsx": "^4.19.3",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.1",
+    "tsx": "^3.0.0",
+    "typescript": "^5.4.3",
+    "typescript-eslint": "^8.23.1",
     "vite": "^6.1.1",
-    "vite-bundle-analyzer": "^0.17.1",
-    "vite-plugin-dts": "^4.5.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-bundle-analyzer": "^0.14.1",
+    "vite-plugin-dts": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.1"
   },
   "simple-git-hooks": {
     "pre-push": "npm run typecheck"
