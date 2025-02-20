@@ -25,6 +25,7 @@
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["major"],
       "automerge": false,
+      "labels": ["major-update"],
       "groupName": "major updates",
       "commitMessagePrefix": "fix(deps):"
     }
