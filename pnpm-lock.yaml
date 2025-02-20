@@ -91,8 +91,8 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.0)
       vite-bundle-analyzer:
-        specifier: ^0.14.1
-        version: 0.14.3
+        specifier: ^0.17.1
+        version: 0.17.1
       vite-plugin-dts:
         specifier: ^4.3.0
         version: 4.5.0(@types/node@22.13.4)(rollup@4.34.8)(typescript@5.7.3)(vite@6.1.1(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.0))
@@ -4296,8 +4296,8 @@ packages:
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}
 
-  vite-bundle-analyzer@0.14.3:
-    resolution: {integrity: sha512-gtYPRahkEdo7TRDLHqq+ZRE8Xfz5dt3UAl0NhkZBBYaGRd3EOyWJz9+WAqRSALf4szFhq5AS0TKvL9nVWiAkqw==}
+  vite-bundle-analyzer@0.17.1:
+    resolution: {integrity: sha512-ubjLhkuRgOSBNck+6xBbQmjmh8SeLTG4alEM5PX2TNzyGhKLwWlyCz1YG0an3RQnscbhVzSb6kYteoHXhP///A==}
     hasBin: true
 
   vite-plugin-dts@4.5.0:
@@ -9115,7 +9115,7 @@ snapshots:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
 
-  vite-bundle-analyzer@0.14.3: {}
+  vite-bundle-analyzer@0.17.1: {}
 
   vite-plugin-dts@4.5.0(@types/node@22.13.4)(rollup@4.34.8)(typescript@5.7.3)(vite@6.1.1(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.0)):
     dependencies:
