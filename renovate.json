@@ -52,7 +52,6 @@
   "npm": {
     "minimumReleaseAge": "3 days"
   },
-  "postUpdateOptions": ["pnpmDedupe", "npmDedupe", "yarnDedupeFewer"],
   "prConcurrentLimit": 10,
   "prHourlyLimit": 0,
   "prCreation": "immediate",
