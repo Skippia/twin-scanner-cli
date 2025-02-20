@@ -16,6 +16,12 @@ jobs:
         with:
           ref: master
 
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Fetch PR branch
         run: |
           # Fetch the PR branch into a local branch named "pr_branch"
