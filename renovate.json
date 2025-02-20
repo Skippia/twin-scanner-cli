@@ -6,7 +6,7 @@
   "packageRules": [
     {
       "description": "Auto merge patch updates",
-      "matchManagers": ["pnpm"],
+      "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch"],
       "automerge": true,
       "groupName": "patch updates",
@@ -14,7 +14,7 @@
     },
     {
       "description": "Group minor updates for review",
-      "matchManagers": ["pnpm"],
+      "matchManagers": ["npm"],
       "matchUpdateTypes": ["minor"],
       "automerge": false,
       "groupName": "minor updates",
@@ -22,7 +22,7 @@
     },
     {
       "description": "Major updates require manual review",
-      "matchManagers": ["pnpm"],
+      "matchManagers": ["npm"],
       "matchUpdateTypes": ["major"],
       "automerge": false,
       "groupName": "major updates",
@@ -35,7 +35,7 @@
     "schedule": ["before 4am on monday"]
   },
   "prConcurrentLimit": 10,
-  "prHourlyLimit": 2,
+  "prHourlyLimit": 0,
   "labels": ["dependencies"],
   "rangeStrategy": "bump",
   "timezone": "Europe/Zurich"
