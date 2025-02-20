@@ -53,7 +53,7 @@ importers:
         version: 22.12.0
       cz-conventional-changelog:
         specifier: ^3.2.0
-        version: 3.2.0(@types/node@22.12.0)(typescript@5.7.2)
+        version: 3.3.0(@types/node@22.12.0)(typescript@5.7.2)
       dependency-cruiser:
         specifier: ^16.10.0
         version: 16.10.0
@@ -1780,10 +1780,6 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
-
-  cz-conventional-changelog@3.2.0:
-    resolution: {integrity: sha512-yAYxeGpVi27hqIilG1nh4A9Bnx4J3Ov+eXy4koL3drrR+IO9GaWPsKjik20ht608Asqi8TQPf0mczhEeyAtMzg==}
-    engines: {node: '>= 10'}
 
   cz-conventional-changelog@3.3.0:
     resolution: {integrity: sha512-U466fIzU5U22eES5lTNiNbZ+d8dfcHcssH4o7QsdWaCcRs/feIPCxKYSWkYBNs5mny7MvEfwpTLWjvbm94hecw==}
@@ -6457,20 +6453,6 @@ snapshots:
       type-fest: 1.4.0
 
   cssesc@3.0.0: {}
-
-  cz-conventional-changelog@3.2.0(@types/node@22.12.0)(typescript@5.7.2):
-    dependencies:
-      chalk: 2.4.2
-      commitizen: 4.3.1(@types/node@22.12.0)(typescript@5.7.2)
-      conventional-commit-types: 3.0.0
-      lodash.map: 4.6.0
-      longest: 2.0.1
-      word-wrap: 1.2.5
-    optionalDependencies:
-      '@commitlint/load': 19.6.1(@types/node@22.12.0)(typescript@5.7.2)
-    transitivePeerDependencies:
-      - '@types/node'
-      - typescript
 
   cz-conventional-changelog@3.3.0(@types/node@22.12.0)(typescript@5.7.2):
     dependencies:
