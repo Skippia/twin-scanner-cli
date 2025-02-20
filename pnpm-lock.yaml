@@ -9,16 +9,16 @@ importers:
   .:
     dependencies:
       fp-ts:
-        specifier: ^2.16.8
+        specifier: ^2.15.8
         version: 2.16.9
       inquirer:
-        specifier: ^12.4.0
+        specifier: ^12.3.0
         version: 12.4.2(@types/node@22.12.0)
       inquirer-fuzzy-path:
-        specifier: ^2.3.0
+        specifier: ^2.2.0
         version: 2.3.0
       zod:
-        specifier: ^3.23.0
+        specifier: ^3.22.0
         version: 3.23.0
     devDependencies:
       0x:
@@ -55,10 +55,10 @@ importers:
         specifier: ^3.2.0
         version: 3.3.0(@types/node@22.12.0)(typescript@5.7.2)
       dependency-cruiser:
-        specifier: ^16.10.0
+        specifier: ^16.9.0
         version: 16.10.0
       eslint:
-        specifier: ^9.20.1
+        specifier: ^9.18.1
         version: 9.20.1(jiti@2.4.2)
       eslint-plugin-functional:
         specifier: ^8.0.0
@@ -76,7 +76,7 @@ importers:
         specifier: ^24.2.3
         version: 24.2.3(typescript@5.7.2)
       simple-git-hooks:
-        specifier: ^2.11.1
+        specifier: ^2.9.0
         version: 2.11.1
       tsx:
         specifier: ^4.19.1
@@ -2457,7 +2457,6 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
 
   global-directory@4.0.1:
     resolution: {integrity: sha512-wHTUcDUoZ1H5/0iVqEudYW4/kAlN5cZ3j/bXn0Dpbizl9iaUVeWSHqiOjsgk6OW2bkLclbBjzewBz6weQ1zA2Q==}
@@ -2659,7 +2658,6 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
-    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.3:
     resolution: {integrity: sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw==}
@@ -4009,7 +4007,6 @@ packages:
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
-    deprecated: Please use @jridgewell/sourcemap-codec instead
 
   spawn-error-forwarder@1.0.0:
     resolution: {integrity: sha512-gRjMgK5uFjbCvdibeGJuy3I5OYz6VLoVdsOJdA6wV0WlfQVLFueoqMxwwYD9RODdgb6oUIvlRlsyFSiQkMKu0g==}

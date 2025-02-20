@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: master
-          fetch: 0
+          fetch-depth: 0
           persist-credentials: true
           token: ${{ secrets.BOT_SECRET_GITHUB_TOKEN }}
 
@@ -29,6 +29,15 @@ jobs:
         run: |
           # Fetch the PR branch into a local branch named "pr_branch"
           git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
+
+      - name: Update PR branch with latest master
+        run: |
+          # Switch to the PR branch
+          git checkout pr_branch
+          # Update it with the latest master changes
+          git merge origin/master --no-edit
+          # Switch back to master
+          git checkout master
 
       - name: Merge PR with "theirs" strategy
         if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch') || contains(steps.metadata.outputs.update-type, 'version-update:semver-minor')
