@@ -6,6 +6,8 @@
   "baseBranches": [
     "master"
   ],
+  "versioning": "semver",
+  "separateMinorPatch": true,
   "automerge": false,
   "packageRules": [
     {
@@ -25,7 +27,7 @@
       ],
       "automerge": true,
       "groupName": "patch updates",
-      "commitMessagePrefix": "fix(renovate): patch"
+      "commitMessagePrefix": "fix(renovate):"
     },
     {
       "description": "Minor updates require manual review",
@@ -35,13 +37,16 @@
       "matchUpdateTypes": [
         "minor"
       ],
+      "matchPackagePatterns": [
+        "*"
+      ],
       "automerge": false,
       "labels": [
         "dependencies",
         "minor"
       ],
       "groupName": "minor updates",
-      "commitMessagePrefix": "fix(renovate): minor"
+      "commitMessagePrefix": "fix(renovate):"
     },
     {
       "description": "Major updates require manual review",
@@ -57,7 +62,7 @@
         "update"
       ],
       "groupName": "major updates",
-      "commitMessagePrefix": "fix(renovate): major"
+      "commitMessagePrefix": "fix(renovate):"
     },
     {
       "enabled": false,
@@ -82,7 +87,6 @@
   "npm": {
     "minimumReleaseAge": "3 days"
   },
-  "separateMinorPatch": true,
   "postUpdateOptions": [
     "pnpmDedupe",
     "npmDedupe",
