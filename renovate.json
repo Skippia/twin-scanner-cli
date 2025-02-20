@@ -1,58 +1,33 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
-  "baseBranches": [
-    "master"
-  ],
+  "extends": ["config:recommended"],
+  "baseBranches": ["master"],
   "automerge": false,
   "packageRules": [
     {
       "description": "Auto merge patch updates",
-      "matchManagers": [
-        "npm"
-      ],
-      "matchUpdateTypes": [
-        "patch"
-      ],
-      "labels": [
-        "dependencies",
-        "patch-update"
-      ],
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch"],
+      "labels": ["dependencies", "patch-update"],
       "automerge": true,
       "groupName": "patch updates",
       "commitMessagePrefix": "fix(patch-deps):"
     },
     {
       "description": "Auto merge minor updates",
-      "matchManagers": [
-        "npm"
-      ],
-      "matchUpdateTypes": [
-        "minor"
-      ],
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor"],
       "automerge": true,
-      "labels": [
-        "dependencies",
-        "minor-update"
-      ],
+      "labels": ["dependencies", "minor-update"],
       "groupName": "minor updates",
       "commitMessagePrefix": "fix(minor-deps):"
     },
     {
       "description": "Major updates require manual review",
-      "matchManagers": [
-        "npm"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["major"],
       "automerge": false,
-      "labels": [
-        "dependencies",
-        "major-update"
-      ],
+      "labels": ["dependencies", "major-update"],
       "groupName": "major updates",
       "commitMessagePrefix": "fix(major-deps):"
     }
@@ -60,15 +35,11 @@
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
-    "schedule": [
-      "before 4am on monday"
-    ]
+    "schedule": ["before 4am on monday"]
   },
   "prConcurrentLimit": 10,
   "prHourlyLimit": 0,
-  "labels": [
-    "dependencies"
-  ],
+  "labels": ["dependencies"],
   "rangeStrategy": "bump",
   "timezone": "Europe/Zurich"
 }

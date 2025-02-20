@@ -26,6 +26,9 @@ jobs:
   release:
     name: Release on production
     uses: ./.github/workflows/common.yml
+    concurrency:
+      group: semantic-release
+      cancel-in-progress: true
     needs: [ci]
     if: ${{ github.ref == 'refs/heads/master' }}
     permissions:
