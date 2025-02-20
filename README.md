@@ -32,7 +32,7 @@
 - Supporting of removing duplicates not only between cross folders, but into the same folder as well f.e:
   - For .torrent files: [ "cat.torrent", "cat (1).torrent", "cat (19).torrent"] => ["cat.torrent"]
   - For .txt files: remove equal and duplicate (by analogy with torrent file names logic) lines from .txt file
-- Supporting opportunity to define own custom mapper between torrent file name (`[rutracker.org].3021606.torrent`) and URL to torrent file locating in some txt file (`https://rutracker.org/forum/viewtopic.php?t=3021606`)
+- Supporting opportunity to define own custom mapper between torrent file name (`[rutracker.org].3021606.torrent`) and URL to torrent file locating in some txt file (`https://rutracker.org/forum/viewtopic.php?t=3021606`). It is assumed that text files contain only links to torrent files from which they can be downloaded, and there is a way to establish (to map) a correspondence between the name of the torrent file and the link to download it. It is also assumed that the link to the torrent file in any of the text files is redundant (duplicate) and there is no need to store information about it in this file **if the torrent file that can be downloaded from this link is already stored in one of the user's folders** — in this case, such a link is a duplicate and will be deleted from an original text file while the program is running in `readonly: false` mode.
 
 ## DX features
 
@@ -84,7 +84,7 @@
 1. Clone actual version of app (or only last version of app) **on the same disk where is located folder(s) with duplicate files**:
 ```sh
 git clone https://github.com/Skippia/twin-scanner-cli.git
-
+```
 ```sh
 git clone --depth 1 https://github.com/Skippia/twin-scanner-cli.git
 ```
