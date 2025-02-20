@@ -48,6 +48,8 @@ jobs:
         run: |
           # Fetch the PR branch using gh CLI.
           gh pr checkout ${{ github.event.pull_request.number }}
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Merge PR with "theirs" strategy
         if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch')
         run: |
