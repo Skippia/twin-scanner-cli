@@ -1,82 +1,47 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
-  "baseBranches": [
-    "master"
-  ],
+  "extends": ["config:recommended"],
+  "baseBranches": ["master"],
   "versioning": "semver",
   "separateMinorPatch": true,
   "automerge": false,
   "packageRules": [
     {
       "description": "Auto merge patch updates",
-      "matchManagers": [
-        "npm"
-      ],
-      "matchUpdateTypes": [
-        "patch"
-      ],
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "labels": [
-        "dependencies",
-        "patch"
-      ],
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch"],
+      "labels": ["dependencies", "patch"],
       "automerge": true,
       "groupName": "patch updates",
-      "commitMessagePrefix": "fix(renovate):"
+      "commitMessagePrefix": "fix(renovate):",
+      "matchPackageNames": ["*"]
     },
     {
       "description": "Minor updates require manual review",
-      "matchManagers": [
-        "npm"
-      ],
-      "matchUpdateTypes": [
-        "minor"
-      ],
-      "matchPackagePatterns": [
-        "*"
-      ],
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor"],
       "automerge": false,
-      "labels": [
-        "dependencies",
-        "minor"
-      ],
+      "labels": ["dependencies", "minor"],
       "groupName": "minor updates",
-      "commitMessagePrefix": "fix(renovate):"
+      "commitMessagePrefix": "fix(renovate):",
+      "matchPackageNames": ["*"]
     },
     {
       "description": "Major updates require manual review",
-      "matchManagers": [
-        "npm"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["major"],
       "automerge": false,
-      "labels": [
-        "dependencies",
-        "update"
-      ],
+      "labels": ["dependencies", "update"],
       "groupName": "major updates",
       "commitMessagePrefix": "fix(renovate):"
     },
     {
       "enabled": false,
-      "matchPackageNames": [
-        "@types/node"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ]
+      "matchPackageNames": ["@types/node"],
+      "matchUpdateTypes": ["major"]
     },
     {
-      "matchDepTypes": [
-        "action"
-      ],
+      "matchDepTypes": ["action"],
       "pinDigests": true
     }
   ],
@@ -87,18 +52,12 @@
   "npm": {
     "minimumReleaseAge": "3 days"
   },
-  "postUpdateOptions": [
-    "pnpmDedupe",
-    "npmDedupe",
-    "yarnDedupeFewer"
-  ],
+  "postUpdateOptions": ["pnpmDedupe", "npmDedupe", "yarnDedupeFewer"],
   "prConcurrentLimit": 10,
   "prHourlyLimit": 0,
   "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch",
-  "labels": [
-    "dependencies"
-  ],
+  "labels": ["dependencies"],
   "rangeStrategy": "bump",
   "timezone": "Europe/Zurich"
 }
