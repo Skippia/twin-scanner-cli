@@ -16,12 +16,16 @@
       "matchUpdateTypes": [
         "patch"
       ],
+      "labels": [
+        "dependencies",
+        "patch-update"
+      ],
       "automerge": true,
       "groupName": "patch updates",
-      "commitMessagePrefix": "fix(deps):"
+      "commitMessagePrefix": "fix(patch-deps):"
     },
     {
-      "description": "Group minor updates for review",
+      "description": "Auto merge minor updates",
       "matchManagers": [
         "npm"
       ],
@@ -29,8 +33,12 @@
         "minor"
       ],
       "automerge": true,
+      "labels": [
+        "dependencies",
+        "minor-update"
+      ],
       "groupName": "minor updates",
-      "commitMessagePrefix": "fix(deps):"
+      "commitMessagePrefix": "fix(minor-deps):"
     },
     {
       "description": "Major updates require manual review",
@@ -46,7 +54,7 @@
         "major-update"
       ],
       "groupName": "major updates",
-      "commitMessagePrefix": "fix(deps):"
+      "commitMessagePrefix": "fix(major-deps):"
     }
   ],
   "lockFileMaintenance": {
