@@ -61,7 +61,7 @@
     "update-git-hooks": "npx simple-git-hooks"
   },
   "dependencies": {
-    "fp-ts": "^2.16.9",
+    "fp-ts": "^2.16.8",
     "inquirer": "^12.4.0",
     "inquirer-fuzzy-path": "^2.3.0",
     "zod": "^3.23.0"
@@ -77,7 +77,7 @@
     "@semantic-release/release-notes-generator": "^14.0.3",
     "@types/inquirer-fuzzy-path": "^2.3.8",
     "@types/node": "^22.12.0",
-    "cz-conventional-changelog": "^3.3.0",
+    "cz-conventional-changelog": "^3.2.0",
     "dependency-cruiser": "^16.10.0",
     "eslint": "^9.20.1",
     "eslint-plugin-functional": "^8.0.0",
