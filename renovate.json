@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
+    "config:recommended",
     ":separatePatchReleases",
     "helpers:disableTypesNodeMajor",
     "helpers:pinGitHubActionDigests",
@@ -12,37 +12,36 @@
   "packageRules": [
     {
       "description": "Auto merge patch updates",
-      "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["patch"],
       "addLabels": ["patch"],
       "commitMessagePrefix": "fix(renovate): [patch]",
       "groupName": "patch",
-      "automerge": true
+      "automerge": true,
+      "matchPackageNames": ["*"]
     },
     {
       "description": "Minor updates require manual review",
-      "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor"],
       "addLabels": ["minor"],
       "commitMessagePrefix": "fix(renovate): [minor]",
       "groupName": "minor",
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": ["*"]
     },
     {
       "description": "Major updates require manual review",
-      "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["major"],
       "addLabels": ["major"],
       "commitMessagePrefix": "fix(renovate): [major]",
       "groupName": "major",
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": ["*"]
     }
   ],
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
     "schedule": ["before 4am on monday"]
-
   },
   "rebaseWhen": "behind-base-branch",
   "prConcurrentLimit": 10,
