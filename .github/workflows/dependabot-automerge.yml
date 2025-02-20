@@ -33,7 +33,7 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.user.login == 'dependabot[bot]' && contains(steps.metadata.outputs.update-type, 'version-update:semver-patch')
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v3
@@ -49,6 +49,7 @@ jobs:
           # Fetch the PR branch using gh CLI.
           gh pr checkout ${{ github.event.pull_request.number }}
       - name: Merge PR with "theirs" strategy
+        if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch')
         run: |
           # Set up git config for commit author.
           git config user.name "github-actions[bot]"
@@ -56,5 +57,6 @@ jobs:
           # Merge the checked-out PR branch into master using the recursive strategy and favoring "their" changes.
           git merge -X theirs ${{ github.head_ref }} -m "Auto-merged Dependabot PR #${{ github.event.pull_request.number }} with conflict resolution (accepting PR changes)"
       - name: Push merge to master
+        if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch')
         run: |
           git push origin master
