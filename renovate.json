@@ -1,60 +1,52 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:base",
+    ":separatePatchReleases",
+    "helpers:disableTypesNodeMajor",
+    "helpers:pinGitHubActionDigests",
+    "npm:unpublishSafe"
+  ],
   "baseBranches": ["master"],
   "versioning": "semver",
-  "separateMinorPatch": true,
-  "automerge": false,
   "packageRules": [
     {
       "description": "Auto merge patch updates",
-      "matchManagers": ["npm"],
+      "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["patch"],
-      "labels": ["dependencies", "patch"],
-      "automerge": true,
-      "groupName": "patch updates",
-      "commitMessagePrefix": "fix(renovate-patch):"
+      "addLabels": ["patch"],
+      "commitMessagePrefix": "fix(renovate): [patch]",
+      "groupName": "patch",
+      "automerge": true
     },
     {
       "description": "Minor updates require manual review",
-      "matchManagers": ["npm"],
+      "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor"],
-      "automerge": false,
-      "labels": ["dependencies", "minor"],
-      "groupName": "minor updates",
-      "commitMessagePrefix": "fix(renovate-minor):"
+      "addLabels": ["minor"],
+      "commitMessagePrefix": "fix(renovate): [minor]",
+      "groupName": "minor",
+      "automerge": false
     },
     {
       "description": "Major updates require manual review",
-      "matchManagers": ["npm"],
+      "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["major"],
-      "automerge": false,
-      "labels": ["dependencies", "update"],
-      "groupName": "major updates",
-      "commitMessagePrefix": "fix(renovate-major):"
-    },
-    {
-      "enabled": false,
-      "matchPackageNames": ["@types/node"],
-      "matchUpdateTypes": ["major"]
-    },
-    {
-      "matchDepTypes": ["action"],
-      "pinDigests": true
+      "addLabels": ["major"],
+      "commitMessagePrefix": "fix(renovate): [major]",
+      "groupName": "major",
+      "automerge": false
     }
   ],
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": true
+    "automerge": true,
+    "schedule": ["before 4am on monday"]
+
   },
-  "npm": {
-    "minimumReleaseAge": "3 days"
-  },
+  "rebaseWhen": "behind-base-branch",
   "prConcurrentLimit": 10,
   "prHourlyLimit": 0,
-  "prCreation": "immediate",
-  "rebaseWhen": "behind-base-branch",
   "labels": ["dependencies"],
-  "rangeStrategy": "bump",
-  "timezone": "Europe/Zurich"
+  "rangeStrategy": "bump"
 }
