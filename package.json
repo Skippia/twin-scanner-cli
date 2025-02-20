@@ -1,7 +1,7 @@
 {
   "name": "twin-scanner-cli",
   "type": "module",
-  "version": "2.0.13",
+  "version": "2.0.20",
   "packageManager": "pnpm@10.4.1",
   "description": "Find duplicate files in multiple folders scanning .txt and .torrent files.",
   "author": "Skippia",
@@ -61,15 +61,15 @@
     "update-git-hooks": "npx simple-git-hooks"
   },
   "dependencies": {
-    "fp-ts": "^2.16.9",
-    "inquirer": "^12.4.2",
-    "inquirer-fuzzy-path": "^2.3.0",
-    "zod": "^3.24.2"
+    "fp-ts": "^2.16.8",
+    "inquirer": "^12.4.1",
+    "inquirer-fuzzy-path": "^2.2.0",
+    "zod": "^3.23.2"
   },
   "devDependencies": {
     "0x": "^5.8.0",
-    "@antfu/eslint-config": "^4.3.0",
-    "@semantic-release/changelog": "^6.0.3",
+    "@antfu/eslint-config": "^4.2.0",
+    "@semantic-release/changelog": "^6.0.2",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.1",
