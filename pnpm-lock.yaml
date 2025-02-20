@@ -12,8 +12,8 @@ importers:
         specifier: ^2.16.9
         version: 2.16.9
       inquirer:
-        specifier: ^12.4.2
-        version: 12.4.2(@types/node@22.12.0)
+        specifier: ^12.4.0
+        version: 12.4.0(@types/node@22.12.0)
       inquirer-fuzzy-path:
         specifier: ^2.3.0
         version: 2.3.0
@@ -2685,14 +2685,11 @@ packages:
     resolution: {integrity: sha512-zfHC/97GSkxKKM7IctZM22x1sVi+FYBh9oaHTmI7Er/GKFpNykUgtviTmqqpiFQs5yJoSowxbT0PHy6N+H+QRg==}
     engines: {node: '>=8.0'}
 
-  inquirer@12.4.2:
-    resolution: {integrity: sha512-reyjHcwyK2LObXgTJH4T1Dpfhwu88LNPTZmg/KenmTsy3T8lN/kZT8Oo7UwwkB9q8+ss2qjjN7GV8oFAfyz9Xg==}
+  inquirer@12.4.0:
+    resolution: {integrity: sha512-eYtpAHOGuKzJWYfZyL6UCSuGbZxgMGjX1qMPLPyQnjLsAFwzoOuvU+kXKHtYP3mtHXF3gMrLvz3UoupB0sD2jA==}
     engines: {node: '>=18'}
     peerDependencies:
       '@types/node': '>=18'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
 
   inquirer@6.5.2:
     resolution: {integrity: sha512-cntlB5ghuB0iuO65Ovoi8ogLHiWGs/5yNrtUcKjFhSSiVeAIVpD7koaSU9RM8mpXw5YDi9RdYXGQMaOURB7ycQ==}
@@ -7582,17 +7579,16 @@ snapshots:
       inquirer-autocomplete-prompt: 1.4.0(inquirer@6.5.2)
       strip-ansi: 4.0.0
 
-  inquirer@12.4.2(@types/node@22.12.0):
+  inquirer@12.4.0(@types/node@22.12.0):
     dependencies:
       '@inquirer/core': 10.1.7(@types/node@22.12.0)
       '@inquirer/prompts': 7.3.2(@types/node@22.12.0)
       '@inquirer/type': 3.0.4(@types/node@22.12.0)
+      '@types/node': 22.12.0
       ansi-escapes: 4.3.2
       mute-stream: 2.0.0
       run-async: 3.0.0
       rxjs: 7.8.1
-    optionalDependencies:
-      '@types/node': 22.12.0
 
   inquirer@6.5.2:
     dependencies:

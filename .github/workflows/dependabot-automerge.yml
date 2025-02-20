@@ -16,7 +16,7 @@ jobs:
         with:
           ref: master
           fetch: 0
-          persist-credentials: false
+          persist-credentials: true
           token: ${{ secrets.BOT_SECRET_GITHUB_TOKEN }}
 
       - name: Fetch Dependabot metadata

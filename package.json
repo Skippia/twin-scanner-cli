@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "fp-ts": "^2.16.9",
-    "inquirer": "^12.4.2",
+    "inquirer": "^12.4.0",
     "inquirer-fuzzy-path": "^2.3.0",
     "zod": "^3.23.0"
   },
