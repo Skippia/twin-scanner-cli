@@ -1,45 +1,100 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-  "baseBranches": ["master"],
+  "extends": [
+    "config:recommended"
+  ],
+  "baseBranches": [
+    "master"
+  ],
   "automerge": false,
   "packageRules": [
     {
       "description": "Auto merge patch updates",
-      "matchManagers": ["npm"],
-      "matchUpdateTypes": ["patch"],
-      "labels": ["dependencies", "patch-update"],
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "labels": [
+        "dependencies",
+        "patch"
+      ],
       "automerge": true,
       "groupName": "patch updates",
-      "commitMessagePrefix": "fix(patch-deps):"
+      "commitMessagePrefix": "fix(renovate): patch"
     },
     {
-      "description": "Auto merge minor updates",
-      "matchManagers": ["npm"],
-      "matchUpdateTypes": ["minor"],
-      "automerge": true,
-      "labels": ["dependencies", "minor-update"],
+      "description": "Minor updates require manual review",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "automerge": false,
+      "labels": [
+        "dependencies",
+        "minor"
+      ],
       "groupName": "minor updates",
-      "commitMessagePrefix": "fix(minor-deps):"
+      "commitMessagePrefix": "fix(renovate): minor"
     },
     {
       "description": "Major updates require manual review",
-      "matchManagers": ["npm"],
-      "matchUpdateTypes": ["major"],
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "automerge": false,
-      "labels": ["dependencies", "major-update"],
+      "labels": [
+        "dependencies",
+        "update"
+      ],
       "groupName": "major updates",
-      "commitMessagePrefix": "fix(major-deps):"
+      "commitMessagePrefix": "fix(renovate): major"
+    },
+    {
+      "enabled": false,
+      "matchPackageNames": [
+        "@types/node"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ]
+    },
+    {
+      "matchDepTypes": [
+        "action"
+      ],
+      "pinDigests": true
     }
   ],
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": true,
-    "schedule": ["before 4am on monday"]
+    "automerge": true
   },
+  "npm": {
+    "minimumReleaseAge": "3 days"
+  },
+  "separateMinorPatch": true,
+  "postUpdateOptions": [
+    "pnpmDedupe",
+    "npmDedupe",
+    "yarnDedupeFewer"
+  ],
   "prConcurrentLimit": 10,
   "prHourlyLimit": 0,
-  "labels": ["dependencies"],
+  "prCreation": "immediate",
+  "rebaseWhen": "behind-base-branch",
+  "labels": [
+    "dependencies"
+  ],
   "rangeStrategy": "bump",
   "timezone": "Europe/Zurich"
 }
