@@ -1,54 +1,54 @@
-name: Dependabot auto-merge
+# name: Dependabot auto-merge
 
-on: pull_request_target
+# on: pull_request_target
 
-permissions:
-  contents: write
-  pull-requests: write
+# permissions:
+#   contents: write
+#   pull-requests: write
 
-jobs:
-  dependabot:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
-    steps:
-      - name: Checkout master branch
-        uses: actions/checkout@v4
-        with:
-          ref: master
-          fetch-depth: 0
-          persist-credentials: true
-          token: ${{ secrets.BOT_SECRET_GITHUB_TOKEN }}
+# jobs:
+#   dependabot:
+#     runs-on: ubuntu-latest
+#     if: github.event.pull_request.user.login == 'dependabot[bot]'
+#     steps:
+#       - name: Checkout master branch
+#         uses: actions/checkout@v4
+#         with:
+#           ref: master
+#           fetch-depth: 0
+#           persist-credentials: true
+#           token: ${{ secrets.BOT_SECRET_GITHUB_TOKEN }}
 
-      - name: Fetch Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Fetch Dependabot metadata
+#         id: metadata
+#         uses: dependabot/fetch-metadata@v2
+#         with:
+#           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch PR branch
-        run: |
-          # Fetch the PR branch into a local branch named "pr_branch"
-          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
+#       - name: Fetch PR branch
+#         run: |
+#           # Fetch the PR branch into a local branch named "pr_branch"
+#           git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
 
-      - name: Update PR branch with latest master
-        run: |
-          # Switch to the PR branch
-          git checkout pr_branch
-          # Update it with the latest master changes
-          git merge origin/master --no-edit
-          # Switch back to master
-          git checkout master
+#       - name: Update PR branch with latest master
+#         run: |
+#           # Switch to the PR branch
+#           git checkout pr_branch
+#           # Update it with the latest master changes
+#           git merge origin/master --no-edit
+#           # Switch back to master
+#           git checkout master
 
-      - name: Merge PR with "theirs" strategy
-        if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch') || contains(steps.metadata.outputs.update-type, 'version-update:semver-minor')
-        run: |
-          # Configure git user for commit
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Merge the fetched PR branch into master using the 'theirs' strategy
-          git merge -X theirs pr_branch -m "Auto-merged Dependabot PR #${{ github.event.pull_request.number }} with conflict resolution (accepting PR changes)"
+#       - name: Merge PR with "theirs" strategy
+#         if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch') || contains(steps.metadata.outputs.update-type, 'version-update:semver-minor')
+#         run: |
+#           # Configure git user for commit
+#           git config user.name "github-actions[bot]"
+#           git config user.email "github-actions[bot]@users.noreply.github.com"
+#           # Merge the fetched PR branch into master using the 'theirs' strategy
+#           git merge -X theirs pr_branch -m "Auto-merged Dependabot PR #${{ github.event.pull_request.number }} with conflict resolution (accepting PR changes)"
 
-      - name: Push merge to master
-        if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch') || contains(steps.metadata.outputs.update-type, 'version-update:semver-minor')
-        run: |
-          git push origin master
+#       - name: Push merge to master
+#         if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch') || contains(steps.metadata.outputs.update-type, 'version-update:semver-minor')
+#         run: |
+#           git push origin master
