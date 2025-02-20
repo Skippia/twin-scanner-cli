@@ -1,11 +1,42 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:base"],
+  "baseBranches": ["master"],
+  "automerge": false,
   "packageRules": [
     {
+      "description": "Auto merge patch updates",
+      "matchManagers": ["pnpm"],
+      "matchUpdateTypes": ["patch"],
       "automerge": true,
-      "groupName": "dependencies",
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "depTypeList": ["dependencies", "devDependencies"]
+      "groupName": "patch updates",
+      "commitMessagePrefix": "fix(deps):"
+    },
+    {
+      "description": "Group minor updates for review",
+      "matchManagers": ["pnpm"],
+      "matchUpdateTypes": ["minor"],
+      "automerge": false,
+      "groupName": "minor updates",
+      "commitMessagePrefix": "fix(deps):"
+    },
+    {
+      "description": "Major updates require manual review",
+      "matchManagers": ["pnpm"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "groupName": "major updates",
+      "commitMessagePrefix": "fix(deps):"
     }
-  ]
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["before 4am on monday"]
+  },
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 2,
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
+  "timezone": "Europe/Zurich"
 }

@@ -1,30 +1,6 @@
-# name: Dependabot auto-merge
+name: Dependabot auto-merge
 
-# on: pull_request
-
-# permissions:
-#   contents: write
-#   pull-requests: write
-
-# jobs:
-#   dependabot:
-#     runs-on: ubuntu-latest
-#     if: github.event.pull_request.user.login == 'dependabot[bot]'
-#     steps:
-#       - name: Fetch Dependabot metadata
-#         id: metadata
-#         uses: dependabot/fetch-metadata@v2
-#         with:
-#           github-token: '${{ secrets.GITHUB_TOKEN }}'
-#       - name: Enable auto-merge for Dependabot PRs
-#         if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch')
-#         run: gh pr merge --auto --merge "$PR_URL"
-#         env:
-#           PR_URL: ${{ github.event.pull_request.html_url }}
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-name: Dependabot auto-merge with conflict resolution
-
-on: pull_request
+on: pull_request_target
 
 permissions:
   contents: write
@@ -33,29 +9,37 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.user.login == 'dependabot[bot]' &&
-      contains(steps.metadata.outputs.update-type, 'version-update:semver-patch')
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: master
+          fetch: 0
+          persist-credentials: true
+          token: ${{ secrets.BOT_SECRET_GITHUB_TOKEN }}
+
       - name: Fetch Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Fetch PR branch
         run: |
-          # Fetch the PR branch using gh CLI.
-          gh pr checkout ${{ github.event.pull_request.number }}
+          # Fetch the PR branch into a local branch named "pr_branch"
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
+
       - name: Merge PR with "theirs" strategy
+        if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch') || contains(steps.metadata.outputs.update-type, 'version-update:semver-minor')
         run: |
-          # Set up git config for commit author.
+          # Configure git user for commit
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Merge the checked-out PR branch into master using the recursive strategy and favoring "their" changes.
-          git merge -X theirs ${{ github.head_ref }} -m "Auto-merged Dependabot PR #${{ github.event.pull_request.number }} with conflict resolution (accepting PR changes)"
+          # Merge the fetched PR branch into master using the 'theirs' strategy
+          git merge -X theirs pr_branch -m "Auto-merged Dependabot PR #${{ github.event.pull_request.number }} with conflict resolution (accepting PR changes)"
+
       - name: Push merge to master
+        if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch') || contains(steps.metadata.outputs.update-type, 'version-update:semver-minor')
         run: |
           git push origin master
