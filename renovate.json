@@ -2,6 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
+    ":separatePatchReleases",
     "helpers:disableTypesNodeMajor",
     "helpers:pinGitHubActionDigests",
     "npm:unpublishSafe"
@@ -23,7 +24,7 @@
       "addLabels": ["minor"],
       "commitMessagePrefix": "fix(renovate): [minor]",
       "groupName": "minor",
-      "automerge": true
+      "automerge": false
     },
     {
       "description": "Major updates require manual review",
