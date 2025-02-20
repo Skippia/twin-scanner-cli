@@ -12,15 +12,16 @@ jobs:
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: master
+          persist-credentials: false
 
       - name: Fetch Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.BOT_SECRET_GITHUB_TOKEN }}
 
       - name: Fetch PR branch
         run: |
@@ -40,3 +41,5 @@ jobs:
         if: contains(steps.metadata.outputs.update-type, 'version-update:semver-patch') || contains(steps.metadata.outputs.update-type, 'version-update:semver-minor')
         run: |
           git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_SECRET_GITHUB_TOKEN }}
