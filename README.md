@@ -85,6 +85,7 @@
 ```sh
 git clone https://github.com/Skippia/twin-scanner-cli.git
 ```
+or
 ```sh
 git clone --depth 1 https://github.com/Skippia/twin-scanner-cli.git
 ```
