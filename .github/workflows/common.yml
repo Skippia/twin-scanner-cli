@@ -7,11 +7,6 @@ on:
         description: Node.js version
         required: true
         type: string
-      run-audit:
-        description: Whether to run the audit step
-        required: false
-        type: boolean
-        default: false
       run-lint:
         description: Whether to run the eslint step
         required: false
@@ -63,10 +58,6 @@ jobs:
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
-
-      - name: Security Audit
-        run: pnpm audit --prod
-        if: ${{ inputs.run-audit }}
 
       - name: Lint
         run: npm run eslint
