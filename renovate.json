@@ -12,9 +12,9 @@
   "packageRules": [
     {
       "description": "Auto merge patch updates",
-      "matchUpdateTypes": ["patch"],
+      "matchUpdateTypes": ["patch", "pin", "digest"],
       "addLabels": ["patch"],
-      "commitMessagePrefix": "fix(renovate): [patch]",
+      "commitMessagePrefix": "fix(renovate):",
       "groupName": "patch",
       "automerge": true
     },
@@ -22,7 +22,7 @@
       "description": "Minor updates require manual review",
       "matchUpdateTypes": ["minor"],
       "addLabels": ["minor"],
-      "commitMessagePrefix": "fix(renovate): [minor]",
+      "commitMessagePrefix": "fix(renovate):",
       "groupName": "minor",
       "automerge": true
     },
@@ -30,7 +30,7 @@
       "description": "Major updates require manual review",
       "matchUpdateTypes": ["major"],
       "addLabels": ["major"],
-      "commitMessagePrefix": "fix(renovate): [major]",
+      "commitMessagePrefix": "fix(renovate):",
       "groupName": "major",
       "automerge": false
     }
@@ -39,7 +39,8 @@
     "enabled": true,
     "automerge": true
   },
-  "rebaseWhen": "behind-base-branch",
+  "rebaseWhen": "auto",
+  "pruneStaleBranches": true,
   "labels": ["dependencies"],
   "rangeStrategy": "bump"
 }
