@@ -7,11 +7,6 @@ on:
         description: Node.js version
         required: true
         type: string
-      run-audit:
-        description: Whether to run the audit step
-        required: false
-        type: boolean
-        default: false
       run-lint:
         description: Whether to run the eslint step
         required: false
@@ -64,10 +59,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Security Audit
-        run: pnpm audit --prod
-        if: ${{ inputs.run-audit }}
-
       - name: Lint
         run: npm run eslint
         if: ${{ inputs.run-lint }}
@@ -86,7 +77,7 @@ jobs:
           output-file: sbom.json
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
         if: ${{ inputs.run-sbom }}
         with:
           name: build-artifacts

@@ -8,7 +8,7 @@ import * as IOE from 'fp-ts/lib/IOEither'
 import * as TE from 'fp-ts/lib/TaskEither'
 import inquirer from 'inquirer'
 import inquirerFuzzyPath from 'inquirer-fuzzy-path'
-import type { LegacyPromptConstructor } from 'node_modules/inquirer/dist/esm/ui/prompt'
+import type { LegacyPromptConstructor } from 'node_modules/inquirer/dist/esm/types/ui/prompt.mjs'
 
 import {
   getExtensionsPrompt,

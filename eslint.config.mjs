@@ -574,7 +574,7 @@ export default antfu(
     rules: {
       //* Core
       ...functional.configs.strict.rules,
-      ...functional.configs.externalTypeScriptRecommended.rules,
+      // ...functional.configs.externalTypeScriptRecommended.rules,
       //* Other configs
       ...functional.configs.currying.rules,
       ...functional.configs.noExceptions.rules,

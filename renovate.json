@@ -1,63 +1,45 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended",
+    ":separatePatchReleases",
+    "helpers:disableTypesNodeMajor",
+    "helpers:pinGitHubActionDigests",
+    "npm:unpublishSafe"
+  ],
   "baseBranches": ["master"],
   "versioning": "semver",
-  "separateMinorPatch": true,
-  "automerge": false,
   "packageRules": [
     {
       "description": "Auto merge patch updates",
-      "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch"],
-      "labels": ["dependencies", "patch"],
-      "automerge": true,
-      "groupName": "patch updates",
-      "commitMessagePrefix": "fix(renovate):",
-      "matchPackageNames": ["*"]
+      "addLabels": ["patch"],
+      "commitMessagePrefix": "fix(renovate): [patch]",
+      "groupName": "patch",
+      "automerge": true
     },
     {
       "description": "Minor updates require manual review",
-      "matchManagers": ["npm"],
       "matchUpdateTypes": ["minor"],
-      "automerge": false,
-      "labels": ["dependencies", "minor"],
-      "groupName": "minor updates",
-      "commitMessagePrefix": "fix(renovate):",
-      "matchPackageNames": ["*"]
+      "addLabels": ["minor"],
+      "commitMessagePrefix": "fix(renovate): [minor]",
+      "groupName": "minor",
+      "automerge": true
     },
     {
       "description": "Major updates require manual review",
-      "matchManagers": ["npm"],
       "matchUpdateTypes": ["major"],
-      "automerge": false,
-      "labels": ["dependencies", "update"],
-      "groupName": "major updates",
-      "commitMessagePrefix": "fix(renovate):"
-    },
-    {
-      "enabled": false,
-      "matchPackageNames": ["@types/node"],
-      "matchUpdateTypes": ["major"]
-    },
-    {
-      "matchDepTypes": ["action"],
-      "pinDigests": true
+      "addLabels": ["major"],
+      "commitMessagePrefix": "fix(renovate): [major]",
+      "groupName": "major",
+      "automerge": false
     }
   ],
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true
   },
-  "npm": {
-    "minimumReleaseAge": "3 days"
-  },
-  "postUpdateOptions": ["pnpmDedupe", "npmDedupe", "yarnDedupeFewer"],
-  "prConcurrentLimit": 10,
-  "prHourlyLimit": 0,
-  "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch",
   "labels": ["dependencies"],
-  "rangeStrategy": "bump",
-  "timezone": "Europe/Zurich"
+  "rangeStrategy": "bump"
 }
