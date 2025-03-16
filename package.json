@@ -2,7 +2,7 @@
   "name": "twin-scanner-cli",
   "type": "module",
   "version": "2.0.29",
-  "packageManager": "pnpm@10.6.2",
+  "packageManager": "pnpm@10.6.3",
   "description": "Find duplicate files in multiple folders scanning .txt and .torrent files.",
   "author": "Skippia",
   "license": "ISC",
