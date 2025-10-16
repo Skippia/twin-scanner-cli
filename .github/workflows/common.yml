@@ -70,7 +70,7 @@ jobs:
           NODE_ENV: production
 
       - name: Generate SBOM
-        uses: anchore/sbom-action@d8a2c0130026bf585de5c176ab8f7ce62d75bf04 # v0
+        uses: anchore/sbom-action@aa0e114b2e19480f157109b9922bda359bd98b90 # v0
         if: ${{ inputs.run-sbom }}
         with:
           format: cyclonedx-json
